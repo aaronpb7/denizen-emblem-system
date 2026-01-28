@@ -1,0 +1,21 @@
+# macOS
+.DS_Store
+
+# Temporary files
+*.tmp
+*.bak
+*~
+
+# Screenshots (already in repo, but ignore future ones)
+screenshots/*.png
+screenshots/*.jpg
+screenshots/*.jpeg
+
+# Logs
+*.log
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
