@@ -42,15 +42,18 @@ get_profile_items:
     - define head <item[<player.skull_item>].with[display_name=<&2><player.name>;lore=<&7>Welcome to your profile!|<&7>UUID<&co> <&e><player.uuid>]>
     - define items <[items].set[<[head]>].at[5]>
 
-    # Row 3: Active role (21), Emblems (23), Bulletin (25) - centered 3-item layout
+    # Row 3: Active role (20), Emblems (22), Cosmetics (24), Bulletin (26) - centered 4-item layout
     - define role_item <proc[get_role_display_item]>
-    - define items <[items].set[<[role_item]>].at[21]>
+    - define items <[items].set[<[role_item]>].at[20]>
 
     - define emblems_item <proc[get_emblems_icon_item]>
-    - define items <[items].set[<[emblems_item]>].at[23]>
+    - define items <[items].set[<[emblems_item]>].at[22]>
+
+    - define cosmetics_item <proc[get_cosmetics_icon_item]>
+    - define items <[items].set[<[cosmetics_item]>].at[24]>
 
     - define bulletin_item <proc[get_bulletin_icon_item]>
-    - define items <[items].set[<[bulletin_item]>].at[25]>
+    - define items <[items].set[<[bulletin_item]>].at[26]>
 
     # Row 5: Close button (bottom left slot 37)
     - define items <[items].set[<item[profile_close_button]>].at[37]>
@@ -531,3 +534,212 @@ create_progress_bar:
     - repeat <[empty]>:
         - define bar "<[bar]><&8>█"
     - determine <[bar]>
+
+get_cosmetics_icon_item:
+    type: procedure
+    script:
+    - define lore <list>
+    - define lore <[lore].include[<&7>Manage your cosmetic unlocks]>
+    - define lore "<[lore].include[<&sp>]>"
+
+    # Count available titles
+    - define title_count 0
+    - if <player.has_flag[ceres.item.title]>:
+        - define title_count <[title_count].add[1]>
+
+    - define lore <[lore].include[<&e>Available Titles<&co> <&6><[title_count]>]>
+
+    # Show active title
+    - if <player.has_flag[cosmetic.title.active]>:
+        - define lore "<[lore].include[<&sp>]>"
+        - define lore <[lore].include[<&2>Active Title<&co>]>
+        - define active_title <player.flag[cosmetic.title.active]>
+        - choose <[active_title]>:
+            - case ceres:
+                - define lore "<[lore].include[<&6><&lb>Ceres' Chosen<&rb>]>"
+    - else:
+        - define lore "<[lore].include[<&sp>]>"
+        - define lore <[lore].include[<&7>No title equipped]>
+
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&e>Click to manage cosmetics]>
+
+    - determine <item[armor_stand].with[display_name=<&d><&l>Cosmetics;lore=<[lore]>]>
+
+# ============================================
+# COSMETICS MENU
+# ============================================
+
+cosmetics_inventory:
+    type: inventory
+    inventory: chest
+    gui: true
+    title: <&8>Cosmetics
+    size: 27
+    procedural items:
+    - determine <proc[get_cosmetics_menu_items]>
+
+get_cosmetics_menu_items:
+    type: procedure
+    script:
+    - define items <list>
+    - define filler <item[gray_stained_glass_pane].with[display_name=<&7>]>
+
+    # Fill with filler
+    - repeat 27:
+        - define items <[items].include[<[filler]>]>
+
+    # Show all 3 titles in center row (slots 12, 14, 16)
+    - define title1 <proc[get_ceres_title_item]>
+    - define items <[items].set[<[title1]>].at[12]>
+
+    - define title2 <proc[get_demeter_title_item]>
+    - define items <[items].set[<[title2]>].at[14]>
+
+    - define title3 <proc[get_heracles_title_item]>
+    - define items <[items].set[<[title3]>].at[16]>
+
+    # Back button (bottom left)
+    - define items <[items].set[<item[cosmetics_back_button]>].at[19]>
+
+    - determine <[items]>
+
+get_ceres_title_item:
+    type: procedure
+    script:
+    - define lore <list>
+
+    # Check if unlocked
+    - if <player.has_flag[ceres.item.title]>:
+        - define lore "<[lore].include[<&6><&lb>Ceres' Chosen<&rb>]>"
+        - define lore "<[lore].include[<&sp>]>"
+        - if <player.has_flag[cosmetic.title.active]> && <player.flag[cosmetic.title.active]> == ceres:
+            - define lore <[lore].include[<&2>✓ Currently Active]>
+            - define lore "<[lore].include[<&sp>]>"
+            - define lore <[lore].include[<&e>Click to unequip]>
+            - determine <item[name_tag].with[display_name=<&6><&l>Ceres Title;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+        - else:
+            - define lore <[lore].include[<&7>Not equipped]>
+            - define lore "<[lore].include[<&sp>]>"
+            - define lore <[lore].include[<&e>Click to equip]>
+            - determine <item[name_tag].with[display_name=<&6><&l>Ceres Title;lore=<[lore]>]>
+    - else:
+        - define lore <[lore].include[<&8>???]>
+        - define lore "<[lore].include[<&sp>]>"
+        - define lore <[lore].include[<&7>Unlock from<&co> <&b>Ceres Crates]>
+        - determine <item[gray_dye].with[display_name=<&8>???;lore=<[lore]>]>
+
+get_demeter_title_item:
+    type: procedure
+    script:
+    - define lore <list>
+
+    # Check if unlocked (placeholder - not implemented yet)
+    - if <player.has_flag[demeter.item.title]>:
+        - define lore "<[lore].include[<&6><&lb>Harvest Queen<&rb>]>"
+        - define lore "<[lore].include[<&sp>]>"
+        - if <player.has_flag[cosmetic.title.active]> && <player.flag[cosmetic.title.active]> == demeter:
+            - define lore <[lore].include[<&2>✓ Currently Active]>
+            - define lore "<[lore].include[<&sp>]>"
+            - define lore <[lore].include[<&e>Click to unequip]>
+            - determine <item[name_tag].with[display_name=<&e><&l>Demeter Title;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+        - else:
+            - define lore <[lore].include[<&7>Not equipped]>
+            - define lore "<[lore].include[<&sp>]>"
+            - define lore <[lore].include[<&e>Click to equip]>
+            - determine <item[name_tag].with[display_name=<&e><&l>Demeter Title;lore=<[lore]>]>
+    - else:
+        - define lore <[lore].include[<&8>???]>
+        - define lore "<[lore].include[<&sp>]>"
+        - define lore <[lore].include[<&7>Unlock from<&co> <&6>Demeter Crates]>
+        - determine <item[gray_dye].with[display_name=<&8>???;lore=<[lore]>]>
+
+get_heracles_title_item:
+    type: procedure
+    script:
+    - define lore <list>
+
+    # Check if unlocked (placeholder - not implemented yet)
+    - if <player.has_flag[heracles.item.title]>:
+        - define lore "<[lore].include[<&c><&lb>The Unconquered<&rb>]>"
+        - define lore "<[lore].include[<&sp>]>"
+        - if <player.has_flag[cosmetic.title.active]> && <player.flag[cosmetic.title.active]> == heracles:
+            - define lore <[lore].include[<&2>✓ Currently Active]>
+            - define lore "<[lore].include[<&sp>]>"
+            - define lore <[lore].include[<&e>Click to unequip]>
+            - determine <item[name_tag].with[display_name=<&c><&l>Heracles Title;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+        - else:
+            - define lore <[lore].include[<&7>Not equipped]>
+            - define lore "<[lore].include[<&sp>]>"
+            - define lore <[lore].include[<&e>Click to equip]>
+            - determine <item[name_tag].with[display_name=<&c><&l>Heracles Title;lore=<[lore]>]>
+    - else:
+        - define lore <[lore].include[<&8>???]>
+        - define lore "<[lore].include[<&sp>]>"
+        - define lore <[lore].include[<&7>Unlock from<&co> <&4>Heracles Crates]>
+        - determine <item[gray_dye].with[display_name=<&8>???;lore=<[lore]>]>
+
+cosmetics_back_button:
+    type: item
+    material: arrow
+    display name: <&e>← Back
+    lore:
+    - <&7>Return to profile
+
+# ============================================
+# COSMETICS CLICK HANDLERS
+# ============================================
+
+cosmetics_click_handler:
+    type: world
+    debug: false
+    events:
+        # Open cosmetics from profile
+        on player clicks armor_stand in profile_inventory:
+        - inventory open d:cosmetics_inventory
+
+        # Back to profile
+        on player clicks cosmetics_back_button in cosmetics_inventory:
+        - inventory open d:profile_inventory
+
+        # Click title items
+        on player clicks name_tag in cosmetics_inventory:
+        - define clicked_title ""
+
+        # Determine which title was clicked based on slot
+        - if <context.slot> == 12:
+            - define clicked_title ceres
+            - define title_flag ceres.item.title
+            - define title_name "<&6>[Ceres' Chosen]"
+        - else if <context.slot> == 14:
+            - define clicked_title demeter
+            - define title_flag demeter.item.title
+            - define title_name "<&6>[Harvest Queen]"
+        - else if <context.slot> == 16:
+            - define clicked_title heracles
+            - define title_flag heracles.item.title
+            - define title_name "<&c>[The Unconquered]"
+
+        # Check if player has this title unlocked
+        - if !<player.has_flag[<[title_flag]>]>:
+            - playsound <player> sound:entity_villager_no
+            - stop
+
+        # Toggle title on/off
+        - if <player.has_flag[cosmetic.title.active]> && <player.flag[cosmetic.title.active]> == <[clicked_title]>:
+            # Turn off current title
+            - flag player cosmetic.title.active:!
+            - playsound <player> sound:block_note_block_pling pitch:0.8
+            - narrate "<&7>Title disabled"
+        - else:
+            # Equip this title
+            - flag player cosmetic.title.active:<[clicked_title]>
+            - playsound <player> sound:block_note_block_pling pitch:1.2
+            - narrate "<[title_name]> <&7>equipped!"
+
+        # Refresh inventory
+        - inventory open d:cosmetics_inventory
+
+        # Click locked titles (gray_dye)
+        on player clicks gray_dye in cosmetics_inventory:
+        - playsound <player> sound:entity_villager_no

@@ -1,5 +1,5 @@
 # ============================================
-# EMBLEM SYSTEM V2 - DEMETER ITEMS
+# DEMETER ITEMS
 # ============================================
 #
 # All items for Demeter progression:

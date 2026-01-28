@@ -78,6 +78,105 @@ This document provides a comprehensive testing checklist and admin command refer
 
 ---
 
+### Global Reset Command
+
+#### Complete System Reset
+
+```
+/emblemreset <player>
+/emblemreset <player> confirm
+```
+
+**Purpose**: Completely resets a player's entire emblem progression across ALL systems
+
+**Safety Feature**: Requires two-step confirmation to prevent accidental resets
+
+**First Command** (`/emblemreset <player>`):
+- Shows detailed warning of what will be deleted
+- Lists all systems affected
+- Provides confirmation command
+
+**Second Command** (`/emblemreset <player> confirm`):
+- Executes the full reset
+- Notifies admin and player
+- Logs to console
+
+**What Gets Reset:**
+
+**Core System:**
+- `met_promachos` - Allows re-introduction to NPC
+- `role.active` - Removes active role
+- `role.changed_before` - Resets role change history
+
+**Demeter (FARMING):**
+- All activity counters (wheat, cows, cakes)
+- All keys awarded tracking
+- All components (wheat, cow, cake) + dates
+- Rank progression
+- Crate statistics (opens, tier counts)
+- Item unlocks (demeter title)
+- Animation state flags
+
+**Ceres (Meta-Progression):**
+- Crate open count
+- All unique items (hoe, title, shulker, wand)
+- Unique item counter
+- Animation state flags
+
+**Cosmetics:**
+- Active title selection
+
+**Future Systems:**
+- Hephaestus flags (wildcard removal)
+- Heracles flags (wildcard removal)
+- Vulcan flags (wildcard removal)
+- Mars flags (wildcard removal)
+
+**Example Workflow:**
+```bash
+# Step 1: Check what will be reset
+/emblemreset Notch
+
+# Output shows warning:
+# ⚠ WARNING: This will permanently delete:
+# - Role selection and active role
+# - All Demeter progress (wheat, cows, cakes)
+# - All Demeter components and ranks
+# - All Ceres unlocks (hoe, title, shulker, wand)
+# - All cosmetic titles
+# - All crate statistics
+# - Promachos introduction flag
+#
+# To confirm, run: /emblemreset Notch confirm
+
+# Step 2: Confirm reset
+/emblemreset Notch confirm
+
+# Output:
+# ✓ Successfully reset all emblem progress for Notch
+# They can now start fresh by visiting Promachos.
+```
+
+**Player Notification:**
+```
+[Emblem System] Your emblem progression has been completely reset by an admin.
+Visit Promachos to begin your journey!
+```
+
+**Use Cases:**
+- Testing full progression flows from scratch
+- Resetting players who request it
+- Cleaning up test accounts before production
+- Preparing accounts for QA testing
+
+**Important Notes:**
+- This does NOT remove physical items from player inventory (keys, rewards, etc.)
+- Only removes flags and progression data
+- Future-proof: automatically includes Hephaestus/Heracles when implemented
+- Console logging for audit trail
+
+---
+
 ### Ceres Admin Commands
 
 #### Give Ceres Keys

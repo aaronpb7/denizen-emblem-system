@@ -1,4 +1,4 @@
-# Emblem System V2 - Overview
+# Emblem System - Overview
 
 ## Philosophy
 
@@ -123,17 +123,17 @@ Each god follows the same template:
 
 ---
 
-## Key Design Differences from V1
+## Key Design Principles
 
-| Feature | V1 (Old) | V2 (New) |
-|---------|----------|----------|
-| Progression | Sequential stages, claim gates | Parallel activities, repeatable keys |
-| Role System | None | Required, one active at a time |
-| Rewards | Stage XP + stage-specific items | Frequent crate loot, deterministic components |
-| Emblems | Physical items | Cosmetic unlocks (flags) |
-| NPC Trading | Resource/emblem trades | Role selection, emblem unlock ceremony |
-| Long-Term Goals | Stage 5 completion | Component milestones + emblem unlock |
-| Grind Feel | Long, gated, infrequent rewards | Short loops, frequent rewards, incremental |
+| Feature | Implementation |
+|---------|----------------|
+| Progression | Parallel activities with repeatable key rewards |
+| Role System | One active role at a time, switch freely |
+| Rewards | Frequent crate loot + deterministic component milestones |
+| Emblems | Cosmetic unlocks (flags) tracked in profile |
+| NPC Trading | Role selection and emblem unlock ceremonies |
+| Long-Term Goals | Component milestones leading to emblem unlocks |
+| Grind Feel | Short loops with frequent rewards for engagement |
 
 ---
 

@@ -1,5 +1,5 @@
 # ============================================
-# EMBLEM SYSTEM V2 - DEMETER EVENTS
+# DEMETER EVENTS - Activity Tracking
 # ============================================
 #
 # Activity tracking for Demeter progression:

@@ -1,5 +1,5 @@
 # ============================================
-# EMBLEM SYSTEM V2 - CERES ITEMS
+# CERES ITEMS
 # ============================================
 #
 # Ceres meta-progression items:

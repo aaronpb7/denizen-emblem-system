@@ -1,5 +1,5 @@
 # ============================================
-# EMBLEM SYSTEM V2 - DEMETER BLESSING
+# DEMETER BLESSING
 # ============================================
 #
 # Consumable item that boosts all incomplete Demeter activities by +10%

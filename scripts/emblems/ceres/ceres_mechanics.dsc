@@ -1,5 +1,5 @@
 # ============================================
-# EMBLEM SYSTEM V2 - CERES MECHANICS
+# CERES MECHANICS - Title System
 # ============================================
 #
 # Special mechanics for Ceres items:
@@ -97,15 +97,23 @@ ceres_bee_cleanup:
 # CERES TITLE - CHAT PREFIX
 # ============================================
 
-ceres_title_chat:
+title_chat_handler:
     type: world
     debug: false
     events:
         on player chats:
-        # Check if player has Ceres title unlocked
-        - if !<player.has_flag[ceres.item.title]>:
+        # Check if player has any title active
+        - if !<player.has_flag[cosmetic.title.active]>:
             - stop
 
-        # Cancel default chat and send custom
+        - define active_title <player.flag[cosmetic.title.active]>
+
+        # Apply the appropriate title prefix
         - determine passively cancelled
-        - announce "<&6>[Ceres' Chosen]<&r> <player.display_name><&7>: <context.message>"
+        - choose <[active_title]>:
+            - case ceres:
+                - announce "<&6>[Ceres' Chosen]<&r> <player.display_name><&7>: <context.message>"
+            - case demeter:
+                - announce "<&6>[Harvest Queen]<&r> <player.display_name><&7>: <context.message>"
+            - case heracles:
+                - announce "<&c>[The Unconquered]<&r> <player.display_name><&7>: <context.message>"

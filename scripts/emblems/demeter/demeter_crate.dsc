@@ -1,5 +1,5 @@
 # ============================================
-# EMBLEM SYSTEM V2 - DEMETER CRATE
+# DEMETER CRATE - Opening System
 # ============================================
 #
 # Demeter crate opening system:
@@ -33,7 +33,8 @@ demeter_key_usage:
         - take item:demeter_key quantity:1
 
         # Start crate animation with pre-rolled results
-        - run demeter_crate_animation def.tier:<[tier]> def.tier_color:<[tier_color]> def.loot:<[loot]>
+        # Use player-specific queue ID so it can be stopped if they close early
+        - run demeter_crate_animation def.tier:<[tier]> def.tier_color:<[tier_color]> def.loot:<[loot]> id:demeter_crate_<player.uuid>
 
         # Track statistics
         - flag player demeter.crates_opened:++
@@ -44,12 +45,19 @@ demeter_crate_animation:
     debug: false
     definitions: tier|tier_color|loot
     script:
+    # Store loot data as flag for early close detection
+    - flag player demeter.crate.pending_loot:<[loot]>
+    - flag player demeter.crate.pending_tier:<[tier]>
+    - flag player demeter.crate.pending_tier_color:<[tier_color]>
+    - flag player demeter.crate.animation_running:true
+
     # Narrate opening message
     - narrate "<&7>You insert the <&6>Demeter Key<&7>..."
     - playsound <player> sound:block_chest_open volume:1.0
 
-    # Open GUI filled with gray panes
+    # Open GUI with yellow border around rolling area
     - define filler <item[gray_stained_glass_pane].with[display_name=<&7>]>
+    - define border <item[yellow_stained_glass_pane].with[display_name=<&e>]>
     - define gui_items <list>
     - repeat 27:
         - define gui_items <[gui_items].include[<[filler]>]>
@@ -57,75 +65,178 @@ demeter_crate_animation:
     - inventory open d:demeter_crate_gui
     - inventory set d:<player.open_inventory> o:<[gui_items]>
 
+    # Set yellow border frame around entire GUI
+    # Top row (1-9)
+    - inventory set d:<player.open_inventory> o:<[border]> slot:1
+    - inventory set d:<player.open_inventory> o:<[border]> slot:2
+    - inventory set d:<player.open_inventory> o:<[border]> slot:3
+    - inventory set d:<player.open_inventory> o:<[border]> slot:4
+    - inventory set d:<player.open_inventory> o:<[border]> slot:5
+    - inventory set d:<player.open_inventory> o:<[border]> slot:6
+    - inventory set d:<player.open_inventory> o:<[border]> slot:7
+    - inventory set d:<player.open_inventory> o:<[border]> slot:8
+    - inventory set d:<player.open_inventory> o:<[border]> slot:9
+    # Middle row sides (10, 18)
+    - inventory set d:<player.open_inventory> o:<[border]> slot:10
+    - inventory set d:<player.open_inventory> o:<[border]> slot:11
+    - inventory set d:<player.open_inventory> o:<[border]> slot:17
+    - inventory set d:<player.open_inventory> o:<[border]> slot:18
+    # Bottom row (19-27)
+    - inventory set d:<player.open_inventory> o:<[border]> slot:19
+    - inventory set d:<player.open_inventory> o:<[border]> slot:20
+    - inventory set d:<player.open_inventory> o:<[border]> slot:21
+    - inventory set d:<player.open_inventory> o:<[border]> slot:22
+    - inventory set d:<player.open_inventory> o:<[border]> slot:23
+    - inventory set d:<player.open_inventory> o:<[border]> slot:24
+    - inventory set d:<player.open_inventory> o:<[border]> slot:25
+    - inventory set d:<player.open_inventory> o:<[border]> slot:26
+    - inventory set d:<player.open_inventory> o:<[border]> slot:27
+
     # SCROLLING REEL ANIMATION
     # Middle row center slots: 12, 13, 14, 15, 16 (5 slots centered, scrolls left to right)
     # Final result lands in center (slot 14)
 
     - define preview_pool <list[bread|cooked_beef|baked_potato|wheat|emerald|golden_carrot|golden_apple|enchanted_golden_apple|hay_bale|bone_meal]>
 
-    # Phase 1: Fast scroll (20 cycles, 1t each = 1s)
+    # Initialize scrolling slots with random items
+    - define slot1 <item[<[preview_pool].random>]>
+    - define slot2 <item[<[preview_pool].random>]>
+    - define slot3 <item[<[preview_pool].random>]>
+    - define slot4 <item[<[preview_pool].random>]>
+    - define slot5 <item[<[preview_pool].random>]>
+
+    # Phase 1: Fast scroll (20 cycles, 2t each = 2s)
     - repeat 20:
-        - define item1 <item[<[preview_pool].random>]>
-        - define item2 <item[<[preview_pool].random>]>
-        - define item3 <item[<[preview_pool].random>]>
-        - define item4 <item[<[preview_pool].random>]>
-        - define item5 <item[<[preview_pool].random>]>
+        # Check if player closed inventory early
+        - if !<player.has_flag[demeter.crate.animation_running]>:
+            - stop
 
-        - inventory set d:<player.open_inventory> o:<[item1]> slot:12
-        - inventory set d:<player.open_inventory> o:<[item2]> slot:13
-        - inventory set d:<player.open_inventory> o:<[item3]> slot:14
-        - inventory set d:<player.open_inventory> o:<[item4]> slot:15
-        - inventory set d:<player.open_inventory> o:<[item5]> slot:16
+        # Shift items left and add new item on right
+        - define slot1 <[slot2]>
+        - define slot2 <[slot3]>
+        - define slot3 <[slot4]>
+        - define slot4 <[slot5]>
+        - define slot5 <item[<[preview_pool].random>]>
 
+        - inventory set d:<player.open_inventory> slot:12 o:<[slot1]>
+        - inventory set d:<player.open_inventory> slot:13 o:<[slot2]>
+        - inventory set d:<player.open_inventory> slot:14 o:<[slot3]>
+        - inventory set d:<player.open_inventory> slot:15 o:<[slot4]>
+        - inventory set d:<player.open_inventory> slot:16 o:<[slot5]>
         - playsound <player> sound:ui_button_click volume:0.2 pitch:1.5
-        - wait 1t
-
-    # Phase 2: Medium scroll (10 cycles, 2t each = 1s)
-    - repeat 10:
-        - define item1 <item[<[preview_pool].random>]>
-        - define item2 <item[<[preview_pool].random>]>
-        - define item3 <item[<[preview_pool].random>]>
-        - define item4 <item[<[preview_pool].random>]>
-        - define item5 <item[<[preview_pool].random>]>
-
-        - inventory set d:<player.open_inventory> o:<[item1]> slot:12
-        - inventory set d:<player.open_inventory> o:<[item2]> slot:13
-        - inventory set d:<player.open_inventory> o:<[item3]> slot:14
-        - inventory set d:<player.open_inventory> o:<[item4]> slot:15
-        - inventory set d:<player.open_inventory> o:<[item5]> slot:16
-
-        - playsound <player> sound:ui_button_click volume:0.3 pitch:1.2
         - wait 2t
 
-    # Phase 3: Slow scroll (5 cycles, 4t each = 1s)
+    # Phase 2: Medium scroll (10 cycles, 3t each = 1.5s)
+    - repeat 10:
+        # Check if player closed inventory early
+        - if !<player.has_flag[demeter.crate.animation_running]>:
+            - stop
+
+        # Shift items left and add new item on right
+        - define slot1 <[slot2]>
+        - define slot2 <[slot3]>
+        - define slot3 <[slot4]>
+        - define slot4 <[slot5]>
+        - define slot5 <item[<[preview_pool].random>]>
+
+        - inventory set d:<player.open_inventory> slot:12 o:<[slot1]>
+        - inventory set d:<player.open_inventory> slot:13 o:<[slot2]>
+        - inventory set d:<player.open_inventory> slot:14 o:<[slot3]>
+        - inventory set d:<player.open_inventory> slot:15 o:<[slot4]>
+        - inventory set d:<player.open_inventory> slot:16 o:<[slot5]>
+        - playsound <player> sound:ui_button_click volume:0.3 pitch:1.2
+        - wait 3t
+
+    # Phase 3: Slow scroll (5 cycles, 5t each = 1.25s)
     - repeat 5:
-        - define item1 <item[<[preview_pool].random>]>
-        - define item2 <item[<[preview_pool].random>]>
-        - define item3 <item[<[preview_pool].random>]>
-        - define item4 <item[<[preview_pool].random>]>
-        - define item5 <item[<[preview_pool].random>]>
+        # Check if player closed inventory early
+        - if !<player.has_flag[demeter.crate.animation_running]>:
+            - stop
 
-        - inventory set d:<player.open_inventory> o:<[item1]> slot:12
-        - inventory set d:<player.open_inventory> o:<[item2]> slot:13
-        - inventory set d:<player.open_inventory> o:<[item3]> slot:14
-        - inventory set d:<player.open_inventory> o:<[item4]> slot:15
-        - inventory set d:<player.open_inventory> o:<[item5]> slot:16
+        # Shift items left and add new item on right
+        - define slot1 <[slot2]>
+        - define slot2 <[slot3]>
+        - define slot3 <[slot4]>
+        - define slot4 <[slot5]>
+        - define slot5 <item[<[preview_pool].random>]>
 
+        - inventory set d:<player.open_inventory> slot:12 o:<[slot1]>
+        - inventory set d:<player.open_inventory> slot:13 o:<[slot2]>
+        - inventory set d:<player.open_inventory> slot:14 o:<[slot3]>
+        - inventory set d:<player.open_inventory> slot:15 o:<[slot4]>
+        - inventory set d:<player.open_inventory> slot:16 o:<[slot5]>
         - playsound <player> sound:ui_button_click volume:0.4 pitch:0.9
-        - wait 4t
-
-    # Clear middle row (slot 14 will be replaced by final result)
-    - inventory set d:<player.open_inventory> o:<[filler]> slot:12
-    - inventory set d:<player.open_inventory> o:<[filler]> slot:13
-    - inventory set d:<player.open_inventory> o:<[filler]> slot:15
-    - inventory set d:<player.open_inventory> o:<[filler]> slot:16
+        - wait 5t
 
     # Build final display item with correct quantity embedded
     - define final_display_item <proc[build_loot_display_item].context[<[loot]>]>
 
-    # Show final result in center slot
-    - inventory set d:<player.open_inventory> o:<[final_display_item]> slot:14
-    - wait 20t
+    # Final landing animation - winning item scrolls into center
+    # Continue the scrolling pattern until final item reaches center (slot 14)
+    # It takes 3 steps to go from slot 16 to slot 14
+
+    # Step 1: Final item enters at slot 16 (far right)
+    - define slot1 <[slot2]>
+    - define slot2 <[slot3]>
+    - define slot3 <[slot4]>
+    - define slot4 <[slot5]>
+    - define slot5 <[final_display_item]>
+
+    - inventory set d:<player.open_inventory> slot:12 o:<[slot1]>
+    - inventory set d:<player.open_inventory> slot:13 o:<[slot2]>
+    - inventory set d:<player.open_inventory> slot:14 o:<[slot3]>
+    - inventory set d:<player.open_inventory> slot:15 o:<[slot4]>
+    - inventory set d:<player.open_inventory> slot:16 o:<[slot5]>
+    - playsound <player> sound:ui_button_click volume:0.4 pitch:0.9
+    - wait 5t
+
+    # Step 2: Final item moves to slot 15
+    - define slot1 <[slot2]>
+    - define slot2 <[slot3]>
+    - define slot3 <[slot4]>
+    - define slot4 <[slot5]>
+    - define slot5 <item[<[preview_pool].random>]>
+
+    - inventory set d:<player.open_inventory> slot:12 o:<[slot1]>
+    - inventory set d:<player.open_inventory> slot:13 o:<[slot2]>
+    - inventory set d:<player.open_inventory> slot:14 o:<[slot3]>
+    - inventory set d:<player.open_inventory> slot:15 o:<[slot4]>
+    - inventory set d:<player.open_inventory> slot:16 o:<[slot5]>
+    - playsound <player> sound:ui_button_click volume:0.4 pitch:0.9
+    - wait 5t
+
+    # Step 3: Final item lands at slot 14 (center)
+    - define slot1 <[slot2]>
+    - define slot2 <[slot3]>
+    - define slot3 <[slot4]>
+    - define slot4 <[slot5]>
+    - define slot5 <item[<[preview_pool].random>]>
+
+    - inventory set d:<player.open_inventory> slot:12 o:<[slot1]>
+    - inventory set d:<player.open_inventory> slot:13 o:<[slot2]>
+    - inventory set d:<player.open_inventory> slot:14 o:<[slot3]>
+    - inventory set d:<player.open_inventory> slot:15 o:<[slot4]>
+    - inventory set d:<player.open_inventory> slot:16 o:<[slot5]>
+    - playsound <player> sound:ui_button_click volume:0.5 pitch:1.0
+    - wait 5t
+
+    # Clear surrounding slots, leave final item in center
+    - inventory set d:<player.open_inventory> o:<[filler]> slot:12
+    - inventory set d:<player.open_inventory> o:<[filler]> slot:13
+    - inventory set d:<player.open_inventory> o:<[filler]> slot:15
+    - inventory set d:<player.open_inventory> o:<[filler]> slot:16
+    - wait 16t
+
+    # Check one final time before closing
+    - if !<player.has_flag[demeter.crate.animation_running]>:
+        - stop
+
+    # Clear animation flag BEFORE closing to prevent early close handler from triggering
+    - flag player demeter.crate.animation_running:!
+
+    # Close GUI
+    - inventory close
+    - wait 5t
 
     # Award loot directly (give command handles safety)
     - choose <[loot].get[type]>:
@@ -142,8 +253,8 @@ demeter_crate_animation:
             - define qty <[loot].get[quantity]>
             - give <item[<[script_name]>].with[quantity=<[qty]>]>
 
-    # Title feedback
-    - title title:<[tier_color]><&l><[tier]> subtitle:<&f><[loot].get[display]> fade_in:5t stay:40t fade_out:10t targets:<player>
+        - case TITLE:
+            - flag player <[loot].get[flag]>:true
 
     # Sound feedback
     - choose <[tier]>:
@@ -159,9 +270,13 @@ demeter_crate_animation:
             - playsound <player> sound:ui_toast_challenge_complete volume:1.0
             - playsound <player> sound:entity_ender_dragon_growl volume:0.5
 
-    # Close GUI after display
-    - wait 10t
-    - inventory close
+    # Title feedback
+    - title "title:<[tier_color]><&l><[tier]> DROP" subtitle:<&f><[loot].get[display]> fade_in:5t stay:40t fade_out:10t targets:<player>
+
+    # Clear pending loot flags after normal completion
+    - flag player demeter.crate.pending_loot:!
+    - flag player demeter.crate.pending_tier:!
+    - flag player demeter.crate.pending_tier_color:!
 
 demeter_crate_gui:
     type: inventory
@@ -226,15 +341,15 @@ roll_demeter_loot:
     - choose <[tier]>:
         - case MORTAL:
             - define pool <list>
-            - define pool <[pool].include[bread|16]>
-            - define pool <[pool].include[cooked_beef|8]>
-            - define pool <[pool].include[baked_potato|8]>
-            - define pool <[pool].include[wheat|32]>
-            - define pool <[pool].include[hay_bale|8]>
-            - define pool <[pool].include[bone_meal|16]>
-            - define pool <[pool].include[pumpkin_pie|8]>
+            - define pool <[pool].include[bread:16]>
+            - define pool <[pool].include[cooked_beef:8]>
+            - define pool <[pool].include[baked_potato:8]>
+            - define pool <[pool].include[wheat:32]>
+            - define pool <[pool].include[hay_bale:8]>
+            - define pool <[pool].include[bone_meal:16]>
+            - define pool <[pool].include[pumpkin_pie:8]>
             - define choice <[pool].random>
-            - define parts <[choice].split[|]>
+            - define parts <[choice].split[<&co>]>
             - define material <[parts].get[1]>
             - define qty <[parts].get[2]>
             - define display_name <[material].to_titlecase.replace[_].with[ ]>
@@ -243,13 +358,13 @@ roll_demeter_loot:
 
         - case HEROIC:
             - define pool <list>
-            - define pool <[pool].include[golden_carrot|8]>
-            - define pool <[pool].include[emerald|16]>
-            - define pool <[pool].include[gold_block|1]>
-            - define pool <[pool].include[experience|100]>
-            - define pool <[pool].include[lead|1]>
+            - define pool <[pool].include[golden_carrot:8]>
+            - define pool <[pool].include[emerald:16]>
+            - define pool <[pool].include[gold_block:1]>
+            - define pool <[pool].include[experience:100]>
+            - define pool <[pool].include[lead:1]>
             - define choice <[pool].random>
-            - define parts <[choice].split[|]>
+            - define parts <[choice].split[<&co>]>
             - define material <[parts].get[1]>
             - define qty <[parts].get[2]>
             - if <[material]> == experience:
@@ -261,12 +376,12 @@ roll_demeter_loot:
 
         - case LEGENDARY:
             - define pool <list>
-            - define pool <[pool].include[golden_apple|2]>
-            - define pool <[pool].include[demeter_key|2]>
-            - define pool <[pool].include[emerald_block|6]>
-            - define pool <[pool].include[experience|250]>
+            - define pool <[pool].include[golden_apple:2]>
+            - define pool <[pool].include[demeter_key:2]>
+            - define pool <[pool].include[emerald_block:6]>
+            - define pool <[pool].include[experience:250]>
             - define choice <[pool].random>
-            - define parts <[choice].split[|]>
+            - define parts <[choice].split[<&co>]>
             - define material <[parts].get[1]>
             - define qty <[parts].get[2]>
             - if <[material]> == experience:
@@ -280,18 +395,21 @@ roll_demeter_loot:
 
         - case MYTHIC:
             - define pool <list>
-            - define pool <[pool].include[enchanted_golden_apple|1]>
-            - define pool <[pool].include[demeter_hoe|1]>
-            - define pool <[pool].include[demeter_blessing|1]>
-            - define pool <[pool].include[gold_block|16]>
-            - define pool <[pool].include[emerald_block|16]>
+            - define pool <[pool].include[enchanted_golden_apple:1]>
+            - define pool <[pool].include[demeter_hoe:1]>
+            - define pool <[pool].include[demeter_blessing:1]>
+            - define pool <[pool].include[demeter_title:1]>
+            - define pool <[pool].include[gold_block:16]>
+            - define pool <[pool].include[emerald_block:16]>
             - define choice <[pool].random>
-            - define parts <[choice].split[|]>
+            - define parts <[choice].split[<&co>]>
             - define material <[parts].get[1]>
             - define qty <[parts].get[2]>
             - if <[material]> == demeter_hoe || <[material]> == demeter_blessing:
                 - define display_name <[material].to_titlecase.replace[_].with[ ]>
                 - define loot_map <map[type=CUSTOM;script=<[material]>;quantity=<[qty]>;display=<[display_name]> x<[qty]>]>
+            - else if <[material]> == demeter_title:
+                - define loot_map <map[type=TITLE;flag=demeter.item.title;display=Demeter Title]>
             - else:
                 - define display_name <[material].to_titlecase.replace[_].with[ ]>
                 - define loot_map <map[type=ITEM;material=<[material]>;quantity=<[qty]>;display=<[display_name]> x<[qty]>]>
@@ -325,6 +443,10 @@ build_loot_display_item:
         - case EXPERIENCE:
             # Experience displays as a bottle
             - determine <item[experience_bottle].with[display_name=<&a>+<[loot].get[amount]> Experience]>
+
+        - case TITLE:
+            # Title displays as a name tag
+            - determine <item[name_tag].with[display_name=<&6><&l><[loot].get[display]>;enchantments=mending,1;hides=ALL]>
 
 # ============================================
 # DEPRECATED LOOT AWARDING
@@ -379,3 +501,53 @@ award_demeter_loot:
 
     # Track tier stats (optional)
     - flag player demeter.tier.<[tier].to_lowercase>:++
+
+# ============================================
+# EARLY CLOSE HANDLER
+# ============================================
+
+demeter_crate_early_close:
+    type: world
+    debug: false
+    events:
+        on player closes demeter_crate_gui:
+        # Check if animation is still running
+        - if !<player.has_flag[demeter.crate.animation_running]>:
+            - stop
+
+        # Stop the animation queue immediately
+        - queue stop demeter_crate_<player.uuid>
+
+        # Animation was interrupted - award pending loot
+        - flag player demeter.crate.animation_running:!
+
+        - define loot <player.flag[demeter.crate.pending_loot]>
+        - define tier <player.flag[demeter.crate.pending_tier]>
+        - define tier_color <player.flag[demeter.crate.pending_tier_color]>
+
+        # Award loot
+        - choose <[loot].get[type]>:
+            - case ITEM:
+                - define material <[loot].get[material]>
+                - define qty <[loot].get[quantity]>
+                - give <item[<[material]>].with[quantity=<[qty]>]>
+
+            - case EXPERIENCE:
+                - experience give <[loot].get[amount]>
+
+            - case CUSTOM:
+                - define script_name <[loot].get[script]>
+                - define qty <[loot].get[quantity]>
+                - give <item[<[script_name]>].with[quantity=<[qty]>]>
+
+            - case TITLE:
+                - flag player <[loot].get[flag]>:true
+
+        # Sound and title feedback (shorter since they closed early)
+        - playsound <player> sound:entity_item_pickup
+        - title "title:<[tier_color]><&l><[tier]> DROP" subtitle:<&f><[loot].get[display]> fade_in:2t stay:20t fade_out:5t targets:<player>
+
+        # Clear pending flags
+        - flag player demeter.crate.pending_loot:!
+        - flag player demeter.crate.pending_tier:!
+        - flag player demeter.crate.pending_tier_color:!

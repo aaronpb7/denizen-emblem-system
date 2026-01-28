@@ -76,13 +76,22 @@ This project uses Denizen, a scripting language for Minecraft servers.
 
 ## Emblem Progression System
 
-See `Emblem Functionality.md` for detailed specifications.
-
 **Quick Reference:**
-- 3 emblems: Hephaestus (mining), Demeter (farming), Heracles (combat)
-- 5 sequential stages each, NPC-gated via `met_promachos` flag
-- Admin commands: `/hephadmin`, `/demeteradmin`, `/heraclesadmin`
-- Actions: `complete`, `claim`, `lock`, `reset`
+- 3 roles: FARMING (Demeter), MINING (Hephaestus), COMBAT (Heracles)
+- Role-based activity tracking with key rewards
+- Crate system with 5 tiers (MORTAL → OLYMPIAN)
+- Component milestones and rank progression
+- Meta-progression via Roman god crates (Ceres, Vulcan, Mars)
+
+**Comprehensive Documentation:**
+- `SYSTEM_OVERVIEW.md` - Complete system reference
+- `docs/overview.md` - Philosophy and design
+- `docs/demeter.md` - Farming role details
+- `docs/crates_demeter.md` - Crate system mechanics
+- `docs/ceres.md` - Meta-progression
+- `docs/promachos.md` - NPC interactions
+- `docs/flags.md` - Flag reference
+- `docs/testing.md` - Testing procedures
 
 **Structure:**
 ```
@@ -90,21 +99,20 @@ scripts/
 ├── profile_gui.dsc       # Player profile command and GUI
 ├── bulletin.dsc          # Server news/updates system
 └── emblems/
-    ├── emblem_items.dsc      # Custom items for all emblems
-    ├── emblem_guis.dsc       # GUI inventories and procedures
-    ├── emblem_events.dsc     # Event handlers and claim tasks
-    ├── emblem_admin.dsc      # Admin commands for testing
-    ├── emblem_recipes.dsc    # Recipe viewer and crafting gates
-    └── promachos_npc.dsc     # NPC assignment, trades, menus
+    ├── core/
+    │   ├── roles.dsc
+    │   ├── promachos_v2.dsc
+    │   └── item_utilities.dsc
+    ├── demeter/          # FARMING role (✅ complete)
+    ├── ceres/            # FARMING meta (✅ complete)
+    ├── hephaestus/       # MINING role (🚧 placeholder)
+    ├── heracles/         # COMBAT role (🚧 placeholder)
+    └── admin/            # Admin commands
 ```
 
-**Adding New Emblems:**
-1. Add items to `emblem_items.dsc`
-2. Add GUI + procedures to `emblem_guis.dsc`
-3. Add event handlers + claim task to `emblem_events.dsc`
-4. Add trades to `promachos_npc.dsc`
-5. Add admin commands to `emblem_admin.dsc`
-6. Update `emblem_selection_inventory` to include new icon
+**Admin Commands:**
+- `/demeteradmin` - Demeter progression testing
+- See `docs/testing.md` for full command reference
 
 ## Bulletin System
 

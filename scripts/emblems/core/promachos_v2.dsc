@@ -1,5 +1,5 @@
 # ============================================
-# EMBLEM SYSTEM V2 - PROMACHOS NPC
+# PROMACHOS NPC - Role Selection
 # ============================================
 #
 # Promachos (Προμαχός) - Herald of the Gods

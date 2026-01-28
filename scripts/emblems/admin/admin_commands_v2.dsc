@@ -1,8 +1,8 @@
 # ============================================
-# EMBLEM SYSTEM V2 - ADMIN COMMANDS
+# ADMIN COMMANDS - Demeter
 # ============================================
 #
-# Testing and administration commands for the V2 emblem system
+# Testing and administration commands for the emblem system
 #
 
 # ============================================
@@ -277,3 +277,120 @@ testroll_command:
 
         - default:
             - narrate "<&c>Invalid crate. Use: demeter or ceres"
+
+# ============================================
+# GLOBAL RESET COMMAND
+# ============================================
+
+emblemreset_command:
+    type: command
+    name: emblemreset
+    description: Completely reset a player's emblem progression
+    usage: /emblemreset (player) [confirm]
+    permission: emblems.admin
+    script:
+    - if <context.args.size> < 1:
+        - narrate "<&c>Usage: /emblemreset <player> [confirm]"
+        - narrate "<&7>This will wipe ALL emblem progress, flags, and unlocks."
+        - stop
+
+    - define target <server.match_player[<context.args.get[1]>].if_null[null]>
+    - if <[target]> == null:
+        - narrate "<&c>Player not found: <context.args.get[1]>"
+        - stop
+
+    # Require confirmation
+    - if <context.args.size> < 2 || <context.args.get[2]> != "confirm":
+        - narrate "<&e><&l>WARNING:<&r> <&c>This will permanently delete:"
+        - narrate "<&7>- Role selection and active role"
+        - narrate "<&7>- All Demeter progress (wheat, cows, cakes)"
+        - narrate "<&7>- All Demeter components and ranks"
+        - narrate "<&7>- All Ceres unlocks (hoe, title, shulker, wand)"
+        - narrate "<&7>- All cosmetic titles"
+        - narrate "<&7>- All crate statistics"
+        - narrate "<&7>- Promachos introduction flag"
+        - narrate ""
+        - narrate "<&e>To confirm, run: <&f>/emblemreset <[target].name> confirm"
+        - stop
+
+    # Execute full reset
+    - run emblemreset_task def.target:<[target]>
+    - narrate "<&a>✓ Successfully reset all emblem progress for <&e><[target].name>"
+    - narrate "<&7>They can now start fresh by visiting Promachos."
+
+emblemreset_task:
+    type: task
+    definitions: target
+    script:
+    # Core system flags
+    - flag <[target]> met_promachos:!
+    - flag <[target]> role.active:!
+    - flag <[target]> role.changed_before:!
+
+    # Demeter activity progress
+    - flag <[target]> demeter.wheat.count:!
+    - flag <[target]> demeter.wheat.keys_awarded:!
+    - flag <[target]> demeter.component.wheat:!
+    - flag <[target]> demeter.component.wheat_date:!
+
+    - flag <[target]> demeter.cows.count:!
+    - flag <[target]> demeter.cows.keys_awarded:!
+    - flag <[target]> demeter.component.cow:!
+    - flag <[target]> demeter.component.cow_date:!
+
+    - flag <[target]> demeter.cakes.count:!
+    - flag <[target]> demeter.cakes.keys_awarded:!
+    - flag <[target]> demeter.component.cake:!
+    - flag <[target]> demeter.component.cake_date:!
+
+    # Demeter rank system
+    - flag <[target]> demeter.rank:!
+
+    # Demeter crate system
+    - flag <[target]> demeter.crates_opened:!
+    - flag <[target]> demeter.tier.mortal:!
+    - flag <[target]> demeter.tier.heroic:!
+    - flag <[target]> demeter.tier.legendary:!
+    - flag <[target]> demeter.tier.mythic:!
+    - flag <[target]> demeter.tier.olympian:!
+    - flag <[target]> demeter.item.title:!
+
+    # Demeter crate animation flags (cleanup)
+    - flag <[target]> demeter.crate.pending_loot:!
+    - flag <[target]> demeter.crate.pending_tier:!
+    - flag <[target]> demeter.crate.pending_tier_color:!
+    - flag <[target]> demeter.crate.animation_running:!
+
+    # Ceres meta-progression
+    - flag <[target]> ceres.crates_opened:!
+    - flag <[target]> ceres.item.hoe:!
+    - flag <[target]> ceres.item.title:!
+    - flag <[target]> ceres.item.shulker:!
+    - flag <[target]> ceres.item.wand:!
+    - flag <[target]> ceres.unique_items:!
+
+    # Ceres crate animation flags (cleanup)
+    - flag <[target]> ceres.crate.pending_result:!
+    - flag <[target]> ceres.crate.animation_running:!
+
+    # Cosmetics system
+    - flag <[target]> cosmetic.title.active:!
+
+    # Hephaestus (placeholder - for future)
+    - flag <[target]> hephaestus:!
+
+    # Heracles (placeholder - for future)
+    - flag <[target]> heracles:!
+
+    # Vulcan (placeholder - for future)
+    - flag <[target]> vulcan:!
+
+    # Mars (placeholder - for future)
+    - flag <[target]> mars:!
+
+    # Notify target player
+    - narrate "<&e>[Emblem System]<&r> <&7>Your emblem progression has been completely reset by an admin." targets:<[target]>
+    - narrate "<&7>Visit <&e>Promachos<&7> to begin your journey!" targets:<[target]>
+
+    # Log to console
+    - announce to_console "Emblem reset completed for player: <[target].name>"

@@ -1,8 +1,8 @@
 # ============================================
-# EMBLEM SYSTEM V2 - ROLE SYSTEM
+# ROLE SYSTEM
 # ============================================
 #
-# Core role data and procedures for the V2 emblem system
+# Core role data and procedures for the emblem system
 #
 # Roles:
 # - FARMING (Georgos) → Demeter progression
