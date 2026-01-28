@@ -18,12 +18,12 @@ ceres_hoe_replant:
     events:
         after player breaks wheat|carrots|potatoes|beetroots|nether_wart:
         # Check if holding Ceres Hoe
-        - if <player.item_in_hand.script.name.if_null[null]> != ceres_hoe:
+        - if <player.item_in_hand.script.name.if_null[none]> != ceres_hoe:
             - stop
 
         # Check if fully grown
         - define material <context.material.name>
-        - define age <context.material.age>
+        - define age <context.material.age.if_null[0]>
 
         # Nether wart max age is 3, others are 7
         - if <[material]> == nether_wart:
@@ -47,18 +47,21 @@ ceres_hoe_replant:
                 - define seed_item nether_wart
 
         # Check if player has seeds in inventory
-        - if !<player.inventory.contains_item[<[seed_item]>]>:
+        - if !<player.inventory.contains.material[<[seed_item]>]>:
             - stop
+
+        # Store location before wait
+        - define loc <context.location>
 
         # Replant after block break completes
         - wait 1t
 
         # Take 1 seed from inventory and replant
-        - take <[seed_item]> quantity:1 from:<player.inventory>
-        - modifyblock <context.location> <[material]>
+        - take material:<[seed_item]> quantity:1
+        - modifyblock <[loc]> <[material]>
 
         # Particle effect
-        - playeffect effect:villager_happy at:<context.location> quantity:5 offset:0.3
+        - playeffect effect:VILLAGER_HAPPY at:<[loc]> quantity:5 offset:0.3
 
 # ============================================
 # CERES WAND - BEE SUMMON
@@ -70,12 +73,19 @@ ceres_wand_use:
     events:
         on player right clicks block with:ceres_wand:
         - determine cancelled passively
+        - run ceres_wand_activate
+        on player right clicks air with:ceres_wand:
+        - determine cancelled passively
+        - run ceres_wand_activate
 
+ceres_wand_activate:
+    type: task
+    script:
         # Check cooldown
         - if <player.has_flag[ceres.wand_cooldown]>:
             - define remaining <player.flag_expiration[ceres.wand_cooldown].from_now.formatted>
             - narrate "<&c>Wand on cooldown: <[remaining]>"
-            - playsound <player> sound:entity_villager_no
+            - playsound <player> sound:ENTITY_VILLAGER_NO
             - stop
 
         # Set cooldown
@@ -132,8 +142,8 @@ ceres_wand_use:
             - narrate "<&e>Ceres' bees swarm to attack!"
         - else:
             - narrate "<&e>Ceres' bees await your command!"
-        - playsound <player> sound:entity_bee_loop_aggressive volume:1.0
-        - playeffect effect:villager_happy at:<player.location> quantity:30 offset:2.0
+        - playsound <player> sound:ENTITY_BEE_LOOP_AGGRESSIVE volume:1.0
+        - playeffect effect:VILLAGER_HAPPY at:<player.location> quantity:30 offset:2.0
 
 # Prevent Ceres bees from targeting players
 ceres_bee_no_player_target:
