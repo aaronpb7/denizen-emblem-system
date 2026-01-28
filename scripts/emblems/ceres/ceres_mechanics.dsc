@@ -3,8 +3,8 @@
 # ============================================
 #
 # Special mechanics for Ceres items:
-# - Ceres Hoe: Auto-replant crops when broken
-# - Ceres Wand: Summon 6 angry bees to attack hostiles
+# - Ceres Hoe: Auto-replant crops when broken (consumes seeds)
+# - Ceres Wand: Summon 6 angry bees that follow and attack
 # - Ceres Title: Chat prefix for title holders
 #
 
@@ -18,14 +18,14 @@ ceres_hoe_replant:
     events:
         after player breaks wheat|carrots|potatoes|beetroots|nether_wart:
         # Check if holding Ceres Hoe
-        - if <player.item_in_hand.script.name.if_null[none]> != ceres_hoe:
+        - if <context.item.script.name.if_null[null]> != ceres_hoe:
             - stop
 
-        # Check if fully grown
-        - define material <context.material.name>
-        - define age <context.material.age.if_null[0]>
+        # Get material and age from the broken block
+        - define material <context.location.material.name>
+        - define age <context.location.material.age>
 
-        # Nether wart max age is 3, others are 7
+        # Check if fully grown (nether_wart max age is 3, others are 7)
         - if <[material]> == nether_wart:
             - if <[age]> != 3:
                 - stop
@@ -47,21 +47,18 @@ ceres_hoe_replant:
                 - define seed_item nether_wart
 
         # Check if player has seeds in inventory
-        - if !<player.inventory.contains.material[<[seed_item]>]>:
+        - if !<player.inventory.contains_item[<[seed_item]>]>:
             - stop
 
-        # Store location before wait
-        - define loc <context.location>
+        # Take 1 seed from inventory
+        - take <[seed_item]> qty:1
 
-        # Replant after block break completes
+        # Wait for block break to complete, then replant at age 0
         - wait 1t
-
-        # Take 1 seed from inventory and replant
-        - take material:<[seed_item]> quantity:1
-        - modifyblock <[loc]> <[material]>
+        - modifyblock <context.location> <[material]>[age=0]
 
         # Particle effect
-        - playeffect effect:VILLAGER_HAPPY at:<[loc]> quantity:5 offset:0.3
+        - playeffect effect:VILLAGER_HAPPY at:<context.location> quantity:5 offset:0.3
 
 # ============================================
 # CERES WAND - BEE SUMMON
@@ -74,6 +71,7 @@ ceres_wand_use:
         on player right clicks block with:ceres_wand:
         - determine cancelled passively
         - run ceres_wand_activate
+
         on player right clicks air with:ceres_wand:
         - determine cancelled passively
         - run ceres_wand_activate
@@ -91,59 +89,54 @@ ceres_wand_activate:
         # Set cooldown
         - flag player ceres.wand_cooldown expire:30s
 
-        # Despawn previous bees before spawning new ones
-        - if <player.has_flag[ceres.active_bees]>:
-            - foreach <player.flag[ceres.active_bees]> as:old_bee:
-                - if <[old_bee].is_spawned.if_null[false]>:
-                    - remove <[old_bee]>
-            - flag player ceres.active_bees:!
-
-        # Get target - prioritize what player is looking at or attacking
-        - define target <player.target_entity.if_null[null]>
-        # Only target mobs, never players
-        - if <[target]> != null:
-            - if <[target].is_player>:
-                - define target null
-            - else if !<[target].is_living>:
-                - define target null
-
-        # If no direct target, find nearest hostile mob (not players)
-        - if <[target]> == null:
-            - define hostiles <player.location.find_entities.within[16].filter_tag[<[filter_value].is_monster>]>
-            - if <[hostiles].size> > 0:
-                - define target <[hostiles].closest_to[<player.location>]>
-
-        # Track spawned bees
-        - define bee_list <list[]>
+        # Clear previous bees list (old bees will be cleaned up by cleanup task)
+        - flag player ceres.wand_bees:!
 
         # Summon 6 bees
         - repeat 6:
             - define offset <location[0,0,0].random_offset[2,1,2]>
             - define spawn_loc <player.location.add[<[offset]>]>
-            - spawn bee[angry=true] <[spawn_loc]> save:bee_<[value]>
-            - define bee <entry[bee_<[value]>].spawned_entity>
+            - spawn bee[angry=true] <[spawn_loc]> save:spawned_bee
+            - define bee <entry[spawned_bee].spawned_entity>
 
-            # Flag bee as belonging to this player
-            - flag <[bee]> ceres.owner:<player>
-            - flag <[bee]> ceres.temporary expire:30s
+            # Flag bee with persistent marker and temporary expiry
+            - flag <[bee]> ceres.managed:true
+            - flag <[bee]> ceres.temporary:true expire:30s
+            - flag <[bee]> ceres.owner:<player.uuid> expire:30s
 
-            # Add to tracking list
-            - define bee_list:->:<[bee]>
-
-            # Attack target if we have one
-            - if <[target]> != null:
-                - attack <[bee]> target:<[target]>
-
-        # Store active bees on player
-        - flag player ceres.active_bees:<[bee_list]>
+            # Add to player's bee list
+            - flag player ceres.wand_bees:->:<[bee]> expire:30s
 
         # Feedback
-        - if <[target]> != null:
-            - narrate "<&e>Ceres' bees swarm to attack!"
-        - else:
-            - narrate "<&e>Ceres' bees await your command!"
+        - narrate "<&e>Ceres' bees swarm to your aid!"
         - playsound <player> sound:ENTITY_BEE_LOOP_AGGRESSIVE volume:1.0
         - playeffect effect:VILLAGER_HAPPY at:<player.location> quantity:30 offset:2.0
+
+# Bees attack what their owner attacks
+ceres_bee_attack_assist:
+    type: world
+    debug: false
+    events:
+        after player damages entity:
+        # Only target monsters
+        - if !<context.entity.entity_type.is_monster>:
+            - stop
+
+        # Check if player has active bees
+        - if !<player.has_flag[ceres.wand_bees]>:
+            - stop
+
+        # Command all valid bees to attack the target
+        - foreach <player.flag[ceres.wand_bees]> as:bee:
+            # Check bee is spawned, has managed flag, and owner matches
+            - if !<[bee].is_spawned.if_null[false]>:
+                - foreach next
+            - if !<[bee].has_flag[ceres.managed]>:
+                - foreach next
+            - if <[bee].flag[ceres.owner].if_null[none]> != <player.uuid>:
+                - foreach next
+            # Command bee to attack
+            - attack <[bee]> target:<context.entity>
 
 # Prevent Ceres bees from targeting players
 ceres_bee_no_player_target:
@@ -151,44 +144,40 @@ ceres_bee_no_player_target:
     debug: false
     events:
         on bee targets player:
-        - if <context.entity.has_flag[ceres.owner]>:
+        - if <context.entity.has_flag[ceres.managed]>:
             - determine cancelled
 
-# Make bees attack what their owner attacks
-ceres_bee_assist:
+# Bee follow and cleanup loop
+ceres_bee_management:
     type: world
     debug: false
     events:
-        on player damages entity:
-        # Check if player has active bees
-        - if !<player.has_flag[ceres.active_bees]>:
-            - stop
-        # Don't target players
-        - if <context.entity.is_player>:
-            - stop
-        # Don't target non-living entities
-        - if !<context.entity.is_living>:
-            - stop
-        # Direct all bees to attack the target
-        - foreach <player.flag[ceres.active_bees]> as:bee:
-            - if <[bee].is_spawned.if_null[false]>:
-                - attack <[bee]> target:<context.entity>
-
-# Bee cleanup - despawn expired bees
-ceres_bee_cleanup:
-    type: world
-    debug: false
-    events:
-        on system time secondly every:5:
+        on system time secondly every:1:
+        # Follow logic - teleport distant bees to their owner
         - foreach <server.online_players> as:p:
-            - if <[p].has_flag[ceres.active_bees]>:
-                - define valid_bees <list[]>
-                - foreach <[p].flag[ceres.active_bees]> as:bee:
-                    - if <[bee].is_spawned.if_null[false]> && <[bee].has_flag[ceres.temporary]>:
-                        - define valid_bees:->:<[bee]>
-                    - else if <[bee].is_spawned.if_null[false]>:
-                        - remove <[bee]>
-                - flag <[p]> ceres.active_bees:<[valid_bees]>
+            - if !<[p].has_flag[ceres.wand_bees]>:
+                - foreach next
+            - foreach <[p].flag[ceres.wand_bees]> as:bee:
+                - if !<[bee].is_spawned.if_null[false]>:
+                    - foreach next
+                - if !<[bee].has_flag[ceres.managed]>:
+                    - foreach next
+                - if <[bee].flag[ceres.owner].if_null[none]> != <[p].uuid>:
+                    - foreach next
+                # Teleport if too far from owner
+                - if <[bee].location.distance[<[p].location>]> > 10:
+                    - define offset <location[0,0,0].random_offset[2,1,2]>
+                    - teleport <[bee]> <[p].location.add[<[offset]>]>
+
+        # Cleanup logic - remove expired bees
+        - foreach <server.worlds> as:world:
+            - foreach <[world].entities[bee]> as:bee:
+                # Only manage our bees
+                - if !<[bee].has_flag[ceres.managed]>:
+                    - foreach next
+                # If managed but temporary flag expired, remove the bee
+                - if !<[bee].has_flag[ceres.temporary]>:
+                    - remove <[bee]>
 
 # ============================================
 # CERES TITLE - CHAT PREFIX
