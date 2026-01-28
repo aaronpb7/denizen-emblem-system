@@ -7,10 +7,12 @@ The Promachos system is a role-based progression framework where players choose 
 **System Architecture:**
 - **3 Main Roles**: FARMING (Demeter), MINING (Hephaestus), COMBAT (Heracles)
 - **Activity Tracking**: Players earn keys by completing role-specific activities
+- **Component Milestones**: One-time achievements at high activity counts (unlock emblems)
+- **Rank System**: Tiered progression with passive gameplay buffs (3 ranks per role)
+- **Emblem System**: Cosmetic unlocks earned by completing all components in a god line
 - **Crate System**: Keys unlock tiered crates with rewards (5 tiers per crate)
 - **Meta-Progression**: Ultra-rare Roman god crates (Ceres, Vulcan, Mars) with finite unique items
-- **Rank System**: Progress through 5 ranks per role (Bronze → Silver → Gold → Platinum → Diamond)
-- **Cosmetics**: Unlockable chat title prefixes
+- **Cosmetics**: Unlockable chat title prefixes from crates
 
 ---
 
@@ -23,11 +25,10 @@ scripts/
 └── emblems/
     ├── core/
     │   ├── roles.dsc              # Role data and procedures
-    │   ├── promachos_v2.dsc       # NPC interactions and role selection
+    │   ├── promachos.dsc          # NPC interactions and role selection
     │   └── item_utilities.dsc     # Shared item procedures
     ├── admin/
-    │   ├── admin_commands_v2.dsc  # Admin testing commands
-    │   └── v1_cleanup_on_join.dsc # Legacy cleanup (can be removed after migration)
+    │   └── admin_commands.dsc     # Admin testing commands
     ├── demeter/  (FARMING)
     │   ├── demeter_events.dsc     # Activity tracking (wheat, cows, cakes)
     │   ├── demeter_ranks.dsc      # Rank progression system
@@ -103,19 +104,25 @@ demeter.component.cake
 
 ### Rank System
 
-5 sequential ranks per role:
+**3 tiered ranks per role** that provide **permanent passive buffs** when role is active.
 
-| Rank | Requirements | Display |
-|------|-------------|---------|
-| BRONZE | 3 components (wheat, cow, cake) | <&6>Bronze |
-| SILVER | 25 Demeter Keys + Bronze rank | <&7>Silver |
-| GOLD | 50 Demeter Keys + Silver rank | <&e>Gold |
-| PLATINUM | 100 Demeter Keys + Gold rank | <&b>Platinum |
-| DIAMOND | 200 Demeter Keys + Platinum rank | <&3>Diamond |
+**Example: Demeter (FARMING)**
 
-**Flag:** `demeter.rank` (value: "BRONZE", "SILVER", etc.)
+| Rank | Requirements | Buffs |
+|------|-------------|-------|
+| **Acolyte of Demeter** | 2,500 wheat + 50 cows | Haste I, +5% crop drops |
+| **Disciple of Demeter** | 12,000 wheat + 300 cows | Haste II, +20% crop drops, 10% twin breeding |
+| **Hero of Demeter** | 50,000 wheat + 700 cows | Haste II, +50% crop drops, 30% twin breeding |
 
-Rank check procedure: `demeter_check_rank`
+**Key Features:**
+- Ranks require **dual activity thresholds** (wheat AND cows for Demeter)
+- Buffs apply **only when corresponding role is active**
+- Rank-up triggers **ceremony with server announcement**
+- Ranks are **parallel to component milestones** (not sequential)
+
+**Flag:** `demeter.rank` (value: 0-3, calculated dynamically)
+
+**See:** `docs/demeter_ranks.md` for complete rank specification
 
 ---
 

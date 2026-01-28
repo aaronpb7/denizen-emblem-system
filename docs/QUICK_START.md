@@ -10,7 +10,7 @@ scripts/
 └── emblems/                           # Complete emblem system
     ├── core/
     │   ├── roles.dsc                  # Role system + procedures
-    │   └── promachos_v2.dsc           # NPC + role selection + ceremonies
+    │   └── promachos.dsc           # NPC + role selection + ceremonies
     ├── demeter/
     │   ├── demeter_items.dsc          # Keys, blessing, hoe, components
     │   ├── demeter_events.dsc         # Activity tracking
@@ -21,7 +21,7 @@ scripts/
     │   ├── ceres_crate.dsc            # Meta-progression crate
     │   └── ceres_mechanics.dsc        # Special item mechanics
     └── admin/
-        ├── admin_commands_v2.dsc      # Testing commands
+        ├── admin_commands.dsc      # Testing commands
         └── v1_cleanup_on_join.dsc     # Auto-wipe old flags (one-time)
 
 docs/                                  # Full documentation
@@ -234,7 +234,7 @@ See `/docs` folder:
 After deploying to your server:
 
 - [ ] All old V1 `.dsc` files deleted
-- [ ] `emblems_v2` renamed to `emblems`
+- [ ] `emblems` renamed to `emblems`
 - [ ] Promachos NPC created and assigned
 - [ ] Tested role selection
 - [ ] Tested activity tracking

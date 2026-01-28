@@ -2,7 +2,7 @@
 
 ## Overview
 
-**Migration Strategy**: **FULL RESET** - No migration from V1 to V2.
+**Migration Strategy**: **FULL RESET** - No migration from legacy to V2.
 
 All old emblem code, flags, and progression will be **deleted and replaced**. Players start fresh with the new system.
 
@@ -10,8 +10,8 @@ All old emblem code, flags, and progression will be **deleted and replaced**. Pl
 
 ## Rationale
 
-The V2 system is fundamentally different from V1:
-- V1: Sequential stage-gated progression
+The V2 system is fundamentally different from legacy:
+- legacy: Sequential stage-gated progression
 - V2: Parallel activity-based progression with roles
 
 **Incompatibility**: The progression models are incompatible. Attempting to map old stages to new counters would be complex, error-prone, and unfair to players at different stages.
@@ -24,17 +24,17 @@ The V2 system is fundamentally different from V1:
 
 ### 1. Backup Current System
 
-**CRITICAL**: Before deploying V2, backup all V1 files and player data.
+**CRITICAL**: Before deploying V2, backup all legacy files and player data.
 
 ```bash
 # Backup scripts
-cp -r scripts/emblems scripts/emblems_v1_backup
-cp scripts/profile_gui.dsc scripts/profile_gui_v1_backup.dsc
-cp scripts/bulletin.dsc scripts/bulletin_v1_backup.dsc
+cp -r scripts/emblems scripts/emblems_legacy_backup
+cp scripts/profile_gui.dsc scripts/profile_gui_legacy_backup.dsc
+cp scripts/bulletin.dsc scripts/bulletin_legacy_backup.dsc
 
 # Backup player data (Denizen saves)
 # Location varies by server setup, typically:
-cp -r plugins/Denizen/saves plugins/Denizen/saves_v1_backup
+cp -r plugins/Denizen/saves plugins/Denizen/saves_legacy_backup
 ```
 
 **Purpose**: If rollback needed due to critical bugs, restore from backup.
@@ -82,7 +82,7 @@ The new system is fundamentally different and incompatible with the old stages. 
 
 ### 3. Player Compensation (Optional)
 
-Consider compensating players who had significant V1 progress:
+Consider compensating players who had significant legacy progress:
 
 **Option A: XP Grant**
 - Stage 1-2 claimed: 500 XP levels
@@ -90,14 +90,14 @@ Consider compensating players who had significant V1 progress:
 - Stage 5 completed (emblem): 2000 XP levels
 
 **Option B: Starter Keys**
-- Any progress in V1: 10 Demeter Keys
+- Any progress in legacy: 10 Demeter Keys
 - Stage 5 completed: 25 Demeter Keys
 
 **Option C: Cosmetic Recognition**
-- Special chat title: "[V1 Veteran]"
-- Unique item: "Emblem of the Old Ways" (cosmetic, lore explains V1 history)
+- Special chat title: "[legacy Veteran]"
+- Unique item: "Emblem of the Old Ways" (cosmetic, lore explains legacy history)
 
-**Recommendation**: Option B (starter keys) - gives V1 players a head start without breaking V2 balance.
+**Recommendation**: Option B (starter keys) - gives legacy players a head start without breaking V2 balance.
 
 ---
 
@@ -116,9 +116,9 @@ stop
 
 ---
 
-### Step 2: Delete Old V1 Files
+### Step 2: Delete Old legacy Files
 
-**Remove all V1 emblem scripts**:
+**Remove all legacy emblem scripts**:
 
 ```bash
 cd scripts/emblems
@@ -143,10 +143,10 @@ rm -f promachos_npc.dsc
 
 ```bash
 cd scripts
-mkdir -p emblems_v2/core
-mkdir -p emblems_v2/demeter
-mkdir -p emblems_v2/ceres
-mkdir -p emblems_v2/admin
+mkdir -p emblems/core
+mkdir -p emblems/demeter
+mkdir -p emblems/ceres
+mkdir -p emblems/admin
 ```
 
 **Copy all V2 script files** (provided in code deliverables section).
@@ -167,24 +167,24 @@ mkdir -p emblems_v2/admin
 
 ### Step 5: Clear Player Flags (CRITICAL)
 
-**Problem**: Old V1 flags will persist in player data.
+**Problem**: Old legacy flags will persist in player data.
 
 **Solution**: Run one-time flag cleanup script on server start.
 
-**Cleanup Script** (`scripts/emblems_v2/admin/v1_flag_cleanup.dsc`):
+**Cleanup Script** (`scripts/emblems/admin/legacy_flag_cleanup.dsc`):
 
 ```yaml
-v1_flag_cleanup:
+legacy_flag_cleanup:
     type: world
     debug: false
     events:
         after server start:
-        - announce "<&e>[System]<&r> Running V1 emblem flag cleanup..."
+        - announce "<&e>[System]<&r> Running legacy emblem flag cleanup..."
         - foreach <server.online_players>:
-            - ~run v1_flag_cleanup_task def:<[value]>
-        - announce "<&e>[System]<&r> V1 flag cleanup complete!"
+            - ~run legacy_flag_cleanup_task def:<[value]>
+        - announce "<&e>[System]<&r> legacy flag cleanup complete!"
 
-v1_flag_cleanup_task:
+legacy_flag_cleanup_task:
     type: task
     debug: false
     definitions: player
@@ -208,7 +208,7 @@ v1_flag_cleanup_task:
     - flag <[player]> emblem.heracles.stage5.completed:!
 
     # KEEP met_promachos flag (reuse in V2)
-    # All other V1 flags removed
+    # All other legacy flags removed
 ```
 
 **Alternative (Manual)**:
@@ -219,7 +219,7 @@ v1_flag_cleanup_task:
 
 ### Step 6: Reset Promachos NPC
 
-**Problem**: Old NPC assignment may have V1 dialogue/trades.
+**Problem**: Old NPC assignment may have legacy dialogue/trades.
 
 **Solution**:
 1. Delete old NPC (if needed): `/npc remove`
@@ -253,7 +253,7 @@ tail -f logs/latest.log
 **Immediate tests** (as admin on live server):
 
 1. **Promachos Interaction**:
-   - Right-click NPC → Should open role selection (even with `met_promachos` from V1)
+   - Right-click NPC → Should open role selection (even with `met_promachos` from legacy)
    - Select role → Confirm flag set
 
 2. **Activity Tracking**:
@@ -323,19 +323,19 @@ tail -f logs/latest.log
 
 1. **Shut down server immediately**
 
-2. **Restore V1 backup**:
+2. **Restore legacy backup**:
    ```bash
-   rm -rf scripts/emblems_v2
-   cp -r scripts/emblems_v1_backup scripts/emblems
-   cp scripts/profile_gui_v1_backup.dsc scripts/profile_gui.dsc
-   cp -r plugins/Denizen/saves_v1_backup/* plugins/Denizen/saves/
+   rm -rf scripts/emblems
+   cp -r scripts/emblems_legacy_backup scripts/emblems
+   cp scripts/profile_gui_legacy_backup.dsc scripts/profile_gui.dsc
+   cp -r plugins/Denizen/saves_legacy_backup/* plugins/Denizen/saves/
    ```
 
 3. **Restart server**
 
 4. **Announce rollback**:
    ```
-   Due to critical issues, we've rolled back to Emblem V1.
+   Due to critical issues, we've rolled back to Emblem legacy.
    V2 will be re-deployed after fixes.
    Apologies for the disruption!
    ```
@@ -348,7 +348,7 @@ tail -f logs/latest.log
 
 ## Flag Cleanup Details
 
-### V1 Flags to Remove
+### legacy Flags to Remove
 
 **Hephaestus**:
 ```
@@ -383,7 +383,7 @@ emblem.heracles.stage4.*
 emblem.heracles.stage5.*
 ```
 
-### V1 Flags to KEEP
+### legacy Flags to KEEP
 
 ```
 met_promachos  (reused in V2)
@@ -421,21 +421,21 @@ If choosing **Option B: Starter Keys**:
 **Run this task on all players post-deployment**:
 
 ```yaml
-v1_compensation:
+legacy_compensation:
     type: world
     debug: false
     events:
         after server start:
         - wait 5s
         - foreach <server.online_players>:
-            - if <[value].has_flag[v1.compensated]>:
+            - if <[value].has_flag[legacy.compensated]>:
                 - foreach next
             - give <[value]> demeter_key quantity:10
             - narrate "<&e>[Promachos]<&r> <&7>Thank you for your service in the old emblem trials. Accept these keys as a token of appreciation." targets:<[value]>
-            - flag <[value]> v1.compensated:true
+            - flag <[value]> legacy.compensated:true
 ```
 
-**Note**: Use flag `v1.compensated` to prevent giving keys multiple times.
+**Note**: Use flag `legacy.compensated` to prevent giving keys multiple times.
 
 ---
 
@@ -445,10 +445,10 @@ v1_compensation:
 A: No. V2 is a complete rework with a different progression model. Everyone starts fresh.
 
 **Q: Why not migrate old progress?**
-A: V1 and V2 are fundamentally incompatible. V1 had sequential stages; V2 has parallel activities with role-based tracking. Mapping would be unfair and complex.
+A: legacy and V2 are fundamentally incompatible. legacy had sequential stages; V2 has parallel activities with role-based tracking. Mapping would be unfair and complex.
 
-**Q: Will I get anything for my V1 progress?**
-A: Yes! Players with V1 progress will receive 10 Demeter Keys as compensation.
+**Q: Will I get anything for my legacy progress?**
+A: Yes! Players with legacy progress will receive 10 Demeter Keys as compensation.
 
 **Q: When does V2 launch?**
 A: [DATE] (exact date TBD)
@@ -464,7 +464,7 @@ A: Old emblem items (if physical) will remain in your inventory but may not func
 ## Final Checklist
 
 **Before Deployment**:
-- [ ] V1 files backed up
+- [ ] legacy files backed up
 - [ ] Player data backed up
 - [ ] V2 files prepared and tested on staging server
 - [ ] Players announced (minimum 1 week prior)
@@ -473,7 +473,7 @@ A: Old emblem items (if physical) will remain in your inventory but may not func
 
 **During Deployment**:
 - [ ] Server shut down gracefully
-- [ ] V1 files deleted
+- [ ] legacy files deleted
 - [ ] V2 files deployed
 - [ ] Flag cleanup script loaded
 - [ ] Bulletin updated

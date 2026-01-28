@@ -184,7 +184,7 @@ After unlocking Demeter, gate the next farming emblem (placeholder).
 
 ---
 
-## Deprecated Flags (V1 - Do Not Use)
+## Deprecated Flags (legacy - Do Not Use)
 
 These flags were used in the old stage-based system and should NOT be referenced in V2 code. They are preserved for migration/rollback purposes only.
 

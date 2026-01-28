@@ -168,7 +168,7 @@ To add a new god (e.g., Hephaestus):
 - `demeter_items.dsc` → `hephaestus_items.dsc`
 - `demeter_events.dsc` → `hephaestus_events.dsc`
 - `demeter_crate.dsc` → `hephaestus_crate.dsc`
-- Update `roles.dsc` and `promachos_v2.dsc`
+- Update `roles.dsc` and `promachos.dsc`
 
 ---
 

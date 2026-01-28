@@ -84,14 +84,17 @@ This project uses Denizen, a scripting language for Minecraft servers.
 - Meta-progression via Roman god crates (Ceres, Vulcan, Mars)
 
 **Comprehensive Documentation:**
-- `SYSTEM_OVERVIEW.md` - Complete system reference
+- `docs/SYSTEM_OVERVIEW.md` - Complete system reference
 - `docs/overview.md` - Philosophy and design
 - `docs/demeter.md` - Farming role details
+- `docs/demeter_ranks.md` - Rank progression with buffs
 - `docs/crates_demeter.md` - Crate system mechanics
 - `docs/ceres.md` - Meta-progression
 - `docs/promachos.md` - NPC interactions
 - `docs/flags.md` - Flag reference
 - `docs/testing.md` - Testing procedures
+- `docs/DEPLOYMENT_CHECKLIST.md` - Production deployment steps
+- `docs/QUICK_START.md` - Quick setup guide
 
 **Structure:**
 ```
@@ -101,7 +104,7 @@ scripts/
 └── emblems/
     ├── core/
     │   ├── roles.dsc
-    │   ├── promachos_v2.dsc
+    │   ├── promachos.dsc
     │   └── item_utilities.dsc
     ├── demeter/          # FARMING role (✅ complete)
     ├── ceres/            # FARMING meta (✅ complete)

@@ -348,6 +348,14 @@ When player breaks a fully-grown crop while holding Ceres Hoe, the crop is **aut
 - Beetroots
 - Nether Wart
 
+**IMPORTANT - Seed Cost:**
+- Replanting **consumes 1 seed from the player's inventory**
+- Wheat requires wheat_seeds
+- Carrots/potatoes use the vegetable itself as seed
+- Beetroots require beetroot_seeds
+- Nether wart uses nether_wart item
+- If player has no seeds, replanting does NOT occur (crop breaks normally)
+
 ### Implementation
 
 **Event**: `after player breaks <crop>` with `hand:<context.item>` check
@@ -373,9 +381,28 @@ ceres_hoe_replant:
             - if <[age]> != 7:
                 - stop
 
+        # Check if player has seeds (NEW)
+        - choose <[material]>:
+            - case wheat:
+                - define seed_item wheat_seeds
+            - case carrots:
+                - define seed_item carrot
+            - case potatoes:
+                - define seed_item potato
+            - case beetroots:
+                - define seed_item beetroot_seeds
+            - case nether_wart:
+                - define seed_item nether_wart
+
+        - if !<player.inventory.contains_item[<[seed_item]>]>:
+            - stop
+
+        # Take 1 seed from inventory (NEW)
+        - take <[seed_item]> qty:1
+
         # Replant
         - wait 1t
-        - modifyblock <context.location> <[material]>
+        - modifyblock <context.location> <[material]>[age=0]
 
         # Optional: Particle effect
         - playeffect effect:villager_happy at:<context.location> quantity:5 offset:0.3
@@ -384,7 +411,9 @@ ceres_hoe_replant:
 **Notes**:
 - `wait 1t` ensures block break completes before replanting
 - Does NOT replant if crop not fully grown (allows early harvest without waste)
+- Does NOT replant if player has no seeds (silent fail, no error message)
 - Works with Demeter activity tracking (break event fires normally, then replant occurs)
+- **Seed consumption means Ceres Hoe is a convenience tool, not infinite farming**
 
 ---
 
@@ -392,70 +421,180 @@ ceres_hoe_replant:
 
 ### Mechanic
 
-Right-click to summon **6 angry bees** that attack nearby hostile mobs.
+Right-click to summon **6 angry bees** that act as combat companions.
 
-**Bees**:
-- Angry state (attack hostiles)
-- Spawn at player location with slight offset
-- Targeting: Nearest hostile mobs within 16 blocks
-- Despawn after 30 seconds
-- Do NOT attack players or passive mobs
+**Bee Behavior** (Advanced AI System):
+- **Attack Assist**: Bees attack whatever the player attacks
+- **Follow Owner**: Automatically teleport to player if >10 blocks away
+- **Safety Mode**: Will NOT attack players, even when angry
+- **Managed Lifecycle**: Auto-despawn after 30 seconds
+- **Owner Tracking**: Each bee is bound to its summoner via UUID flags
 
 **Cooldown**: 30 seconds per player
 
+### Advanced Features
+
+#### Follow Behavior
+Bees automatically stay near their owner:
+- **Distance Check**: Every second, check if bee is >10 blocks from owner
+- **Auto-Teleport**: If too far, teleport to random offset near owner (2-block radius)
+- **Prevents Loss**: Bees never get left behind in combat or exploration
+
+#### Attack Assist System
+Bees coordinate with player combat:
+- **Event Trigger**: When player damages a monster entity
+- **Bee Command**: All living bees from that player attack the same target
+- **Validation**: Only attacks if bee is still spawned and properly flagged
+- **Smart Targeting**: Ignores non-monster entities (doesn't waste AI on passive mobs)
+
+#### Safety Protections
+Multiple safeguards prevent friendly fire:
+- **Player Target Block**: Bees explicitly blocked from targeting any player
+- **Owner UUID Check**: Bees only respond to commands from their summoner
+- **Managed Flag**: Only bees with `ceres.managed` flag are controlled (prevents affecting natural bees)
+
 ### Implementation
 
+**Summon Handler:**
 ```yaml
-ceres_wand_use:
-    type: world
-    events:
-        on player right clicks using:ceres_wand:
+ceres_wand_activate:
+    type: task
+    script:
         # Check cooldown
         - if <player.has_flag[ceres.wand_cooldown]>:
             - define remaining <player.flag_expiration[ceres.wand_cooldown].from_now.formatted>
             - narrate "<&c>Wand on cooldown: <[remaining]>"
-            - playsound <player> sound:entity_villager_no
-            - determine cancelled
+            - playsound <player> sound:ENTITY_VILLAGER_NO
             - stop
 
         # Set cooldown
         - flag player ceres.wand_cooldown expire:30s
 
-        # Summon 6 bees
+        # Clear previous bees list
+        - flag player ceres.wand_bees:!
+
+        # Summon 6 bees with advanced flagging
         - repeat 6:
             - define offset <location[0,0,0].random_offset[2,1,2]>
             - define spawn_loc <player.location.add[<[offset]>]>
-            - spawn bee[angry=true] <[spawn_loc]> save:bee_<[value]>
-            - define bee <entry[bee_<[value]>].spawned_entity>
+            - spawn bee[angry=true] <[spawn_loc]> save:spawned_bee
+            - define bee <entry[spawned_bee].spawned_entity>
 
-            # Flag bee as temporary
-            - flag <[bee]> ceres.temporary expire:30s
+            # Flag bee with management markers
+            - flag <[bee]> ceres.managed:true
+            - flag <[bee]> ceres.temporary:true expire:30s
+            - flag <[bee]> ceres.owner:<player.uuid> expire:30s
 
-            # Optional: Target nearest hostile
-            - define hostiles <[spawn_loc].find_entities[hostile_mobs].within[16]>
-            - if <[hostiles].size> > 0:
-                - attack <[bee]> target:<[hostiles].first>
+            # Add to player's bee list
+            - flag player ceres.wand_bees:->:<[bee]> expire:30s
 
         # Feedback
-        - narrate "<&e>Ceres' bees swarm to your defense!"
-        - playsound <player> sound:entity_bee_loop_aggressive volume:1.0
-        - playeffect effect:villager_happy at:<player.location> quantity:30 offset:2.0
-
-        # Despawn after 30s
-        - wait 30s
-        - define all_bees <player.location.find_entities[bee].within[50].filter[has_flag[ceres.temporary]]>
-        - foreach <[all_bees]>:
-            - remove <[value]>
+        - narrate "<&e>Ceres' bees swarm to your aid!"
+        - playsound <player> sound:ENTITY_BEE_LOOP_AGGRESSIVE volume:1.0
+        - playeffect effect:VILLAGER_HAPPY at:<player.location> quantity:30 offset:2.0
 ```
 
-**Hostile Mob List**:
-- Zombie, Skeleton, Creeper, Spider, Cave Spider, Enderman, Witch, Blaze, Wither Skeleton, etc.
-- Use Denizen tag: `<location.find_entities[monster].within[16]>`
+**Attack Assist Handler:**
+```yaml
+ceres_bee_attack_assist:
+    type: world
+    events:
+        after player damages entity:
+        # Only assist on monster targets
+        - if !<context.entity.entity_type.is_monster>:
+            - stop
 
-**Edge Cases**:
-- Bees may die in combat before 30s → natural despawn
-- If no hostiles nearby, bees wander aimlessly → despawn after 30s
-- Wand does not consume durability (unbreakable)
+        # Check if player has active bees
+        - if !<player.has_flag[ceres.wand_bees]>:
+            - stop
+
+        # Command all valid bees to attack the target
+        - foreach <player.flag[ceres.wand_bees]> as:bee:
+            - if !<[bee].is_spawned.if_null[false]>:
+                - foreach next
+            - if !<[bee].has_flag[ceres.managed]>:
+                - foreach next
+            - if <[bee].flag[ceres.owner].if_null[none]> != <player.uuid>:
+                - foreach next
+            # Command bee to attack
+            - attack <[bee]> target:<context.entity>
+```
+
+**Follow & Cleanup System:**
+```yaml
+ceres_bee_management:
+    type: world
+    events:
+        on system time secondly every:1:
+        # Follow logic - teleport distant bees
+        - foreach <server.online_players> as:p:
+            - if !<[p].has_flag[ceres.wand_bees]>:
+                - foreach next
+            - foreach <[p].flag[ceres.wand_bees]> as:bee:
+                - if !<[bee].is_spawned.if_null[false]>:
+                    - foreach next
+                - if !<[bee].has_flag[ceres.managed]>:
+                    - foreach next
+                - if <[bee].flag[ceres.owner].if_null[none]> != <[p].uuid>:
+                    - foreach next
+                # Teleport if too far from owner
+                - if <[bee].location.distance[<[p].location>]> > 10:
+                    - define offset <location[0,0,0].random_offset[2,1,2]>
+                    - teleport <[bee]> <[p].location.add[<[offset]>]>
+
+        # Cleanup logic - remove expired bees
+        - foreach <server.worlds> as:world:
+            - foreach <[world].entities[bee]> as:bee:
+                - if !<[bee].has_flag[ceres.managed]>:
+                    - foreach next
+                # If managed but temporary flag expired, remove
+                - if !<[bee].has_flag[ceres.temporary]>:
+                    - remove <[bee]>
+```
+
+**Player Protection:**
+```yaml
+ceres_bee_no_player_target:
+    type: world
+    events:
+        on bee targets player:
+        - if <context.entity.has_flag[ceres.managed]>:
+            - determine cancelled
+```
+
+### Performance Considerations
+
+**Tick System Impact:**
+- Runs every second (not every tick) to check all active bees
+- Only processes bees with `ceres.managed` flag (ignores natural bees)
+- Cleanup automatically removes orphaned bees
+
+**Worst Case Load:**
+- 10 online players each with 6 bees = 60 bees managed
+- 60 distance checks + potential teleports per second
+- Minimal overhead (entities are cheap, teleport is instant)
+
+**Recommendation:** System is optimized for typical server loads (1-20 players). No performance issues expected.
+
+### Edge Cases
+
+**Bee Death in Combat:**
+- Bee dies naturally → Removed from entity list
+- No cleanup needed (flag expires with entity)
+
+**Player Logout:**
+- Bees remain for 30s after owner logs out
+- `ceres.temporary` flag expires → Cleanup removes them
+- `ceres.wand_bees` flag on player expires naturally
+
+**Dimension Changes:**
+- Bees follow owner across dimensions (teleport works cross-world)
+- If owner enters dimension bees can't enter (like End portal) → Bees despawn when temporary flag expires
+
+**Cooldown Edge Case:**
+- Summoning new bees clears old `ceres.wand_bees` list
+- Old bees still exist but are no longer commanded
+- Old bees despawn when their 30s expires
 
 ---
 

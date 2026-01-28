@@ -1,19 +1,19 @@
-# Emblem System V2 - Deployment Checklist
+# Emblem System - Deployment Checklist
 
 ## Pre-Deployment (1-2 Weeks Before)
 
 ### ☐ Backup Everything
 ```bash
-# Backup V1 scripts
-cp -r scripts/emblems scripts/emblems_v1_backup
-cp scripts/profile_gui.dsc scripts/profile_gui_v1_backup.dsc
+# Backup legacy scripts
+cp -r scripts/emblems scripts/emblems_legacy_backup
+cp scripts/profile_gui.dsc scripts/profile_gui_legacy_backup.dsc
 
 # Backup player data
-cp -r plugins/Denizen/saves plugins/Denizen/saves_v1_backup
+cp -r plugins/Denizen/saves plugins/Denizen/saves_legacy_backup
 ```
 
 ### ☐ Test on Staging Server
-1. Copy all V2 files to staging server
+1. Copy all current files to staging server
 2. Run through full test checklist (`docs/testing.md`)
 3. Verify no errors in console
 4. Test with 2-3 players concurrently
@@ -22,11 +22,11 @@ cp -r plugins/Denizen/saves plugins/Denizen/saves_v1_backup
 ### ☐ Announce to Players (Minimum 1 Week Notice)
 **Bulletin Update**:
 - Increment version in `scripts/bulletin.dsc`
-- Add V2 announcement entry
+- Add current announcement entry
 
 **Discord/Forum Post**:
 ```
-📢 Emblem System V2 - Coming [DATE]
+📢 Emblem System - Coming [DATE]
 
 We're completely reworking the emblem system!
 
@@ -41,13 +41,13 @@ RESET:
 ❌ Everyone starts fresh
 
 COMPENSATION:
-🎁 10 Demeter Keys for all players with V1 progress
+🎁 10 Demeter Keys for all players with legacy progress
 
 Learn more: [link to EMBLEM_V2_README.md]
 ```
 
 ### ☐ Prepare Admin Team
-- Brief all admins/mods on V2 mechanics
+- Brief all admins/mods on current mechanics
 - Share `docs/testing.md` and `EMBLEM_V2_README.md`
 - Assign roles: who monitors console, who answers questions, who tests
 
@@ -59,7 +59,7 @@ Learn more: [link to EMBLEM_V2_README.md]
 
 ```bash
 # Give players warning
-say Server restarting in 5 minutes for Emblem System V2!
+say Server restarting in 5 minutes for Emblem System!
 say All emblem progress will reset. You'll receive 10 Demeter Keys as compensation.
 
 # Wait 3 minutes
@@ -75,7 +75,7 @@ stop
 
 ---
 
-### Phase 2: Delete V1 Files
+### Phase 2: Delete legacy Files
 
 ```bash
 cd /path/to/server/plugins/Denizen/scripts
@@ -91,35 +91,35 @@ rm -rf emblems/
 
 ---
 
-### Phase 3: Deploy V2 Files
+### Phase 3: Deploy current Files
 
 ```bash
-# Create V2 directory structure
-mkdir -p emblems_v2/core
-mkdir -p emblems_v2/demeter
-mkdir -p emblems_v2/ceres
-mkdir -p emblems_v2/admin
+# Create current directory structure
+mkdir -p emblems/core
+mkdir -p emblems/demeter
+mkdir -p emblems/ceres
+mkdir -p emblems/admin
 
-# Copy all V2 scripts
+# Copy all current scripts
 # (Upload via FTP, SFTP, or copy from local backup)
 
 # Verify file count:
-find emblems_v2 -name "*.dsc" | wc -l
+find emblems -name "*.dsc" | wc -l
 # Should return: 11 files
 ```
 
 **Files to upload**:
 ```
-emblems_v2/core/roles.dsc
-emblems_v2/core/promachos_v2.dsc
-emblems_v2/demeter/demeter_items.dsc
-emblems_v2/demeter/demeter_events.dsc
-emblems_v2/demeter/demeter_crate.dsc
-emblems_v2/demeter/demeter_blessing.dsc
-emblems_v2/ceres/ceres_items.dsc
-emblems_v2/ceres/ceres_crate.dsc
-emblems_v2/ceres/ceres_mechanics.dsc
-emblems_v2/admin/admin_commands_v2.dsc
+emblems/core/roles.dsc
+emblems/core/promachos.dsc
+emblems/demeter/demeter_items.dsc
+emblems/demeter/demeter_events.dsc
+emblems/demeter/demeter_crate.dsc
+emblems/demeter/demeter_blessing.dsc
+emblems/ceres/ceres_items.dsc
+emblems/ceres/ceres_crate.dsc
+emblems/ceres/ceres_mechanics.dsc
+emblems/admin/admin_commands.dsc
 ```
 
 ---
@@ -127,27 +127,90 @@ emblems_v2/admin/admin_commands_v2.dsc
 ### Phase 4: Replace Updated Files
 
 ```bash
-# Replace profile_gui.dsc with V2 version
+# Replace profile_gui.dsc with current version
 cp profile_gui_v2.dsc profile_gui.dsc
 
-# Update bulletin.dsc (increment version, add V2 announcement)
+# Update bulletin.dsc (increment version, add current announcement)
 # Edit manually or use updated file
 ```
 
 ---
 
-### Phase 5: Optional - Create V1 Flag Cleanup Script
+### Phase 4.5: **CRITICAL** - Remove OP-Only Testing Gate
+
+**⚠️ REQUIRED FOR PRODUCTION DEPLOYMENT ⚠️**
+
+The Promachos NPC interaction currently has an OP-only gate for testing purposes. **This MUST be removed before players can use the system.**
+
+**File:** `scripts/emblems/core/promachos.dsc`
+
+**Lines to Remove (33-36):**
+```yaml
+# Temporary OP-only restriction
+- if !<player.is_op>:
+    - narrate "<&e>Emblem system coming soon!"
+    - stop
+```
+
+**How to Remove:**
+1. Open `scripts/emblems/core/promachos.dsc`
+2. Navigate to the `promachos_interact` script (line ~27)
+3. Delete lines 33-36 (the OP check block)
+4. Save file
+5. Run `/denizen reload` on server
+
+**Before (Testing):**
+```yaml
+promachos_interact:
+    type: interact
+    steps:
+        1:
+            click trigger:
+                script:
+                # Temporary OP-only restriction
+                - if !<player.is_op>:
+                    - narrate "<&e>Emblem system coming soon!"
+                    - stop
+
+                - if !<player.has_flag[met_promachos]>:
+                    - run promachos_first_meeting
+                - else:
+                    - inventory open d:promachos_main_menu
+```
+
+**After (Production):**
+```yaml
+promachos_interact:
+    type: interact
+    steps:
+        1:
+            click trigger:
+                script:
+                - if !<player.has_flag[met_promachos]>:
+                    - run promachos_first_meeting
+                - else:
+                    - inventory open d:promachos_main_menu
+```
+
+**Verification:**
+1. As a non-OP player, right-click Promachos NPC
+2. Should see first-time dialogue or main menu
+3. Should NOT see "Emblem system coming soon!" message
+
+---
+
+### Phase 5: Optional - Create legacy Flag Cleanup Script
 
 **Only if you want automatic flag cleanup on server start**:
 
-Create `emblems_v2/admin/v1_flag_cleanup.dsc`:
+Create `emblems/admin/legacy_flag_cleanup.dsc`:
 ```yaml
-v1_flag_cleanup:
+legacy_flag_cleanup:
     type: world
     debug: false
     events:
         after server start:
-        - announce "<&e>[System]<&r> Cleaning up V1 emblem flags..."
+        - announce "<&e>[System]<&r> Cleaning up legacy emblem flags..."
         - foreach <server.online_players>:
             # Remove all old emblem flags
             - flag <[value]> emblem:!
@@ -188,15 +251,15 @@ v1_flag_cleanup:
 ```
 
 **Monitor console** for:
-- Script load errors (should see 11 V2 scripts load)
+- Script load errors (should see 11 current scripts load)
 - Event registration errors
 - Flag read/write errors
 
 **Expected output** (example):
 ```
-[Denizen] Loading script emblems_v2/core/roles.dsc
-[Denizen] Loading script emblems_v2/core/promachos_v2.dsc
-[Denizen] Loading script emblems_v2/demeter/demeter_items.dsc
+[Denizen] Loading script emblems/core/roles.dsc
+[Denizen] Loading script emblems/core/promachos.dsc
+[Denizen] Loading script emblems/demeter/demeter_items.dsc
 ...
 [Denizen] 11 scripts loaded successfully
 ```
@@ -300,7 +363,7 @@ Should stay > 19.5
 
 ☐ **Survey Players** (Discord poll or in-game):
 ```
-1. Is the new system more fun than V1? (Yes/No/Neutral)
+1. Is the new system more fun than legacy? (Yes/No/Neutral)
 2. Are key drop rates fair? (Too frequent/Just right/Too rare)
 3. Are crate rewards satisfying? (Yes/No)
 4. Any bugs encountered? (Free text)
@@ -322,7 +385,7 @@ Should stay > 19.5
 
 ## Rollback Plan (Emergency Only)
 
-**If V2 has critical game-breaking bugs**:
+**If current has critical game-breaking bugs**:
 
 ### Emergency Rollback Steps
 
@@ -331,19 +394,19 @@ Should stay > 19.5
 stop
 ```
 
-2. **Restore V1 backup**:
+2. **Restore legacy backup**:
 ```bash
 cd /path/to/server/plugins/Denizen/scripts
 
 # Remove V2
-rm -rf emblems_v2/
+rm -rf emblems/
 
-# Restore V1
-cp -r emblems_v1_backup emblems/
-cp profile_gui_v1_backup.dsc profile_gui.dsc
+# Restore legacy
+cp -r emblems_legacy_backup emblems/
+cp profile_gui_legacy_backup.dsc profile_gui.dsc
 
 # Restore player data (if needed)
-cp -r plugins/Denizen/saves_v1_backup/* plugins/Denizen/saves/
+cp -r plugins/Denizen/saves_legacy_backup/* plugins/Denizen/saves/
 ```
 
 3. **Restart server**:
@@ -353,12 +416,12 @@ cp -r plugins/Denizen/saves_v1_backup/* plugins/Denizen/saves/
 
 4. **Announce rollback**:
 ```
-say Emblem V2 has been rolled back due to critical issues.
+say Emblem current has been rolled back due to critical issues.
 say We've restored the old system. Apologies for the disruption!
-say V2 will be re-deployed after fixes.
+say current will be re-deployed after fixes.
 ```
 
-5. **Debug V2 offline**, fix issues, re-test on staging
+5. **Debug current offline**, fix issues, re-test on staging
 
 6. **Re-deploy** when ready (follow checklist again)
 
@@ -366,7 +429,7 @@ say V2 will be re-deployed after fixes.
 
 ## Success Criteria
 
-Mark V2 as successful if after 1 week:
+Mark current as successful if after 1 week:
 
 - ☐ No rollbacks required
 - ☐ Server uptime > 99%
@@ -440,7 +503,7 @@ Mark V2 as successful if after 1 week:
 
 **Player Communication**: Transparency is key. Announce bugs, fixes, and updates promptly.
 
-**Iteration**: V2 is a foundation. Listen to feedback and evolve the system!
+**Iteration**: current is a foundation. Listen to feedback and evolve the system!
 
 ---
 

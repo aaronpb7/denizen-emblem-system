@@ -290,6 +290,29 @@ Cakes: [███░░░░░░░] 95 / 300  (32%)
 
 ---
 
+## Rank System
+
+In addition to component milestones, Demeter has a **separate rank progression system** that provides **permanent passive buffs** while the FARMING role is active.
+
+**Ranks:**
+- **Acolyte of Demeter** (2,500 wheat + 50 cows)
+- **Disciple of Demeter** (12,000 wheat + 300 cows)
+- **Hero of Demeter** (50,000 wheat + 700 cows)
+
+**Buffs Include:**
+- Farming Speed (Haste I/II)
+- Extra Crop Drops (+5% to +50%)
+- Twin Breeding Chance (10% to 30%)
+
+**Relationship to Components:**
+- Ranks and components are **parallel systems**
+- You can achieve ranks without components, and vice versa
+- Ranks provide gameplay benefits; components unlock emblems
+
+**See:** `docs/demeter_ranks.md` for complete rank specification
+
+---
+
 ## Admin Commands
 
 See `docs/testing.md` for full command list. Key commands:
