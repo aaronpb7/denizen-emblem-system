@@ -68,8 +68,9 @@ ceres_wand_use:
             - spawn bee[angry=true] <[spawn_loc]> save:bee_<[value]>
             - define bee <entry[bee_<[value]>].spawned_entity>
 
-            # Flag bee as temporary
+            # Flag bee as temporary and link to player
             - flag <[bee]> ceres.temporary expire:20s
+            - flag <[bee]> ceres.owner:<player>
 
             # Target nearest hostile (if any)
             - define hostiles <[spawn_loc].find_entities[monster].within[16].filter_tag[<[filter_value].entity_type.is_monster>]>
@@ -80,6 +81,21 @@ ceres_wand_use:
         - narrate "<&e>Ceres' bees swarm to your defense!"
         - playsound <player> sound:entity_bee_loop_aggressive volume:1.0
         - playeffect effect:villager_happy at:<player.location> quantity:30 offset:2.0
+
+# Redirect bees when player attacks an entity
+ceres_bee_redirect:
+    type: world
+    debug: false
+    events:
+        after player damages entity:
+        # Find all bees owned by this player
+        - define player_bees <player.location.find_entities[bee].within[32].filter[has_flag[ceres.owner]].filter[flag[ceres.owner].equals[<player>]]>
+        - if <[player_bees].size> == 0:
+            - stop
+
+        # Redirect all bees to attack the damaged entity
+        - foreach <[player_bees]> as:bee:
+            - attack <[bee]> target:<context.entity>
 
 # Bee cleanup task
 ceres_bee_cleanup:
