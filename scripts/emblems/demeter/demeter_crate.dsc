@@ -341,13 +341,13 @@ roll_demeter_loot:
     - choose <[tier]>:
         - case MORTAL:
             - define pool <list>
-            - define pool <[pool].include[bread:16]>
-            - define pool <[pool].include[cooked_beef:8]>
-            - define pool <[pool].include[baked_potato:8]>
-            - define pool <[pool].include[wheat:32]>
-            - define pool <[pool].include[hay_bale:8]>
-            - define pool <[pool].include[bone_meal:16]>
-            - define pool <[pool].include[pumpkin_pie:8]>
+            - define pool <[pool].include[bread:8]>
+            - define pool <[pool].include[cooked_beef:4]>
+            - define pool <[pool].include[baked_potato:4]>
+            - define pool <[pool].include[wheat:16]>
+            - define pool <[pool].include[hay_bale:4]>
+            - define pool <[pool].include[bone_meal:8]>
+            - define pool <[pool].include[pumpkin_pie:4]>
             - define choice <[pool].random>
             - define parts <[choice].split[<&co>]>
             - define material <[parts].get[1]>

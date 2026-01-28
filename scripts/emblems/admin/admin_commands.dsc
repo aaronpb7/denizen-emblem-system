@@ -35,6 +35,86 @@ roleadmin_command:
     - narrate "<&a>Your role has been set to <[role]> by an admin." targets:<[target]>
 
 # ============================================
+# FARMING XP ADMIN COMMAND
+# ============================================
+
+farmingadmin_command:
+    type: command
+    name: farmingadmin
+    description: Manage Farming XP and ranks
+    usage: /farmingadmin (player) (action) [args...]
+    permission: emblems.admin
+    script:
+    - if <context.args.size> < 2:
+        - narrate "<&c>Usage: /farmingadmin <player> <xp|setxp|rank|reset> [args...]"
+        - stop
+
+    - define target <server.match_player[<context.args.get[1]>].if_null[null]>
+    - if <[target]> == null:
+        - narrate "<&c>Player not found"
+        - stop
+
+    - define action <context.args.get[2].to_lowercase>
+
+    - choose <[action]>:
+        # Give XP
+        - case xp:
+            - if <context.args.size> < 3:
+                - narrate "<&c>Usage: /farmingadmin <player> xp <amount>"
+                - stop
+            - define amount <context.args.get[3]>
+            - if !<[amount].is_integer>:
+                - narrate "<&c>Amount must be a number"
+                - stop
+            - proc[award_farming_xp].context[<[target]>|<[amount]>|admin_command]
+            - define total <[target].flag[farming.xp].if_null[0]>
+            - define rank <[target].flag[farming.rank].if_null[0]>
+            - narrate "<&a>Gave <[target].name> <[amount]> XP (Total: <[total]>, Rank: <[rank]>)"
+
+        # Set total XP
+        - case setxp:
+            - if <context.args.size> < 3:
+                - narrate "<&c>Usage: /farmingadmin <player> setxp <amount>"
+                - stop
+            - define amount <context.args.get[3]>
+            - if !<[amount].is_integer>:
+                - narrate "<&c>Amount must be a number"
+                - stop
+            - define old_rank <[target].flag[farming.rank].if_null[0]>
+            - flag <[target]> farming.xp:<[amount]>
+            - define new_rank <proc[get_farming_rank].context[<[amount]>]>
+            - flag <[target]> farming.rank:<[new_rank]>
+            - narrate "<&a>Set <[target].name>'s XP to <[amount]> (Rank: <[old_rank]> → <[new_rank]>)"
+            - if <[new_rank]> > <[old_rank]>:
+                - run farming_rank_up_ceremony def.player:<[target]> def.rank:<[new_rank]>
+
+        # Force set rank
+        - case rank:
+            - if <context.args.size> < 3:
+                - narrate "<&c>Usage: /farmingadmin <player> rank <0|1|2|3|4|5>"
+                - stop
+            - define new_rank <context.args.get[3]>
+            - if !<list[0|1|2|3|4|5].contains[<[new_rank]>]>:
+                - narrate "<&c>Rank must be 0, 1, 2, 3, 4, or 5"
+                - stop
+            - define old_rank <[target].flag[farming.rank].if_null[0]>
+            - flag <[target]> farming.rank:<[new_rank]>
+            - define rank_name <proc[get_farming_rank_name].context[<[new_rank]>]>
+            - narrate "<&a>Set <[target].name>'s rank from <[old_rank]> to <[new_rank]> (<[rank_name]>)"
+            # Trigger ceremony if rank increased
+            - if <[new_rank]> > <[old_rank]>:
+                - run farming_rank_up_ceremony def.player:<[target]> def.rank:<[new_rank]>
+
+        # Reset farming XP and rank
+        - case reset:
+            - flag <[target]> farming.xp:!
+            - flag <[target]> farming.rank:!
+            - narrate "<&a>Reset farming XP and rank for <[target].name>"
+
+        - default:
+            - narrate "<&c>Invalid action. Use: xp, setxp, rank, or reset"
+
+# ============================================
 # DEMETER ADMIN COMMAND
 # ============================================
 
@@ -46,7 +126,7 @@ demeteradmin_command:
     permission: emblems.admin
     script:
     - if <context.args.size> < 2:
-        - narrate "<&c>Usage: /demeteradmin <player> <keys|set|component|rank|checkrank|reset> [args...]"
+        - narrate "<&c>Usage: /demeteradmin <player> <keys|set|component|reset> [args...]"
         - stop
 
     - define target <server.match_player[<context.args.get[1]>].if_null[null]>
@@ -129,40 +209,13 @@ demeteradmin_command:
                 - default:
                     - narrate "<&c>Invalid component. Use: wheat, cow, or cake"
 
-        # Force set rank
-        - case rank:
-            - if <context.args.size> < 3:
-                - narrate "<&c>Usage: /demeteradmin <player> rank <0|1|2|3>"
-                - stop
-            - define new_rank <context.args.get[3]>
-            - if !<list[0|1|2|3].contains[<[new_rank]>]>:
-                - narrate "<&c>Rank must be 0, 1, 2, or 3"
-                - stop
-            - define old_rank <[target].flag[demeter.rank].if_null[0]>
-            - flag <[target]> demeter.rank:<[new_rank]>
-            - define rank_name <proc[get_demeter_rank_name].context[<[new_rank]>]>
-            - narrate "<&a>Set <[target].name>'s rank from <[old_rank]> to <[new_rank]> (<[rank_name]>)"
-            # Trigger ceremony if rank increased
-            - if <[new_rank]> > <[old_rank]>:
-                - run demeter_rank_up_ceremony def.player:<[target]> def.rank:<[new_rank]>
-
-        # Recalculate rank from counters
-        - case checkrank:
-            - define old_rank <[target].flag[demeter.rank].if_null[0]>
-            - define calculated_rank <proc[get_demeter_rank].context[<[target]>]>
-            - flag <[target]> demeter.rank:<[calculated_rank]>
-            - define rank_name <proc[get_demeter_rank_name].context[<[calculated_rank]>]>
-            - narrate "<&a>Recalculated <[target].name>'s rank: <[old_rank]> -> <[calculated_rank]> (<[rank_name]>)"
-            - if <[calculated_rank]> > <[old_rank]>:
-                - run demeter_rank_up_ceremony def.player:<[target]> def.rank:<[calculated_rank]>
-
         # Reset all Demeter flags
         - case reset:
             - flag <[target]> demeter:!
             - narrate "<&a>Reset all Demeter flags for <[target].name>"
 
         - default:
-            - narrate "<&c>Invalid action. Use: keys, set, component, rank, checkrank, or reset"
+            - narrate "<&c>Invalid action. Use: keys, set, component, or reset"
 
 # ============================================
 # CERES ADMIN COMMAND
@@ -343,8 +396,9 @@ emblemreset_task:
     - flag <[target]> demeter.component.cake:!
     - flag <[target]> demeter.component.cake_date:!
 
-    # Demeter rank system
-    - flag <[target]> demeter.rank:!
+    # Farming XP and rank system
+    - flag <[target]> farming.xp:!
+    - flag <[target]> farming.rank:!
 
     # Demeter crate system
     - flag <[target]> demeter.crates_opened:!

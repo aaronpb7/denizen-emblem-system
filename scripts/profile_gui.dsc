@@ -42,18 +42,21 @@ get_profile_items:
     - define head <item[<player.skull_item>].with[display_name=<&2><player.name>;lore=<&7>Welcome to your profile!|<&7>UUID<&co> <&e><player.uuid>]>
     - define items <[items].set[<[head]>].at[5]>
 
-    # Row 3: Active role (20), Emblems (22), Cosmetics (24), Bulletin (26) - centered 4-item layout
+    # Row 3: Active role (19), Ranks (21), Emblems (23), Cosmetics (25), Bulletin (27) - centered 5-item layout
     - define role_item <proc[get_role_display_item]>
-    - define items <[items].set[<[role_item]>].at[20]>
+    - define items <[items].set[<[role_item]>].at[19]>
+
+    - define ranks_item <proc[get_ranks_icon_item]>
+    - define items <[items].set[<[ranks_item]>].at[21]>
 
     - define emblems_item <proc[get_emblems_icon_item]>
-    - define items <[items].set[<[emblems_item]>].at[22]>
+    - define items <[items].set[<[emblems_item]>].at[23]>
 
     - define cosmetics_item <proc[get_cosmetics_icon_item]>
-    - define items <[items].set[<[cosmetics_item]>].at[24]>
+    - define items <[items].set[<[cosmetics_item]>].at[25]>
 
     - define bulletin_item <proc[get_bulletin_icon_item]>
-    - define items <[items].set[<[bulletin_item]>].at[26]>
+    - define items <[items].set[<[bulletin_item]>].at[27]>
 
     # Row 5: Close button (bottom left slot 37)
     - define items <[items].set[<item[profile_close_button]>].at[37]>
@@ -122,6 +125,30 @@ get_role_display_item:
     - define lore <[lore].include[<&8>Change role by speaking to Promachos]>
 
     - determine <item[<[icon]>].with[display_name=<&6><&l><[display]>;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+
+get_ranks_icon_item:
+    type: procedure
+    script:
+    - define xp <player.flag[farming.xp].if_null[0]>
+    - define rank <player.flag[farming.rank].if_null[0]>
+    - define rank_name <proc[get_farming_rank_name].context[<[rank]>]>
+
+    - define lore <list>
+    - if <[rank]> == 0:
+        - define lore <[lore].include[<&7>No rank achieved yet]>
+        - define lore <[lore].include[<empty>]>
+        - define lore <[lore].include[<&e>Start farming to gain XP!]>
+    - else:
+        - define lore <[lore].include[<&6>Current Rank<&co> <&e><[rank_name]>]>
+        - define lore <[lore].include[<empty>]>
+        - define lore <[lore].include[<&7>Total XP<&co> <&e><[xp].format_number>]>
+    - define lore <[lore].include[<empty>]>
+    - define lore <[lore].include[<&e>Click to view ranks]>
+
+    - if <[rank]> > 0:
+        - determine <item[experience_bottle].with[display_name=<&6><&l>Farming Ranks;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+    - else:
+        - determine <item[experience_bottle].with[display_name=<&6><&l>Farming Ranks;lore=<[lore]>]>
 
 get_emblems_icon_item:
     type: procedure
@@ -252,6 +279,9 @@ profile_click_handler:
     type: world
     debug: false
     events:
+        after player clicks experience_bottle in profile_inventory:
+        - inventory open d:farming_ranks_gui
+
         after player clicks profile_emblems_locked in profile_inventory:
         - narrate "<&7>You must speak to <&e>Promachos <&7>first."
         - playsound <player> sound:entity_villager_no
@@ -304,10 +334,6 @@ get_demeter_progress_items:
     - repeat 27:
         - define items <[items].include[<[filler]>]>
 
-    # Row 1: Rank display (centered slot 5)
-    - define rank_item <proc[get_demeter_rank_display_item]>
-    - define items <[items].set[<[rank_item]>].at[5]>
-
     # Row 2: Three activity items centered (slots 12, 14, 16)
     - define wheat_item <proc[get_demeter_wheat_progress_item]>
     - define items <[items].set[<[wheat_item]>].at[12]>
@@ -350,11 +376,8 @@ get_demeter_wheat_progress_item:
         - define percent <[count].div[15000].mul[100].round>
     - define lore <[lore].include[<&7>(<[percent]>% complete)]>
     - define lore "<[lore].include[<&sp>]>"
-    - define lore <[lore].include[<&6>Key Rewards<&co>]>
-    - define lore <[lore].include[<&7>Every 150 wheat harvested will grant]>
-    - define lore <[lore].include[<&7>you 1 <&e>Demeter Key<&7>.]>
-    - define lore "<[lore].include[<&sp>]>"
-    - define lore <[lore].include[<&8>Keys Earned<&co> <&e><[keys]>]>
+    - define lore <[lore].include[<&8><&o>Component progress is independent]>
+    - define lore <[lore].include[<&8><&o>from Farming XP ranks.]>
 
     - if <[complete]>:
         - determine <item[wheat].with[display_name=<&e><&l>Wheat Harvest;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
@@ -388,11 +411,8 @@ get_demeter_cow_progress_item:
         - define percent <[count].div[2000].mul[100].round>
     - define lore <[lore].include[<&7>(<[percent]>% complete)]>
     - define lore "<[lore].include[<&sp>]>"
-    - define lore <[lore].include[<&6>Key Rewards<&co>]>
-    - define lore <[lore].include[<&7>Every 20 cows bred will grant you]>
-    - define lore <[lore].include[<&7>1 <&e>Demeter Key<&7>.]>
-    - define lore "<[lore].include[<&sp>]>"
-    - define lore <[lore].include[<&8>Keys Earned<&co> <&e><[keys]>]>
+    - define lore <[lore].include[<&8><&o>Component progress is independent]>
+    - define lore <[lore].include[<&8><&o>from Farming XP ranks.]>
 
     - if <[complete]>:
         - determine <item[leather].with[display_name=<&e><&l>Cow Breeding;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
@@ -426,11 +446,8 @@ get_demeter_cake_progress_item:
         - define percent <[count].div[300].mul[100].round>
     - define lore <[lore].include[<&7>(<[percent]>% complete)]>
     - define lore "<[lore].include[<&sp>]>"
-    - define lore <[lore].include[<&6>Key Rewards<&co>]>
-    - define lore <[lore].include[<&7>Every 3 cakes crafted will grant you]>
-    - define lore <[lore].include[<&7>1 <&e>Demeter Key<&7>.]>
-    - define lore "<[lore].include[<&sp>]>"
-    - define lore <[lore].include[<&8>Keys Earned<&co> <&e><[keys]>]>
+    - define lore <[lore].include[<&8><&o>Component progress is independent]>
+    - define lore <[lore].include[<&8><&o>from Farming XP ranks.]>
 
     - if <[complete]>:
         - determine <item[cake].with[display_name=<&e><&l>Cake Crafting;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
@@ -443,83 +460,6 @@ demeter_progress_back_button:
     display name: <&e>← Back
     lore:
     - <&7>Return to emblems
-
-get_demeter_rank_display_item:
-    type: procedure
-    script:
-    - define rank <player.flag[demeter.rank].if_null[0]>
-    - define rank_name <proc[get_demeter_rank_name].context[<[rank]>]>
-    - define wheat <player.flag[demeter.wheat.count].if_null[0]>
-    - define cows <player.flag[demeter.cows.count].if_null[0]>
-
-    - define lore <list>
-    - if <[rank]> == 0:
-        - define lore <[lore].include[<&7>No rank achieved yet]>
-        - define lore "<[lore].include[<&sp>]>"
-        - define lore <[lore].include[<&e>Next Rank<&co> <&6>Acolyte of Demeter]>
-        - define lore "<[lore].include[<&sp>]>"
-        # Wheat progress bar
-        - define wheat_needed 2500
-        - define wheat_percent <[wheat].div[<[wheat_needed]>].mul[100].round.min[100]>
-        - define wheat_bar <proc[create_progress_bar].context[<[wheat_percent]>]>
-        - define lore <[lore].include[<&7>Wheat<&co> <&e><[wheat]>/<[wheat_needed]>]>
-        - define lore <[lore].include[<[wheat_bar]>]>
-        - define lore "<[lore].include[<&sp>]>"
-        # Cow progress bar
-        - define cows_needed 50
-        - define cows_percent <[cows].div[<[cows_needed]>].mul[100].round.min[100]>
-        - define cows_bar <proc[create_progress_bar].context[<[cows_percent]>]>
-        - define lore <[lore].include[<&7>Cows<&co> <&e><[cows]>/<[cows_needed]>]>
-        - define lore <[lore].include[<[cows_bar]>]>
-        - determine <item[wheat_seeds].with[display_name=<&6>Demeter Rank;lore=<[lore]>]>
-    - else:
-        - define lore <[lore].include[<&6><&l>CURRENT RANK]>
-        - define lore "<[lore].include[<&sp>]>"
-
-        # Get benefits
-        - define haste <proc[get_farming_speed_bonus].context[<[rank]>]>
-        - define crops <proc[get_extra_crop_chance].context[<[rank]>]>
-        - define twins <proc[get_twin_breeding_chance].context[<[rank]>]>
-
-        - define lore <[lore].include[<&e>Active Benefits<&co>]>
-        - if <[haste]> >= 0:
-            - define lore <[lore].include[<&7>• Farming Speed<&co> <&e>Speed <[haste].add[1]>]>
-        - if <[crops]> > 0:
-            - define lore <[lore].include[<&7>• Extra Crops<&co> <&e>+<[crops]>%]>
-        - if <[twins]> > 0:
-            - define lore <[lore].include[<&7>• Twin Breeding<&co> <&e><[twins]>%]>
-
-        # Show next rank if not max
-        - if <[rank]> < 3:
-            - define lore "<[lore].include[<&sp>]>"
-            - define next_rank <[rank].add[1]>
-            - define next_name <proc[get_demeter_rank_name].context[<[next_rank]>]>
-            - define lore <[lore].include[<&e>Next Rank<&co> <&6><[next_name]>]>
-            - define lore "<[lore].include[<&sp>]>"
-            # Progress bars for next rank
-            - choose <[next_rank]>:
-                - case 1:
-                    - define wheat_needed 2500
-                    - define cows_needed 50
-                - case 2:
-                    - define wheat_needed 12000
-                    - define cows_needed 300
-                - case 3:
-                    - define wheat_needed 50000
-                    - define cows_needed 700
-            # Wheat progress bar
-            - define wheat_percent <[wheat].div[<[wheat_needed]>].mul[100].round.min[100]>
-            - define wheat_bar <proc[create_progress_bar].context[<[wheat_percent]>]>
-            - define lore <[lore].include[<&7>Wheat<&co> <&e><[wheat]>/<[wheat_needed]>]>
-            - define lore <[lore].include[<[wheat_bar]>]>
-            - define lore "<[lore].include[<&sp>]>"
-            # Cow progress bar
-            - define cows_percent <[cows].div[<[cows_needed]>].mul[100].round.min[100]>
-            - define cows_bar <proc[create_progress_bar].context[<[cows_percent]>]>
-            - define lore <[lore].include[<&7>Cows<&co> <&e><[cows]>/<[cows_needed]>]>
-            - define lore <[lore].include[<[cows_bar]>]>
-
-        - determine <item[golden_hoe].with[display_name=<&6><&l><[rank_name]>;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
 
 create_progress_bar:
     type: procedure
@@ -743,3 +683,197 @@ cosmetics_click_handler:
         # Click locked titles (gray_dye)
         on player clicks gray_dye in cosmetics_inventory:
         - playsound <player> sound:entity_villager_no
+
+        # Farming ranks GUI
+        on player clicks farming_ranks_back_button in farming_ranks_gui:
+        - inventory open d:profile_inventory
+
+# ============================================
+# FARMING RANKS GUI
+# ============================================
+
+farming_ranks_gui:
+    type: inventory
+    inventory: chest
+    gui: true
+    title: <&8>Farming Skill Ranks
+    size: 45
+    procedural items:
+    - determine <proc[get_farming_ranks_items]>
+
+get_farming_ranks_items:
+    type: procedure
+    script:
+    - define items <list>
+    - define filler <item[gray_stained_glass_pane].with[display_name=<&7>]>
+
+    # Fill all slots
+    - repeat 45:
+        - define items <[items].include[<[filler]>]>
+
+    # Row 1: Current rank and XP (slot 5 - top center)
+    - define current_rank_item <proc[get_current_farming_rank_item]>
+    - define items <[items].set[<[current_rank_item]>].at[5]>
+
+    # Row 2-3: Five rank tiers (slots 11-15 and 20-24)
+    # Top row: Ranks 1-3
+    - define rank1_item <proc[get_rank_tier_item].context[1]>
+    - define items <[items].set[<[rank1_item]>].at[11]>
+
+    - define rank2_item <proc[get_rank_tier_item].context[2]>
+    - define items <[items].set[<[rank2_item]>].at[13]>
+
+    - define rank3_item <proc[get_rank_tier_item].context[3]>
+    - define items <[items].set[<[rank3_item]>].at[15]>
+
+    # Bottom row: Ranks 4-5
+    - define rank4_item <proc[get_rank_tier_item].context[4]>
+    - define items <[items].set[<[rank4_item]>].at[21]>
+
+    - define rank5_item <proc[get_rank_tier_item].context[5]>
+    - define items <[items].set[<[rank5_item]>].at[23]>
+
+    # Row 4: XP sources (slots 29, 31, 33)
+    - define crops_item <item[wheat].with[display_name=<&e>Crop Harvesting;lore=<&7>Harvest<&sp>fully<&sp>grown<&sp>crops<&sp>for<&sp>XP|<empty>|<&6>XP<&sp>Rates<&co>|<&7>•<&sp>Wheat/Carrots/Potatoes<&co><&sp><&e>2<&sp>XP|<&7>•<&sp>Pumpkin/Melon<&co><&sp><&e>5<&sp>XP|<&7>•<&sp>Nether<&sp>Wart<&co><&sp><&e>3<&sp>XP|<&7>•<&sp>Sugar<&sp>Cane/Kelp<&co><&sp><&e>1<&sp>XP]>
+    - define items <[items].set[<[crops_item]>].at[29]>
+
+    - define animals_item <item[beef].with[display_name=<&e>Animal<&sp>Breeding;lore=<&7>Breed<&sp>animals<&sp>for<&sp>XP|<empty>|<&6>XP<&sp>Rates<&co>|<&7>•<&sp>Cow/Sheep/Pig<&co><&sp><&e>10<&sp>XP|<&7>•<&sp>Chicken/Rabbit/Bee<&co><&sp><&e>6-8<&sp>XP|<&7>•<&sp>Horse<&co><&sp><&e>30<&sp>XP|<&7>•<&sp>Turtle<&co><&sp><&e>20<&sp>XP]>
+    - define items <[items].set[<[animals_item]>].at[31]>
+
+    - define foods_item <item[cake].with[display_name=<&e>Food<&sp>Crafting;lore=<&7>Craft<&sp>food<&sp>items<&sp>for<&sp>XP|<empty>|<&6>XP<&sp>Rates<&co>|<&7>•<&sp>Bread<&co><&sp><&e>3<&sp>XP|<&7>•<&sp>Cake<&co><&sp><&e>12<&sp>XP|<&7>•<&sp>Pumpkin<&sp>Pie<&co><&sp><&e>10<&sp>XP|<&7>•<&sp>Rabbit<&sp>Stew<&co><&sp><&e>15<&sp>XP]>
+    - define items <[items].set[<[foods_item]>].at[33]>
+
+    # Back button (bottom left slot 37)
+    - define items <[items].set[<item[farming_ranks_back_button]>].at[37]>
+
+    - determine <[items]>
+
+farming_ranks_back_button:
+    type: item
+    material: arrow
+    display name: <&e>← Back
+    lore:
+    - <&7>Return to profile
+
+get_current_farming_rank_item:
+    type: procedure
+    script:
+    - define xp <player.flag[farming.xp].if_null[0]>
+    - define rank <player.flag[farming.rank].if_null[0]>
+    - define rank_name <proc[get_farming_rank_name].context[<[rank]>]>
+
+    - define lore <list>
+    - if <[rank]> == 0:
+        - define lore <[lore].include[<&7>You haven't achieved a rank yet.]>
+        - define lore <[lore].include[<empty>]>
+        - define lore <[lore].include[<&7>Total XP<&co> <&e><[xp].format_number> / 1,000]>
+        - define percent <[xp].div[1000].mul[100].round.min[100]>
+        - define bar <proc[create_progress_bar].context[<[percent]>]>
+        - define lore <[lore].include[<[bar]>]>
+        - define lore <[lore].include[<empty>]>
+        - define lore <[lore].include[<&e>Next Rank<&co> <&6>Acolyte of the Farm]>
+        - determine <item[wheat_seeds].with[display_name=<&6><&l>Your Farming Rank;lore=<[lore]>]>
+    - else:
+        - define rank_data <script[farming_rank_data].data_key[ranks.<[rank]>]>
+        - define lore <[lore].include[<&6><&l>CURRENT RANK]>
+        - define lore <[lore].include[<empty>]>
+        - define lore <[lore].include[<&7>Total XP<&co> <&e><[xp].format_number>]>
+        - define lore <[lore].include[<empty>]>
+
+        # Show buffs
+        - define haste <proc[get_farming_speed_bonus].context[<[rank]>]>
+        - define crops <proc[get_extra_crop_chance].context[<[rank]>]>
+
+        - define lore <[lore].include[<&e>Active Buffs<&co>]>
+        - if <[crops]> > 0:
+            - define lore <[lore].include[<&7>• Extra Crop Output<&co> <&e>+<[crops]>%]>
+        - if <[haste]> >= 0:
+            - define lore <[lore].include[<&7>• Farming Speed<&co> <&e>Speed <[haste].add[1]>]>
+
+        # Show next rank if not maxed
+        - if <[rank]> < 5:
+            - define lore <[lore].include[<empty>]>
+            - define next_rank <[rank].add[1]>
+            - define next_name <proc[get_farming_rank_name].context[<[next_rank]>]>
+            - define next_data <script[farming_rank_data].data_key[ranks.<[next_rank]>]>
+            - define next_xp_total <[next_data].get[xp_total]>
+            - define lore <[lore].include[<&e>Next Rank<&co> <&6><[next_name]>]>
+            - define lore <[lore].include[<&7><[xp].format_number> / <[next_xp_total].format_number> XP]>
+            - define percent <[xp].div[<[next_xp_total]>].mul[100].round.min[100]>
+            - define bar <proc[create_progress_bar].context[<[percent]>]>
+            - define lore <[lore].include[<[bar]>]>
+        - else:
+            - define lore <[lore].include[<empty>]>
+            - define lore <[lore].include[<&6><&l>MAX RANK ACHIEVED!]>
+
+        - determine <item[golden_hoe].with[display_name=<&6><&l><[rank_name]>;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+
+get_rank_tier_item:
+    type: procedure
+    definitions: tier
+    script:
+    - define player_rank <player.flag[farming.rank].if_null[0]>
+    - define rank_data <script[farming_rank_data].data_key[ranks.<[tier]>]>
+    - define rank_name <[rank_data].get[name]>
+    - define xp_required <[rank_data].get[xp_required]>
+    - define xp_total <[rank_data].get[xp_total]>
+    - define key_reward <[rank_data].get[key_reward]>
+    - define crops_bonus <[rank_data].get[extra_crop_chance]>
+    - define haste_amp <[rank_data].get[haste_amplifier]>
+
+    - define lore <list>
+
+    # Status indicator
+    - if <[player_rank]> >= <[tier]>:
+        - define lore <[lore].include[<&2><&l>✓ UNLOCKED]>
+    - else if <[player_rank]> == <[tier].sub[1]>:
+        - define lore <[lore].include[<&e><&l>NEXT RANK]>
+    - else:
+        - define lore <[lore].include[<&8>Locked]>
+
+    - define lore <[lore].include[<empty>]>
+    - define lore <[lore].include[<&6>XP Required<&co> <&e><[xp_total].format_number>]>
+    - define lore <[lore].include[<empty>]>
+
+    # Buffs
+    - define lore <[lore].include[<&e>Rank Buffs<&co>]>
+    - if <[crops_bonus]> > 0:
+        - define lore <[lore].include[<&7>• Extra Crops<&co> <&e>+<[crops_bonus]>%]>
+    - if <[haste_amp]> >= 0:
+        - define speed_level <[haste_amp].add[1]>
+        - define lore <[lore].include[<&7>• Speed<&co> <&e>Speed <[speed_level]>]>
+    - else:
+        - define lore <[lore].include[<&7>• No speed buff]>
+
+    - define lore <[lore].include[<empty>]>
+    - define lore <[lore].include[<&e>Rank Reward<&co> <&6><[key_reward]> Demeter Keys]>
+
+    # Choose icon based on tier and unlock status
+    - if <[player_rank]> >= <[tier]>:
+        # Unlocked - use enchanted item
+        - choose <[tier]>:
+            - case 1:
+                - define material wheat_seeds
+            - case 2:
+                - define material iron_hoe
+            - case 3:
+                - define material golden_hoe
+            - case 4:
+                - define material diamond_hoe
+            - case 5:
+                - define material netherite_hoe
+        - determine <item[<[material]>].with[display_name=<&6><&l><[rank_name]>;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+    - else:
+        # Locked - use gray version
+        - choose <[tier]>:
+            - case 1:
+                - define material wheat_seeds
+            - case 2:
+                - define material stone_hoe
+            - case 3:
+                - define material stone_hoe
+            - case 4:
+                - define material stone_hoe
+            - case 5:
+                - define material stone_hoe
+        - determine <item[<[material]>].with[display_name=<&8><[rank_name]>;lore=<[lore]>]>

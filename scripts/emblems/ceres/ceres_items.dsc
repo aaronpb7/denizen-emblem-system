@@ -16,14 +16,12 @@
 ceres_key:
     type: item
     material: echo_shard
-    display name: <&b><&l>CERES KEY<&r>
+    display name: <&b>Ceres Key<&r>
     enchantments:
     - mending:1
     mechanisms:
         hides: ENCHANTS
     lore:
-    - <&b>OLYMPIAN
-    - <empty>
     - <&7>A key forged in the Roman vault,
     - <&7>where Ceres guards her most
     - <&7>precious and finite treasures.
@@ -32,6 +30,8 @@ ceres_key:
     - <&e>a Ceres Crate.
     - <empty>
     - <&8>50% God Apple / 50% Unique Item
+    - <empty>
+    - <&b><&l><&k>|||<&r> <&b><&l>OLYMPIAN KEY<&r> <&b><&l><&k>|||
 
 # ============================================
 # CERES HOE
@@ -40,15 +40,13 @@ ceres_key:
 ceres_hoe:
     type: item
     material: netherite_hoe
-    display name: <&d><&l>CERES HOE<&r>
+    display name: <&b>Ceres Hoe<&r>
     enchantments:
     - mending:1
     mechanisms:
         hides: ENCHANTS
         unbreakable: true
     lore:
-    - <&d>MYTHIC
-    - <empty>
     - <&7>A netherite hoe blessed by
     - <&7>Ceres, unbreakable and eternal.
     - <empty>
@@ -57,6 +55,8 @@ ceres_hoe:
     - <empty>
     - <&8>Unbreakable
     - <&8>Unique - One per player
+    - <empty>
+    - <&b><&l><&k>|||<&r> <&b><&l>OLYMPIAN HOE<&r> <&b><&l><&k>|||
 
 # ============================================
 # CERES WAND
@@ -65,15 +65,13 @@ ceres_hoe:
 ceres_wand:
     type: item
     material: blaze_rod
-    display name: <&d><&l>CERES WAND<&r>
+    display name: <&b>Ceres Wand<&r>
     enchantments:
     - mending:1
     mechanisms:
         hides: ENCHANTS
         unbreakable: true
     lore:
-    - <&d>MYTHIC
-    - <empty>
     - <&7>A staff imbued with the
     - <&7>protective fury of Ceres' bees.
     - <empty>
@@ -82,3 +80,5 @@ ceres_wand:
     - <empty>
     - <&8>Cooldown: 30 seconds
     - <&8>Unique - One per player
+    - <empty>
+    - <&b><&l><&k>|||<&r> <&b><&l>OLYMPIAN WAND<&r> <&b><&l><&k>|||

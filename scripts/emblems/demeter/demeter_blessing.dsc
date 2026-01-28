@@ -5,7 +5,7 @@
 # Consumable item that boosts all incomplete Demeter activities by +10%
 # - Wheat: +1,500 (10% of 15,000)
 # - Cows: +200 (10% of 2,000)
-# - Cakes: +30 (10% of 300)
+# - Cakes: +50 (10% of 500)
 #
 # Only boosts incomplete activities (component not obtained)
 # Caps at requirement (cannot exceed milestone)
@@ -89,8 +89,8 @@ demeter_blessing_usage:
         # ===== CAKE BOOST =====
         - if !<player.has_flag[demeter.component.cake]>:
             - define current <player.flag[demeter.cakes.count].if_null[0]>
-            - define boost 30
-            - define new_count <[current].add[<[boost]>].min[300]>
+            - define boost 50
+            - define new_count <[current].add[<[boost]>].min[500]>
             - define actual_boost <[new_count].sub[<[current]>]>
 
             - flag player demeter.cakes.count:<[new_count]>
@@ -98,7 +98,7 @@ demeter_blessing_usage:
 
             # Check for key awards
             - define keys_awarded <player.flag[demeter.cakes.keys_awarded].if_null[0]>
-            - define keys_should_have <[new_count].div[3].round_down>
+            - define keys_should_have <[new_count].div[5].round_down>
             - if <[keys_should_have]> > <[keys_awarded]>:
                 - define keys_to_give <[keys_should_have].sub[<[keys_awarded]>]>
                 - give demeter_key quantity:<[keys_to_give]>
@@ -106,10 +106,10 @@ demeter_blessing_usage:
                 - narrate "<&e><&l>BONUS KEYS!<&r> <&7>+<[keys_to_give]> Demeter Keys (Cakes)"
 
             # Check for component milestone
-            - if <[new_count]> >= 300:
+            - if <[new_count]> >= 500:
                 - flag player demeter.component.cake:true
                 - flag player demeter.component.cake_date:<util.time_now.format>
-                - narrate "<&6><&l>MILESTONE!<&r> <&e>Cake Component obtained! <&7>(300 cakes)"
+                - narrate "<&6><&l>MILESTONE!<&r> <&e>Cake Component obtained! <&7>(500 cakes)"
                 - playsound <player> sound:ui_toast_challenge_complete
                 - announce "<&e>[Promachos]<&r> <&f><player.name> <&7>has obtained the <&6>Cake Component<&7>!"
 
