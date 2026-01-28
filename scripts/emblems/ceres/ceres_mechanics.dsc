@@ -18,12 +18,12 @@ ceres_hoe_replant:
     events:
         after player breaks wheat|carrots|potatoes|beetroots|nether_wart:
         # Check if holding Ceres Hoe
-        - if <context.item.script.name.if_null[null]> != ceres_hoe:
+        - if <player.item_in_hand.script.name.if_null[null]> != ceres_hoe:
             - stop
 
-        # Get material and age from the broken block
-        - define material <context.location.material.name>
-        - define age <context.location.material.age>
+        # Get material and age from the broken block (context.material stores what was broken)
+        - define material <context.material.name>
+        - define age <context.material.age>
 
         # Check if fully grown (nether_wart max age is 3, others are 7)
         - if <[material]> == nether_wart:
