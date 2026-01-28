@@ -31,6 +31,9 @@ demeter_wheat_tracking:
         - flag player demeter.wheat.count:++
         - define count <player.flag[demeter.wheat.count]>
 
+        # Check for rank-up
+        - run demeter_check_rank def.player:<player>
+
         # Check for key award (every 150)
         - define keys_awarded <player.flag[demeter.wheat.keys_awarded].if_null[0]>
         - define keys_should_have <[count].div[150].round_down>
@@ -72,6 +75,9 @@ demeter_cow_tracking:
         # Increment counter
         - flag <[breeder]> demeter.cows.count:++
         - define count <[breeder].flag[demeter.cows.count]>
+
+        # Check for rank-up
+        - run demeter_check_rank def.player:<[breeder]>
 
         # Check for key award (every 20)
         - define keys_awarded <[breeder].flag[demeter.cows.keys_awarded].if_null[0]>

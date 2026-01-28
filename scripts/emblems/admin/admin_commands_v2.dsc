@@ -46,7 +46,7 @@ demeteradmin_command:
     permission: emblems.admin
     script:
     - if <context.args.size> < 2:
-        - narrate "<&c>Usage: /demeteradmin <player> <keys|set|component|reset> [args...]"
+        - narrate "<&c>Usage: /demeteradmin <player> <keys|set|component|rank|checkrank|reset> [args...]"
         - stop
 
     - define target <server.match_player[<context.args.get[1]>].if_null[null]>
@@ -83,9 +83,11 @@ demeteradmin_command:
                 - case wheat:
                     - flag <[target]> demeter.wheat.count:<[count]>
                     - narrate "<&a>Set <[target].name>'s wheat count to <[count]>"
+                    - run demeter_check_rank def.player:<[target]>
                 - case cows:
                     - flag <[target]> demeter.cows.count:<[count]>
                     - narrate "<&a>Set <[target].name>'s cows count to <[count]>"
+                    - run demeter_check_rank def.player:<[target]>
                 - case cakes:
                     - flag <[target]> demeter.cakes.count:<[count]>
                     - narrate "<&a>Set <[target].name>'s cakes count to <[count]>"
@@ -127,13 +129,40 @@ demeteradmin_command:
                 - default:
                     - narrate "<&c>Invalid component. Use: wheat, cow, or cake"
 
+        # Force set rank
+        - case rank:
+            - if <context.args.size> < 3:
+                - narrate "<&c>Usage: /demeteradmin <player> rank <0|1|2|3>"
+                - stop
+            - define new_rank <context.args.get[3]>
+            - if !<list[0|1|2|3].contains[<[new_rank]>]>:
+                - narrate "<&c>Rank must be 0, 1, 2, or 3"
+                - stop
+            - define old_rank <[target].flag[demeter.rank].if_null[0]>
+            - flag <[target]> demeter.rank:<[new_rank]>
+            - define rank_name <proc[get_demeter_rank_name].context[<[new_rank]>]>
+            - narrate "<&a>Set <[target].name>'s rank from <[old_rank]> to <[new_rank]> (<[rank_name]>)"
+            # Trigger ceremony if rank increased
+            - if <[new_rank]> > <[old_rank]>:
+                - run demeter_rank_up_ceremony def.player:<[target]> def.rank:<[new_rank]>
+
+        # Recalculate rank from counters
+        - case checkrank:
+            - define old_rank <[target].flag[demeter.rank].if_null[0]>
+            - define calculated_rank <proc[get_demeter_rank].context[<[target]>]>
+            - flag <[target]> demeter.rank:<[calculated_rank]>
+            - define rank_name <proc[get_demeter_rank_name].context[<[calculated_rank]>]>
+            - narrate "<&a>Recalculated <[target].name>'s rank: <[old_rank]> -> <[calculated_rank]> (<[rank_name]>)"
+            - if <[calculated_rank]> > <[old_rank]>:
+                - run demeter_rank_up_ceremony def.player:<[target]> def.rank:<[calculated_rank]>
+
         # Reset all Demeter flags
         - case reset:
             - flag <[target]> demeter:!
             - narrate "<&a>Reset all Demeter flags for <[target].name>"
 
         - default:
-            - narrate "<&c>Invalid action. Use: keys, set, component, or reset"
+            - narrate "<&c>Invalid action. Use: keys, set, component, rank, checkrank, or reset"
 
 # ============================================
 # CERES ADMIN COMMAND
