@@ -59,7 +59,7 @@ ceres_wand_use:
             - stop
 
         # Set cooldown
-        - flag player ceres.wand_cooldown expire:30s
+        - flag player ceres.wand_cooldown expire:3m
 
         # Summon 6 bees
         - repeat 6:
@@ -69,7 +69,7 @@ ceres_wand_use:
             - define bee <entry[bee_<[value]>].spawned_entity>
 
             # Flag bee as temporary
-            - flag <[bee]> ceres.temporary expire:30s
+            - flag <[bee]> ceres.temporary expire:20s
 
             # Target nearest hostile (if any)
             - define hostiles <[spawn_loc].find_entities[monster].within[16].filter_tag[<[filter_value].entity_type.is_monster>]>
