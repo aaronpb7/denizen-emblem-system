@@ -74,7 +74,7 @@ ceres_crate_gui:
     type: inventory
     inventory: chest
     gui: true
-    title: <&b>Ceres Vault - Opening...
+    title: <&8>Ceres Vault - Opening...
     size: 27
 
 # ============================================
@@ -177,7 +177,7 @@ award_ceres_loot:
             - playsound <player> sound:block_beacon_activate volume:0.5
 
             # Server announcement
-            - announce "<&b>[CERES]<&r> <&f><player.name> <&7>obtained a unique Ceres item: <&d><[result].get[display]><&7>!"
+            - announce "<&b><&l>OLYMPIAN DROP!<&r> <&f><player.name> <&7>obtained a unique Ceres item<&co> <&d><[result].get[display]><&7>!"
 
             # Track stats
             - flag player ceres.unique_items:++

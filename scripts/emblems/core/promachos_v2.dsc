@@ -104,7 +104,7 @@ promachos_main_menu:
     type: inventory
     inventory: chest
     gui: true
-    title: <&e>Promachos - Herald Menu
+    title: <&8>Promachos - Herald Menu
     size: 27
     definitions:
         filler: <item[gray_stained_glass_pane].with[display_name=<&7>]>
@@ -187,7 +187,7 @@ role_selection_gui:
     type: inventory
     inventory: chest
     gui: true
-    title: <&e>Promachos - Choose Your Path
+    title: <&8>Promachos - Choose Your Path
     size: 27
     definitions:
         filler: <item[gray_stained_glass_pane].with[display_name=<&7>]>
@@ -213,8 +213,7 @@ promachos_gui_events:
         - inventory open d:role_selection_gui
 
         after player clicks promachos_system_info_button in promachos_main_menu:
-        - inventory close
-        - run promachos_system_info
+        - inventory open d:system_info_gui
 
         # Role selection clicks
         after player clicks promachos_farming_role_button in role_selection_gui:
@@ -227,6 +226,10 @@ promachos_gui_events:
         - run set_player_role def:COMBAT
 
         after player clicks promachos_back_button in role_selection_gui:
+        - inventory open d:promachos_main_menu
+
+        # System info menu clicks
+        after player clicks system_info_back_button in system_info_gui:
         - inventory open d:promachos_main_menu
 
 # ============================================
@@ -268,29 +271,130 @@ set_player_role:
     - playsound <player> sound:block_enchantment_table_use
 
 # ============================================
-# SYSTEM INFO MESSAGE
+# SYSTEM INFO GUI
 # ============================================
 
-promachos_system_info:
-    type: task
-    script:
-    - narrate "<&7><&m>                                        <&r>"
-    - narrate "<&e><&l>Emblem System Overview<&r>"
-    - narrate ""
-    - narrate "<&6>Roles:<&7> Choose one path to pursue at a time."
-    - narrate "<&7>Only your active role earns progress and keys."
-    - narrate ""
-    - narrate "<&6>Activities:<&7> Perform tasks related to your role."
-    - narrate "<&7>Earn keys frequently, unlock components at milestones."
-    - narrate ""
-    - narrate "<&6>Emblems:<&7> Collect all components, then return to me."
-    - narrate "<&7>I will unlock the emblem and reveal the next path."
-    - narrate ""
-    - narrate "<&6>Keys:<&7> Use keys anytime to open crates."
-    - narrate "<&7>Keys can be traded or saved regardless of your role."
-    - narrate ""
-    - narrate "<&8>Type <&e>/profile<&8> to view your progress."
-    - narrate "<&7><&m>                                        <&r>"
+system_info_roles:
+    type: item
+    material: compass
+    display name: <&6><&l>Roles
+    lore:
+    - <&7><&o>"Three paths diverge before you..."
+    - <empty>
+    - <&e>How It Works<&co>
+    - <&7>Pick <&6>Georgos<&7>, <&6>Metallourgos<&7>, or <&6>Hoplites<&7>.
+    - <&7>Your active role determines which
+    - <&7>activities count toward progression.
+    - <empty>
+    - <&6>Important<&co>
+    - <&7>• Only one role active at a time
+    - <&7>• Switch anytime by clicking me
+    - <&7>• Keys and flags persist across changes
+
+system_info_activities:
+    type: item
+    material: diamond_pickaxe
+    display name: <&6><&l>Activities
+    mechanisms:
+        hides: ALL
+    lore:
+    - <&7><&o>"Prove your devotion through sacred labor..."
+    - <empty>
+    - <&e>What You Do<&co>
+    - <&7>Complete tasks specific to your role.
+    - <&7>Progress is tracked automatically.
+    - <empty>
+    - <&6>Georgos (Farmer)<&co>
+    - <&7>Harvest wheat, breed cows, craft cakes
+    - <empty>
+    - <&6>Metallourgos & Hoplites<&co>
+    - <&7>Activities coming soon!
+    - <empty>
+    - <&8>Keys drop every 150 wheat, 20 cows, 3 cakes
+
+system_info_emblems:
+    type: item
+    material: nether_star
+    display name: <&6><&l>Emblems
+    lore:
+    - <&7><&o>"Symbols of divine favor and mastery..."
+    - <empty>
+    - <&e>How to Unlock<&co>
+    - <&7>Each emblem needs 3 components.
+    - <&7>Get components by hitting milestones.
+    - <&7>Once all 3 are done, click me.
+    - <empty>
+    - <&6>Demeter's Emblem<&co>
+    - <&7>• 15,000 wheat = Wheat Component
+    - <&7>• 2,000 cows = Cow Component
+    - <&7>• 300 cakes = Cake Component
+    - <empty>
+    - <&8>Check progress with /profile → Emblems
+
+system_info_crates:
+    type: item
+    material: tripwire_hook
+    display name: <&6><&l>Crates & Keys
+    lore:
+    - <&7><&o>"Fortune's gifts await the worthy..."
+    - <empty>
+    - <&e>How to Use<&co>
+    - <&7>You get keys from doing activities.
+    - <&7>Right-click a key on any block to open.
+    - <&7>Watch the animation, claim your loot!
+    - <empty>
+    - <&6>Demeter Keys<&co>
+    - <&7>5 rarity tiers from common to olympian
+    - <&7>Loot includes food, blocks, XP, more keys
+    - <empty>
+    - <&8>Keys work even if you switch roles
+
+system_info_progression:
+    type: item
+    material: writable_book
+    display name: <&6><&l>Track Progress
+    lore:
+    - <&7><&o>"Know thyself and chart your journey..."
+    - <empty>
+    - <&e>Use /profile<&co>
+    - <&7>Type <&e>/profile<&7> to open your GUI.
+    - <&7>It shows your current role, emblem
+    - <&7>status, and server news.
+    - <empty>
+    - <&6>Click Emblems to see<&co>
+    - <&7>• Component completion status
+    - <&7>• Progress counters (wheat/cows/cakes)
+    - <&7>• Unlock ceremonies when ready
+    - <empty>
+    - <&8>Everything updates live as you play
+
+system_info_gui:
+    type: inventory
+    inventory: chest
+    gui: true
+    title: <&8>Promachos - System Guide
+    size: 45
+    definitions:
+        filler: <item[gray_stained_glass_pane].with[display_name=<&7>]>
+        roles: <item[system_info_roles]>
+        activities: <item[system_info_activities]>
+        emblems: <item[system_info_emblems]>
+        crates: <item[system_info_crates]>
+        progression: <item[system_info_progression]>
+        back: <item[system_info_back_button]>
+    slots:
+    - [filler] [filler] [filler] [filler] [filler] [filler] [filler] [filler] [filler]
+    - [filler] [filler] [roles] [filler] [activities] [filler] [emblems] [filler] [filler]
+    - [filler] [filler] [filler] [filler] [filler] [filler] [filler] [filler] [filler]
+    - [filler] [filler] [crates] [filler] [filler] [filler] [progression] [filler] [filler]
+    - [back] [filler] [filler] [filler] [filler] [filler] [filler] [filler] [filler]
+
+system_info_back_button:
+    type: item
+    material: arrow
+    display name: <&e>← Back
+    lore:
+    - <&7>Return to Promachos
 
 # ============================================
 # EMBLEM CHECK GUI
@@ -300,8 +404,8 @@ emblem_check_gui:
     type: inventory
     inventory: chest
     gui: true
-    title: <&e>Promachos - Emblem Progress
-    size: 45
+    title: <&8>Emblem Progress
+    size: 27
     procedural items:
     - determine <proc[get_emblem_check_items]>
 
@@ -312,19 +416,16 @@ get_emblem_check_items:
 
     # Filler
     - define filler <item[gray_stained_glass_pane].with[display_name=<&7>]>
-    - repeat 45:
+    - repeat 27:
         - define items <[items].include[<[filler]>]>
 
-    # Row 1: Primary gods
+    # Row 2: Three emblems centered (slots 12, 14, 16)
     - define items <[items].set[<proc[get_demeter_emblem_status_item]>].at[12]>
     - define items <[items].set[<proc[get_hephaestus_emblem_status_item]>].at[14]>
     - define items <[items].set[<proc[get_heracles_emblem_status_item]>].at[16]>
 
-    # Row 2: Component details
-    - define items <[items].set[<proc[get_demeter_component_display_item]>].at[21]>
-
-    # Back button (bottom left slot 37)
-    - define items <[items].set[<item[emblem_check_back_button]>].at[37]>
+    # Back button (bottom left slot 19)
+    - define items <[items].set[<item[emblem_check_back_button]>].at[19]>
 
     - determine <[items]>
 
@@ -342,42 +443,39 @@ get_demeter_emblem_status_item:
     # Check if unlocked
     - if <player.has_flag[demeter.emblem.unlocked]>:
         - define lore <list>
-        - define lore <[lore].include[<&a>UNLOCKED]>
+        - define lore <[lore].include[<&2>UNLOCKED]>
         - define lore <[lore].include[<empty>]>
         - define lore <[lore].include[<&7>Symbol of agricultural mastery.]>
-        - determine <item[enchanted_golden_apple].with[display_name=<&6><&l>Demeter's Emblem<&r> <&a>✓;lore=<[lore]>]>
+        - determine <item[enchanted_golden_apple].with[display_name=<&6><&l>Demeter's Emblem<&r> <&2>✓;lore=<[lore]>]>
 
     # Check if ready
     - if <proc[check_demeter_components_complete]>:
         - determine <item[demeter_emblem_ready]>
 
-    # In progress
-    - define wheat_count <player.flag[demeter.wheat.count].if_null[0]>
-    - define cows_count <player.flag[demeter.cows.count].if_null[0]>
-    - define cakes_count <player.flag[demeter.cakes.count].if_null[0]>
-
+    # In progress - high level overview
     - define wheat_complete <player.has_flag[demeter.component.wheat]>
     - define cow_complete <player.has_flag[demeter.component.cow]>
     - define cake_complete <player.has_flag[demeter.component.cake]>
 
-    - define lore <list>
-    - define lore <[lore].include[<&7>Components:]>
+    - define components_done 0
     - if <[wheat_complete]>:
-        - define lore <[lore].include[<&a>✓ Wheat Component <&7>(<[wheat_count]>/15000)]>
-    - else:
-        - define lore <[lore].include[<&c>✗ Wheat Component <&7>(<[wheat_count]>/15000)]>
-
+        - define components_done <[components_done].add[1]>
     - if <[cow_complete]>:
-        - define lore <[lore].include[<&a>✓ Cow Component <&7>(<[cows_count]>/2000)]>
-    - else:
-        - define lore <[lore].include[<&c>✗ Cow Component <&7>(<[cows_count]>/2000)]>
-
+        - define components_done <[components_done].add[1]>
     - if <[cake_complete]>:
-        - define lore <[lore].include[<&a>✓ Cake Component <&7>(<[cakes_count]>/300)]>
-    - else:
-        - define lore <[lore].include[<&c>✗ Cake Component <&7>(<[cakes_count]>/300)]>
+        - define components_done <[components_done].add[1]>
 
-    - determine <item[wheat].with[display_name=<&6><&l>Demeter's Emblem<&r> <&7>In Progress;lore=<[lore]>]>
+    - define lore <list>
+    - define lore <[lore].include[<&7><&o>"Emblem of agricultural mastery"]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&e>Progress<&co> <&7><[components_done]>/3 components]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&7>Complete three sacred activities]>
+    - define lore <[lore].include[<&7>to unlock Demeter's blessing.]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&e>Click for detailed progress]>
+
+    - determine <item[wheat].with[display_name=<&6><&l>Demeter's Emblem;lore=<[lore]>]>
 
 demeter_emblem_ready:
     type: item
@@ -387,7 +485,7 @@ demeter_emblem_ready:
     - <&e>READY TO UNLOCK!
     - <empty>
     - <&7>All components obtained!
-    - <&a>Click to unlock this emblem.
+    - <&2>Click to unlock this emblem.
     enchantments:
     - mending:1
     mechanisms:
@@ -415,32 +513,6 @@ get_heracles_emblem_status_item:
     - define lore <[lore].include[<&8><&o>to begin this path.]>
     - determine <item[gray_dye].with[display_name=<&8>???;lore=<[lore]>]>
 
-# Demeter component detail display
-get_demeter_component_display_item:
-    type: procedure
-    script:
-    - define wheat_count <player.flag[demeter.wheat.count].if_null[0]>
-    - define cows_count <player.flag[demeter.cows.count].if_null[0]>
-    - define cakes_count <player.flag[demeter.cakes.count].if_null[0]>
-
-    - define wheat_keys <player.flag[demeter.wheat.keys_awarded].if_null[0]>
-    - define cows_keys <player.flag[demeter.cows.keys_awarded].if_null[0]>
-    - define cakes_keys <player.flag[demeter.cakes.keys_awarded].if_null[0]>
-
-    - define lore <list>
-    - define lore <[lore].include[<&e>Demeter Progress]>
-    - define lore <[lore].include[<empty>]>
-    - define lore <[lore].include[<&6>Wheat: <&7><[wheat_count]> / 15,000]>
-    - define lore <[lore].include[<&8>Keys earned: <[wheat_keys]>]>
-    - define lore <[lore].include[<empty>]>
-    - define lore <[lore].include[<&6>Cows: <&7><[cows_count]> / 2,000]>
-    - define lore <[lore].include[<&8>Keys earned: <[cows_keys]>]>
-    - define lore <[lore].include[<empty>]>
-    - define lore <[lore].include[<&6>Cakes: <&7><[cakes_count]> / 300]>
-    - define lore <[lore].include[<&8>Keys earned: <[cakes_keys]>]>
-
-    - determine <item[writable_book].with[display_name=<&e>Component Progress;lore=<[lore]>]>
-
 # Check if all Demeter components complete
 check_demeter_components_complete:
     type: procedure
@@ -460,9 +532,6 @@ emblem_check_gui_clicks:
         after player clicks demeter_emblem_ready in emblem_check_gui:
         - run demeter_emblem_unlock_ceremony
 
-        after player clicks emblem_check_back_button in emblem_check_gui:
-        - inventory open d:profile_inventory
-
 demeter_emblem_unlock_ceremony:
     type: task
     script:
@@ -479,7 +548,7 @@ demeter_emblem_unlock_ceremony:
     - narrate "<&e><&l>Promachos<&r><&7>: The goddess of harvest smiles upon you. Receive her emblem!"
     - wait 3s
 
-    - narrate "<&e><&l>Promachos<&r><&a>You have unlocked the <&6><&l>Emblem of Demeter<&a>!"
+    - narrate "<&e><&l>Promachos<&r><&2>You have unlocked the <&6><&l>Emblem of Demeter<&2>!"
 
     # Set flags
     - flag player demeter.emblem.unlocked:true

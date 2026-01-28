@@ -3,12 +3,12 @@
 # ============================================
 #
 # Tiered ranks earned by reaching cumulative wheat/cow thresholds (BOTH required)
-# Unlocks passive farming bonuses: haste, extra crops, twin breeding
+# Unlocks passive farming bonuses: speed, extra crops, twin breeding
 #
 # Rank Requirements:
-#   Acolyte:  2,500 wheat + 50 cows   → Haste I, +5% crops
-#   Disciple: 12,000 wheat + 300 cows → Haste II, +20% crops, 10% twins
-#   Hero:     50,000 wheat + 700 cows → Haste II, +50% crops, 30% twins
+#   Acolyte:  2,500 wheat + 50 cows   → Speed I, +5% crops
+#   Disciple: 12,000 wheat + 300 cows → Speed II, +20% crops, 10% twins
+#   Hero:     50,000 wheat + 700 cows → Speed II, +50% crops, 30% twins
 #
 
 # ============================================
@@ -147,11 +147,11 @@ demeter_rank_up_ceremony:
     - playeffect effect:COMPOSTER at:<[player].location> quantity:30 offset:0.5,1,0.5
     - playsound <[player]> sound:UI_TOAST_CHALLENGE_COMPLETE volume:1 pitch:1
     # Title announcement
-    - title title:<&6><&l>RANK<&sp>UP! subtitle:<&a><[rank_name]> targets:<[player]> fade_in:10t stay:70t fade_out:20t
+    - title title:<&6><&l>DEMETER<&sp>RANK<&sp>UP! subtitle:<&e><[rank_name]> targets:<[player]> fade_in:10t stay:70t fade_out:20t
     # Chat message
     - narrate "<&6>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" targets:<[player]>
     - narrate "<&e><&l>⚜ DEMETER RANK ACHIEVED ⚜" targets:<[player]>
-    - narrate "<&a>You have become: <&f><[rank_name]>" targets:<[player]>
+    - narrate "<&7>You have become<&co> <&6><[rank_name]>" targets:<[player]>
     - narrate "" targets:<[player]>
     # Show rewards based on rank
     - define haste <proc[get_farming_speed_bonus].context[<[rank]>]>
@@ -159,21 +159,21 @@ demeter_rank_up_ceremony:
     - define twins <proc[get_twin_breeding_chance].context[<[rank]>]>
     - narrate "<&b>Rewards Unlocked:" targets:<[player]>
     - if <[haste]> >= 0:
-        - narrate "<&7>• <&f>Farming Speed: <&a>Haste <[haste].add[1]>" targets:<[player]>
+        - narrate "<&7>• <&f>Farming Speed: <&e>Speed <[haste].add[1]>" targets:<[player]>
     - if <[crops]> > 0:
-        - narrate "<&7>• <&f>Extra Crop Chance: <&a>+<[crops]>%" targets:<[player]>
+        - narrate "<&7>• <&f>Extra Crop Chance: <&e>+<[crops]>%" targets:<[player]>
     - if <[twins]> > 0:
-        - narrate "<&7>• <&f>Twin Breeding Chance: <&a><[twins]>%" targets:<[player]>
+        - narrate "<&7>• <&f>Twin Breeding Chance: <&e><[twins]>%" targets:<[player]>
     - narrate "<&6>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" targets:<[player]>
     # Server-wide announcement
-    - announce "<&e>[Promachos]<&r> <&f><[player].name> <&7>has achieved the rank of <&a><[rank_name]><&7>!"
+    - announce "<&e>[Promachos]<&r> <&f><[player].name> <&7>has achieved <&6><[rank_name]><&7>!"
 
 # ============================================
 # RANK BONUS HANDLERS
 # ============================================
 
-# Apply farming haste when breaking crops (for ranked players)
-demeter_farming_haste:
+# Apply farming speed when breaking crops (for ranked players)
+demeter_farming_speed:
     type: world
     debug: false
     events:
@@ -181,12 +181,12 @@ demeter_farming_haste:
         # Role gate
         - if <player.flag[role.active]> != FARMING:
             - stop
-        # Get rank and apply haste if qualified
+        # Get rank and apply speed if qualified
         - define rank <player.flag[demeter.rank].if_null[0]>
         - if <[rank]> > 0:
-            - define haste_amp <proc[get_farming_speed_bonus].context[<[rank]>]>
-            - if <[haste_amp]> >= 0:
-                - cast haste <player> duration:5s amplifier:<[haste_amp]> no_icon hide_particles
+            - define speed_amp <proc[get_farming_speed_bonus].context[<[rank]>]>
+            - if <[speed_amp]> >= 0:
+                - cast speed <player> duration:5s amplifier:<[speed_amp]> no_icon hide_particles
 
 # Apply extra crop drops on wheat harvest (for ranked players)
 demeter_extra_crops:
@@ -232,4 +232,4 @@ demeter_twin_breeding:
                 # Effects for twin birth
                 - playeffect effect:HEART at:<[parent].location.add[0,1,0]> quantity:10 offset:0.5
                 - playsound <[breeder]> sound:ENTITY_COW_AMBIENT volume:1 pitch:1.5
-                - narrate "<&a>✦ <&e>Demeter's blessing grants twin calves! <&a>✦" targets:<[breeder]>
+                - narrate "<&e>✦ Demeter's blessing grants twin calves! ✦" targets:<[breeder]>

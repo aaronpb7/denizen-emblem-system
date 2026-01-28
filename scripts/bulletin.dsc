@@ -7,7 +7,7 @@
 
 bulletin_data:
     type: data
-    version: 2
+    version: 3
 
 # ==================== JOIN EVENT ====================
 
@@ -37,7 +37,7 @@ bulletin_inventory:
     size: 45
     slots:
     - [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler]
-    - [bulletin_filler] [bulletin_welcome] [bulletin_filler] [bulletin_emblems] [bulletin_filler] [bulletin_promachos] [bulletin_filler] [bulletin_house] [bulletin_filler]
+    - [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_promachos_new] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler]
     - [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler]
     - [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler]
     - [bulletin_back_button] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler]
@@ -54,67 +54,30 @@ bulletin_back_button:
     lore:
     - <&7>Return to profile
 
-bulletin_welcome:
+bulletin_promachos_new:
     type: item
-    material: oak_sign
-    display name: <&a><&l>20/01 - Welcome!
+    material: writable_book
+    display name: <&e><&l>28/01 - Promachos Arrives!
     lore:
-    - <&7>Welcome to the server!
-    - " "
-    - <&7>We've added a new progression
-    - <&7>system featuring <&e>Emblems<&7>.
-    - " "
-    - <&7>Complete challenges to earn
-    - <&7>powerful rewards and prove
-    - <&7>your dedication to the gods!
-
-bulletin_emblems:
-    type: item
-    material: nether_star
-    display name: <&6><&l>20/01 - Three New Emblems
-    lore:
-    - <&7>Three emblem paths are now available<&co>
-    - " "
-    - <&f>Forgeheart Emblem <&8>- <&7>Hephaestus
-    - <&7>  Mining, golems, and forge mastery
-    - " "
-    - <&f>Verdant Oath Emblem <&8>- <&7>Demeter
-    - <&7>  Farming, breeding, and harvest
-    - " "
-    - <&f>Trial of Might Emblem <&8>- <&7>Heracles
-    - <&7>  Raids, combat, and conquest
-    - " "
-    - <&e>Each has 5 stages with XP rewards!
-
-bulletin_promachos:
-    type: item
-    material: player_head
-    display name: <&e><&l>20/01 - Meet Promachos
-    lore:
-    - <&7>Find the NPC <&e>Promachos <&7>at spawn!
-    - " "
-    - <&7>He is the guardian of the
-    - <&7>forgotten emblems and will<&co>
-    - " "
-    - <&f>• <&7>Introduce you to the emblem system
-    - <&f>• <&7>Trade materials for progression
-    - <&f>• <&7>Exchange final items for emblems
-    - " "
-    - <&e>Speak to him to get started!
-
-bulletin_house:
-    type: item
-    material: bricks
-    display name: <&6><&l>27/01 - A Home for Promachos
-    lore:
-    - <&7>Promachos is seeking brave adventurers
-    - <&7>to help build him a proper house!
-    - " "
-    - <&7>He has wandered the lands for ages
-    - <&7>and dreams of a place to call home.
-    - " "
-    - <&e>All who contribute will receive
-    - <&e>a special reward for their efforts!
+    - <&7><&o>"A herald of the gods walks among mortals..."
+    - <empty>
+    - <&6>New NPC at Spawn<&co> <&e>Promachos
+    - <&7>An ancient herald who guards the
+    - <&7>secrets of forgotten emblems.
+    - <empty>
+    - <&e>What Awaits You<&co>
+    - <&6>Roles <&8>- <&7>Choose your sacred path
+    - <&7>  Farmer, Miner, or Warrior?
+    - <empty>
+    - <&6>Emblems <&8>- <&7>Unlock divine symbols
+    - <&7>  Complete challenges to earn them
+    - <empty>
+    - <&6>Keys <&8>- <&7>Open mystical crates
+    - <&7>  Earn rewards as you progress
+    - <empty>
+    - <&6>And More <&8>- <&7>Discover as you explore!
+    - <empty>
+    - <&8>Find Promachos to begin your legend
 
 # ==================== PROFILE ICON ====================
 
