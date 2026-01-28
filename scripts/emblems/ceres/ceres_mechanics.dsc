@@ -70,7 +70,7 @@ ceres_wand_use:
 
             # Flag bee as temporary and link to player
             - flag <[bee]> ceres.temporary expire:20s
-            - flag <[bee]> ceres.owner:<player>
+            - flag <[bee]> ceres.owner:<player.uuid>
 
             # Target nearest hostile (if any)
             - define hostiles <[spawn_loc].find_entities[monster].within[16].filter_tag[<[filter_value].entity_type.is_monster>]>
@@ -88,14 +88,19 @@ ceres_bee_redirect:
     debug: false
     events:
         after player damages entity:
+        # Don't target other players
+        - if <context.entity.is_player.if_null[false]>:
+            - stop
+
         # Find all bees owned by this player
-        - define player_bees <player.location.find_entities[bee].within[32].filter[has_flag[ceres.owner]].filter[flag[ceres.owner].equals[<player>]]>
+        - define player_bees <player.location.find_entities[bee].within[32].filter[has_flag[ceres.owner]].filter[flag[ceres.owner].equals[<player.uuid>]]>
         - if <[player_bees].size> == 0:
             - stop
 
         # Redirect all bees to attack the damaged entity
         - foreach <[player_bees]> as:bee:
-            - attack <[bee]> target:<context.entity>
+            - if <[bee].is_spawned.if_null[false]>:
+                - attack <[bee]> target:<context.entity>
 
 # Bee cleanup task
 ceres_bee_cleanup:
