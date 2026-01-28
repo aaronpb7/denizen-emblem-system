@@ -6,6 +6,7 @@
 
 netherite_restriction:
     type: world
+    debug: false
     events:
         on player smiths item:
         # Check if result is a netherite item

@@ -18,11 +18,6 @@ demeter_key_usage:
         on player right clicks block with:demeter_key:
         - determine cancelled passively
 
-        # Temporary OP-only restriction
-        - if !<player.is_op>:
-            - narrate "<&e>Crate system coming soon!"
-            - stop
-
         # Roll tier and loot BEFORE taking key (safer)
         - define tier_result <proc[roll_demeter_tier]>
         - define tier <[tier_result].get[1]>

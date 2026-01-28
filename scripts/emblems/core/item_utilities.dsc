@@ -9,6 +9,7 @@
 # Usage: - run give_item_to_player def:<player>|<item>|<quantity>
 give_item_to_player:
     type: task
+    debug: false
     definitions: player|item|quantity
     script:
     - inventory add d:<[player].inventory> o:<[item]> quantity:<[quantity]>
@@ -17,6 +18,7 @@ give_item_to_player:
 # Usage: - run give_item def:<item>|<quantity>
 give_item:
     type: task
+    debug: false
     definitions: item|quantity
     script:
     - give <[item]> quantity:<[quantity]>

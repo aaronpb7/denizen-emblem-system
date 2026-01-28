@@ -135,12 +135,11 @@ Players may still:
 
 **Counter Flag**: `demeter.cakes.count`
 
-**Key Threshold**: Every 3 cakes
+**Key Threshold**: Every 5 cakes
 - Flag: `demeter.cakes.keys_awarded`
-- Logic: Same as wheat (multiples of 3)
-- **Note**: Very fast key generation (intentional for cooking-focused players)
+- Logic: Same as wheat (multiples of 5)
 
-**Component Milestone**: 300 cakes
+**Component Milestone**: 500 cakes
 - Flag: `demeter.component.cake`
 - Award: Cake Component item (or flag)
 - Once-only check
@@ -148,12 +147,12 @@ Players may still:
 **Feedback**:
 - On key award:
   ```
-  <&e><&l>DEMETER KEY!<&r> <&7>Cakes crafted: <&a><cakes.count><&7>/300
+  <&e><&l>DEMETER KEY!<&r> <&7>Cakes crafted: <&a><cakes.count><&7>/500
   ```
 
 - On component milestone:
   ```
-  <&6><&l>MILESTONE!<&r> <&e>Cake Component obtained! <&7>(300 cakes)
+  <&6><&l>MILESTONE!<&r> <&e>Cake Component obtained! <&7>(500 cakes)
   ```
   - Server announce
 
@@ -247,7 +246,7 @@ Components may be implemented as **physical items** or **flags only**. Recommend
 ```
 <&6>LEGENDARY
 
-<&7>Symbol of 300 cakes crafted.
+<&7>Symbol of 500 cakes crafted.
 <&7>Required for Demeter's Emblem.
 
 <&8><&o>Obtained: <date>
@@ -278,7 +277,7 @@ Cows: [██████████] 2,000 / 2,000  (100%)
   ├─ Keys earned: 100
   └─ Component: ✓ OBTAINED
 
-Cakes: [███░░░░░░░] 95 / 300  (32%)
+Cakes: [███░░░░░░░] 95 / 500  (19%)
   ├─ Keys earned: 31
   └─ Component: ✗ Not yet obtained
 ```
@@ -436,23 +435,23 @@ demeter_cake_tracking:
         - if <player.flag[role.active]> != FARMING:
             - stop
 
-        # Increment counter (context.item.quantity for bulk crafts)
-        - define craft_amount <context.item.quantity>
+        # Increment counter (context.amount handles shift-click)
+        - define craft_amount <context.amount>
         - flag player demeter.cakes.count:+:<[craft_amount]>
         - define count <player.flag[demeter.cakes.count]>
 
-        # Key award (every 3)
+        # Key award (every 5)
         - define keys_awarded <player.flag[demeter.cakes.keys_awarded].if_null[0]>
-        - define keys_should_have <[count].div[3].round_down>
+        - define keys_should_have <[count].div[5].round_down>
         - if <[keys_should_have]> > <[keys_awarded]>:
             - define keys_to_give <[keys_should_have].sub[<[keys_awarded]>]>
             - give demeter_key quantity:<[keys_to_give]>
             - flag player demeter.cakes.keys_awarded:<[keys_should_have]>
-            - narrate "<&e><&l>DEMETER KEY!<&r> <&7>Cakes: <&a><[count]><&7>/300"
+            - narrate "<&e><&l>DEMETER KEY!<&r> <&7>Cakes: <&a><[count]><&7>/500"
             - playsound <player> sound:entity_experience_orb_pickup
 
-        # Component milestone (300)
-        - if <[count]> >= 300 && !<player.has_flag[demeter.component.cake]>:
+        # Component milestone (500)
+        - if <[count]> >= 500 && !<player.has_flag[demeter.component.cake]>:
             - flag player demeter.component.cake:true
             - narrate "<&6><&l>MILESTONE!<&r> <&e>Cake Component obtained!"
             - playsound <player> sound:ui_toast_challenge_complete
@@ -471,8 +470,8 @@ demeter_cake_tracking:
 4. Continue to 15,000 → Receives Wheat Component + 100 keys total
 5. Breed 20 cows → Receives 1 key
 6. Continue to 2,000 → Receives Cow Component + 100 keys total
-7. Craft 3 cakes → Receives 1 key
-8. Continue to 300 → Receives Cake Component + 100 keys total
+7. Craft 5 cakes → Receives 1 key
+8. Continue to 500 → Receives Cake Component + 100 keys total
 9. Visit Promachos → Unlock Demeter emblem
 
 ### Scenario 2: Role Switching
@@ -493,7 +492,7 @@ demeter_cake_tracking:
 
 1. Player shift-clicks to craft 8 cakes at once
 2. Counter increments by 8 (not 1)
-3. If counter was 295, now 303 → Awards 2 keys (for 297 and 300)
+3. If counter was 48, now 56 → Awards 1 key (for reaching 50)
 
 ---
 

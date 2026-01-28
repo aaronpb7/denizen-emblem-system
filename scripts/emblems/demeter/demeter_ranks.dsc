@@ -90,14 +90,11 @@ farming_xp_rates:
         hoglin: 12
     # Food crafting
     foods:
-        bread: 3
-        cookie: 4
         cake: 12
         pumpkin_pie: 10
-        mushroom_stew: 5
+        mushroom_stew: 4
         rabbit_stew: 15
         beetroot_soup: 6
-        honey_bottle: 3
         suspicious_stew: 8
 
 # ============================================
@@ -106,7 +103,8 @@ farming_xp_rates:
 
 # Award farming XP to player (centralized handler)
 award_farming_xp:
-    type: procedure
+    type: task
+    debug: false
     definitions: player|amount|source
     script:
     # Role gate - only FARMING role gains XP
@@ -167,6 +165,16 @@ get_farming_rank_name:
         - default:
             - determine "Unranked"
 
+# Get rank data for a rank level
+get_farming_rank_data:
+    type: procedure
+    definitions: rank
+    script:
+    - if <[rank]> >= 1 && <[rank]> <= 5:
+        - determine <script[farming_rank_data].data_key[ranks.<[rank]>]>
+    - else:
+        - determine <map[xp_total=1000]>
+
 # Get haste amplifier for rank (-1 = no haste, 0 = Speed I, 1 = Speed II)
 get_farming_speed_bonus:
     type: procedure
@@ -205,6 +213,7 @@ get_extra_crop_chance:
 
 farming_rank_up_ceremony:
     type: task
+    debug: false
     definitions: player|rank
     script:
     - define rank_name <proc[get_farming_rank_name].context[<[rank]>]>
@@ -239,7 +248,7 @@ farming_rank_up_ceremony:
     - narrate "<&6>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" targets:<[player]>
 
     # Award keys
-    - give demeter_key quantity:<[key_reward]>
+    - give demeter_key quantity:<[key_reward]> player:<[player]>
 
     # Server-wide announcement
     - announce "<&e>[Promachos]<&r> <&f><[player].name> <&7>has achieved <&6><[rank_name]><&7>!"

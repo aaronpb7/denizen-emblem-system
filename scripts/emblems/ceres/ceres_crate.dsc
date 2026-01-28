@@ -19,11 +19,6 @@ ceres_key_usage:
         on player right clicks block with:ceres_key:
         - determine cancelled passively
 
-        # Temporary OP-only restriction
-        - if !<player.is_op>:
-            - narrate "<&e>Crate system coming soon!"
-            - stop
-
         # Roll outcome BEFORE taking key (safer)
         - define result <proc[roll_ceres_outcome]>
 
@@ -339,6 +334,7 @@ roll_ceres_outcome:
 
 award_ceres_loot:
     type: task
+    debug: false
     script:
     # This task is injected, so <[result]> is available from parent context
     - choose <[result].get[type]>:

@@ -78,6 +78,7 @@ ceres_wand_use:
 
 ceres_wand_activate:
     type: task
+    debug: false
     script:
         # Check cooldown
         - if <player.has_flag[ceres.wand_cooldown]>:
@@ -119,7 +120,7 @@ ceres_bee_attack_assist:
     events:
         after player damages entity:
         # Only target monsters
-        - if !<context.entity.entity_type.is_monster>:
+        - if !<context.entity.is_monster>:
             - stop
 
         # Check if player has active bees

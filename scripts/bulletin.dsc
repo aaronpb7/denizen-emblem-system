@@ -13,6 +13,7 @@ bulletin_data:
 
 bulletin_join_handler:
     type: world
+    debug: false
     events:
         on player joins:
         - define current_version <script[bulletin_data].data_key[version]>
@@ -57,27 +58,31 @@ bulletin_back_button:
 bulletin_promachos_new:
     type: item
     material: writable_book
-    display name: <&e><&l>28/01 - Promachos Arrives!
+    display name: <&e><&l>28/01 - Emblem System Launch!
     lore:
     - <&7><&o>"A herald of the gods walks among mortals..."
     - <empty>
-    - <&6>New NPC at Spawn<&co> <&e>Promachos
-    - <&7>An ancient herald who guards the
-    - <&7>secrets of forgotten emblems.
+    - <&6><&l>NEW PROGRESSION SYSTEM
+    - <&7>A complete overhaul to server progression!
+    - <&7>Choose a sacred role and unlock divine rewards.
     - <empty>
-    - <&e>What Awaits You<&co>
-    - <&6>Roles <&8>- <&7>Choose your sacred path
-    - <&7>  Farmer, Miner, or Warrior?
+    - <&e><&l>FARMING ROLE - AVAILABLE NOW!
+    - <&6>Demeter<&7>, Goddess of Harvest
+    - <&7>• Harvest wheat, breed cows, craft cakes
+    - <&7>• Earn <&6>Demeter Keys <&7>from activities
+    - <&7>• Open crates for rewards and upgrades
+    - <&7>• Gain <&e>Farming XP <&7>for permanent buffs
+    - <&7>• Unlock <&d>Ceres Vault <&7>meta-progression
     - <empty>
-    - <&6>Emblems <&8>- <&7>Unlock divine symbols
-    - <&7>  Complete challenges to earn them
+    - <&6>What You Get<&co>
+    - <&7>• Farming Speed (Haste I/II)
+    - <&7>• Extra Crop Drops (+5% to +25%)
+    - <&7>• Mythic tools and consumables
+    - <&7>• Exclusive cosmetic titles
     - <empty>
-    - <&6>Keys <&8>- <&7>Open mystical crates
-    - <&7>  Earn rewards as you progress
+    - <&8><&o>Mining and Combat roles coming soon!
     - <empty>
-    - <&6>And More <&8>- <&7>Discover as you explore!
-    - <empty>
-    - <&8>Find Promachos to begin your legend
+    - <&e>Type /profile to get started!
 
 # ==================== PROFILE ICON ====================
 
@@ -107,6 +112,7 @@ bulletin_icon_new:
 
 open_bulletin:
     type: task
+    debug: false
     script:
     - inventory open d:bulletin_inventory
     # Mark as seen
@@ -117,6 +123,7 @@ open_bulletin:
 
 bulletin_click_handler:
     type: world
+    debug: false
     events:
         after player clicks bulletin_icon in profile_inventory:
         - run open_bulletin
@@ -135,6 +142,7 @@ bulletin_announce_command:
     description: Announce a new bulletin to all online players
     usage: /bulletinannounce
     permission: op
+    debug: false
     script:
     - define players <server.online_players>
     - if <[players].is_empty>:

@@ -26,15 +26,11 @@ promachos_assignment:
 
 promachos_interact:
     type: interact
+    debug: false
     steps:
         1:
             click trigger:
                 script:
-                # Temporary OP-only restriction
-                - if !<player.is_op>:
-                    - narrate "<&e>Emblem system coming soon!"
-                    - stop
-
                 - if !<player.has_flag[met_promachos]>:
                     - run promachos_first_meeting
                 - else:
@@ -46,6 +42,7 @@ promachos_interact:
 
 promachos_first_meeting:
     type: task
+    debug: false
     script:
     # Dialogue sequence (5 parts, 3s delay)
     - narrate "<&e><&l>Promachos<&r><&7>: Greetings, <player.name>. I am Promachos, Herald of the Gods."
@@ -238,6 +235,7 @@ promachos_gui_events:
 
 set_player_role:
     type: task
+    debug: false
     definitions: role
     script:
     # Check if already active
@@ -277,7 +275,7 @@ set_player_role:
 system_info_roles:
     type: item
     material: compass
-    display name: <&6><&l>Roles
+    display name: <&6><&l>Roles & Activities
     lore:
     - <&7><&o>"Three paths diverge before you..."
     - <empty>
@@ -286,87 +284,93 @@ system_info_roles:
     - <&7>Your active role determines which
     - <&7>activities count toward progression.
     - <empty>
-    - <&6>Important<&co>
-    - <&7>• Only one role active at a time
-    - <&7>• Switch anytime by clicking me
-    - <&7>• Keys and flags persist across changes
+    - <&6>Georgos Activities<&co>
+    - <&7>• Harvest wheat → Keys every 150
+    - <&7>• Breed cows → Keys every 20
+    - <&7>• Craft cakes → Keys every 5
+    - <empty>
+    - <&8>Other roles coming soon!
 
-system_info_activities:
+system_info_ranks:
     type: item
-    material: diamond_pickaxe
-    display name: <&6><&l>Activities
+    material: diamond_hoe
+    display name: <&6><&l>Ranks & XP System
     mechanisms:
         hides: ALL
     lore:
-    - <&7><&o>"Prove your devotion through sacred labor..."
+    - <&7><&o>"Rise through mastery, earn divine favor..."
     - <empty>
-    - <&e>What You Do<&co>
-    - <&7>Complete tasks specific to your role.
-    - <&7>Progress is tracked automatically.
+    - <&e>Farming Ranks<&co>
+    - <&7>Acolyte → Disciple → Hero → Champion → Legend
+    - <&7>• Speed I/II while farming
+    - <&7>• +5% to +25% extra crop drops
+    - <&7>• Key rewards at each rank up
     - <empty>
-    - <&6>Georgos (Farmer)<&co>
-    - <&7>Harvest wheat, breed cows, craft cakes
-    - <empty>
-    - <&6>Metallourgos & Hoplites<&co>
-    - <&7>Activities coming soon!
-    - <empty>
-    - <&8>Keys drop every 150 wheat, 20 cows, 3 cakes
+    - <&e>XP Sources<&co>
+    - <&7>Crops<&co> Wheat/carrots/potatoes/beets (2)
+    - <&7>Melons/pumpkins (5), nether wart (3)
+    - <&7>Animals<&co> Cow/sheep/pig (10), horse (30)
+    - <&7>Foods<&co> Cake (12), rabbit stew (15)
+    - <&7>Pumpkin pie (10), suspicious stew (8)
+    - <&8>View rank progress in /profile
 
 system_info_emblems:
     type: item
     material: nether_star
-    display name: <&6><&l>Emblems
+    display name: <&6><&l>Emblems & Components
     lore:
     - <&7><&o>"Symbols of divine favor and mastery..."
     - <empty>
     - <&e>How to Unlock<&co>
     - <&7>Each emblem needs 3 components.
     - <&7>Get components by hitting milestones.
-    - <&7>Once all 3 are done, click me.
+    - <&7>Once all 3 are done, return to me.
     - <empty>
     - <&6>Demeter's Emblem<&co>
     - <&7>• 15,000 wheat = Wheat Component
     - <&7>• 2,000 cows = Cow Component
-    - <&7>• 300 cakes = Cake Component
+    - <&7>• 500 cakes = Cake Component
     - <empty>
-    - <&8>Check progress with /profile → Emblems
+    - <&8>Track progress with /profile → Emblems
 
 system_info_crates:
     type: item
     material: tripwire_hook
-    display name: <&6><&l>Crates & Keys
+    display name: <&6><&l>Crates & Rewards
     lore:
     - <&7><&o>"Fortune's gifts await the worthy..."
     - <empty>
-    - <&e>How to Use<&co>
-    - <&7>You get keys from doing activities.
-    - <&7>Right-click a key on any block to open.
-    - <&7>Watch the animation, claim your loot!
+    - <&e>Demeter Keys<&co>
+    - <&7>Right-click key on any block to open.
+    - <&7>5 rarity tiers → better loot at higher tiers
+    - <&7>Rewards<&co> Food, blocks, XP, Demeter items
     - <empty>
-    - <&6>Demeter Keys<&co>
-    - <&7>5 rarity tiers from common to olympian
-    - <&7>Loot includes food, blocks, XP, more keys
+    - <&e>Special Loot<&co>
+    - <&7>• <&6>Demeter Hoe<&7> - Auto-harvest tool
+    - <&7>• <&6>Demeter Blessing<&7> - Activity boosts
+    - <&7>• <&6>Demeter Title<&7> - Chat prefix
     - <empty>
-    - <&8>Keys work even if you switch roles
+    - <&8>1% chance for Ceres Key (meta-progression)
 
 system_info_progression:
     type: item
-    material: writable_book
-    display name: <&6><&l>Track Progress
+    material: enchanted_golden_apple
+    display name: <&6><&l>Meta-Progression
     lore:
-    - <&7><&o>"Know thyself and chart your journey..."
+    - <&7><&o>"Beyond the gods lies greater glory..."
     - <empty>
-    - <&e>Use /profile<&co>
-    - <&7>Type <&e>/profile<&7> to open your GUI.
-    - <&7>It shows your current role, emblem
-    - <&7>status, and server news.
+    - <&e>Ceres Keys<&co>
+    - <&7>Roman tier above Greek pantheon
+    - <&7>1% drop from Olympian tier crates
+    - <&7>50/50 god apple or unique item
     - <empty>
-    - <&6>Click Emblems to see<&co>
-    - <&7>• Component completion status
-    - <&7>• Progress counters (wheat/cows/cakes)
-    - <&7>• Unlock ceremonies when ready
+    - <&6>Unique Ceres Items<&co>
+    - <&7>• <&b>Ceres Hoe<&7> - Consumes seeds to replant
+    - <&7>• <&b>Ceres Wand<&7> - Summons angry bees
+    - <&7>• <&b>Ceres Title<&7> - [Ceres' Chosen] prefix
+    - <&7>• <&b>Shulker Box<&7> - Portable storage
     - <empty>
-    - <&8>Everything updates live as you play
+    - <&8>Collect all 4, then only god apples drop
 
 system_info_gui:
     type: inventory
@@ -377,16 +381,16 @@ system_info_gui:
     definitions:
         filler: <item[gray_stained_glass_pane].with[display_name=<&7>]>
         roles: <item[system_info_roles]>
-        activities: <item[system_info_activities]>
+        ranks: <item[system_info_ranks]>
         emblems: <item[system_info_emblems]>
         crates: <item[system_info_crates]>
-        progression: <item[system_info_progression]>
+        meta: <item[system_info_progression]>
         back: <item[system_info_back_button]>
     slots:
     - [filler] [filler] [filler] [filler] [filler] [filler] [filler] [filler] [filler]
-    - [filler] [filler] [roles] [filler] [activities] [filler] [emblems] [filler] [filler]
+    - [filler] [filler] [roles] [filler] [ranks] [filler] [emblems] [filler] [filler]
     - [filler] [filler] [filler] [filler] [filler] [filler] [filler] [filler] [filler]
-    - [filler] [filler] [crates] [filler] [filler] [filler] [progression] [filler] [filler]
+    - [filler] [filler] [crates] [filler] [filler] [filler] [meta] [filler] [filler]
     - [back] [filler] [filler] [filler] [filler] [filler] [filler] [filler] [filler]
 
 system_info_back_button:
@@ -534,6 +538,7 @@ emblem_check_gui_clicks:
 
 demeter_emblem_unlock_ceremony:
     type: task
+    debug: false
     script:
     # Close GUI
     - inventory close

@@ -15,6 +15,7 @@ roleadmin_command:
     description: Set player's active role
     usage: /roleadmin (player) (FARMING|MINING|COMBAT)
     permission: emblems.admin
+    debug: false
     script:
     - if <context.args.size> < 2:
         - narrate "<&c>Usage: /roleadmin <player> <FARMING|MINING|COMBAT>"
@@ -44,6 +45,7 @@ farmingadmin_command:
     description: Manage Farming XP and ranks
     usage: /farmingadmin (player) (action) [args...]
     permission: emblems.admin
+    debug: false
     script:
     - if <context.args.size> < 2:
         - narrate "<&c>Usage: /farmingadmin <player> <xp|setxp|rank|reset> [args...]"
@@ -66,7 +68,7 @@ farmingadmin_command:
             - if !<[amount].is_integer>:
                 - narrate "<&c>Amount must be a number"
                 - stop
-            - proc[award_farming_xp].context[<[target]>|<[amount]>|admin_command]
+            - run award_farming_xp def.player:<[target]> def.amount:<[amount]> def.source:admin_command
             - define total <[target].flag[farming.xp].if_null[0]>
             - define rank <[target].flag[farming.rank].if_null[0]>
             - narrate "<&a>Gave <[target].name> <[amount]> XP (Total: <[total]>, Rank: <[rank]>)"
@@ -124,6 +126,7 @@ demeteradmin_command:
     description: Manage Demeter progression
     usage: /demeteradmin (player) (action) [args...]
     permission: emblems.admin
+    debug: false
     script:
     - if <context.args.size> < 2:
         - narrate "<&c>Usage: /demeteradmin <player> <keys|set|component|reset> [args...]"
@@ -227,6 +230,7 @@ ceresadmin_command:
     description: Manage Ceres progression
     usage: /ceresadmin (player) (action) [args...]
     permission: emblems.admin
+    debug: false
     script:
     - if <context.args.size> < 2:
         - narrate "<&c>Usage: /ceresadmin <player> <keys|item|reset> [args...]"
@@ -312,6 +316,7 @@ testroll_command:
     description: Simulate crate roll without consuming key
     usage: /testroll (demeter|ceres)
     permission: emblems.admin
+    debug: false
     script:
     - if <context.args.size> < 1:
         - narrate "<&c>Usage: /testroll <demeter|ceres>"
@@ -341,6 +346,7 @@ emblemreset_command:
     description: Completely reset a player's emblem progression
     usage: /emblemreset (player) [confirm]
     permission: emblems.admin
+    debug: false
     script:
     - if <context.args.size> < 1:
         - narrate "<&c>Usage: /emblemreset <player> [confirm]"
@@ -373,6 +379,7 @@ emblemreset_command:
 
 emblemreset_task:
     type: task
+    debug: false
     definitions: target
     script:
     # Core system flags

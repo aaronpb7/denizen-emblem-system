@@ -75,13 +75,13 @@ Recommend **NETHER_STAR** for visual distinctiveness.
 
 - **Wheat**: 15,000 (component at `demeter.component.wheat`)
 - **Cows**: 2,000 (component at `demeter.component.cow`)
-- **Cakes**: 300 (component at `demeter.component.cake`)
+- **Cakes**: 500 (component at `demeter.component.cake`)
 
 ### Boost Amounts (10% of requirement)
 
 - **Wheat**: +1,500 per use
 - **Cows**: +200 per use
-- **Cakes**: +30 per use
+- **Cakes**: +50 per use
 
 ### Rules
 
@@ -162,7 +162,7 @@ demeter_blessing_use:
         # Boost cakes (if incomplete)
         - if !<player.has_flag[demeter.component.cake]>:
             - define current <player.flag[demeter.cakes.count].if_null[0]>
-            - define new_count <[current].add[30].min[300]>
+            - define new_count <[current].add[50].min[500]>
             - flag player demeter.cakes.count:<[new_count]>
             - define boosted <[boosted].include[<&6>Cakes<&7>: +<[new_count].sub[<[current]>]> (<[current]> → <[new_count]>)]>
 
@@ -190,7 +190,7 @@ demeter_blessing_use:
 <&d><&l>DEMETER BLESSING ACTIVATED!<&r>
   <&6>Wheat<&7>: +1500 (10,000 → 11,500)
   <&6>Cows<&7>: +200 (800 → 1,000)
-  <&6>Cakes<&7>: +30 (150 → 180)
+  <&6>Cakes<&7>: +50 (150 → 200)
 ```
 
 **Note**: Only shows activities that were incomplete
@@ -208,7 +208,7 @@ Sound: `entity_villager_no`
 ```
 <&d><&l>DEMETER BLESSING ACTIVATED!<&r>
   <&6>Wheat<&7>: +500 (14,500 → 15,000) <&a>MAX REACHED
-  <&6>Cakes<&7>: +30 (250 → 280)
+  <&6>Cakes<&7>: +50 (250 → 300)
 ```
 
 **Note**: Wheat was capped at 15,000 (14,500 + 1,500 = 16,000, capped to 15,000)
@@ -229,12 +229,12 @@ Sound: `entity_villager_no`
 **After Use**:
 - Wheat: 15,000 (unchanged)
 - Cows: 2,000 (unchanged)
-- Cakes: 150 (+30)
+- Cakes: 170 (+50)
 
 **Message**:
 ```
 <&d><&l>DEMETER BLESSING ACTIVATED!<&r>
-  <&6>Cakes<&7>: +30 (120 → 150)
+  <&6>Cakes<&7>: +50 (120 → 170)
 ```
 
 ---
@@ -273,7 +273,7 @@ Sound: `entity_villager_no`
 
 **Result**:
 - Each use increments counter by +10%
-- If wheat is 0 → 1,500 → 3,000 → 4,500 → 6,000 → 7,500 after 5 uses
+- If cakes are 0 → 50 → 100 → 150 → 200 → 250 after 5 uses
 - Stackable item means player must click 5 times (1 item consumed per click)
 
 ---
@@ -290,14 +290,14 @@ Sound: `entity_villager_no`
 **After Use**:
 - Wheat: 1,500
 - Cows: 200
-- Cakes: 30
+- Cakes: 50
 
 **Message**:
 ```
 <&d><&l>DEMETER BLESSING ACTIVATED!<&r>
   <&6>Wheat<&7>: +1500 (0 → 1,500)
   <&6>Cows<&7>: +200 (0 → 200)
-  <&6>Cakes<&7>: +30 (0 → 30)
+  <&6>Cakes<&7>: +50 (0 → 50)
 ```
 
 ---
@@ -328,7 +328,7 @@ Sound: `entity_villager_no`
     - narrate "<&6><&l>MILESTONE!<&r> <&e>Wheat Component obtained!"
     - playsound <player> sound:ui_toast_challenge_complete
 
-# Similar for cows (2,000) and cakes (300)
+# Similar for cows (2,000) and cakes (500)
 ```
 
 **Key Award Logic**:
@@ -403,8 +403,8 @@ Sound: `entity_villager_no`
 - Blessing grants +200 breeds → ~10 keys worth
 - Same rarity, same value ratio
 
-**Cakes**: 300 crafts → 100 keys
-- Blessing grants +30 crafts → ~10 keys worth
+**Cakes**: 500 crafts → 100 keys
+- Blessing grants +50 crafts → ~10 keys worth
 - Same rarity, same value ratio
 
 **Conclusion**: Blessing is a **boost/convenience item**, not a farming target. Players use it to skip ~10% of grind per activity.
