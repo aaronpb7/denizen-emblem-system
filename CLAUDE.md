@@ -89,7 +89,10 @@ This project uses Denizen, a scripting language for Minecraft servers.
 - `docs/demeter.md` - Farming role details
 - `docs/demeter_ranks.md` - Rank progression with buffs
 - `docs/crates_demeter.md` - Crate system mechanics
-- `docs/ceres.md` - Meta-progression
+- `docs/ceres.md` - Farming meta-progression
+- `docs/heracles.md` - Combat role details
+- `docs/mars.md` - Combat meta-progression
+- `docs/heracles_CONFIRMED.md` - Finalized design decisions
 - `docs/promachos.md` - NPC interactions
 - `docs/flags.md` - Flag reference
 - `docs/testing.md` - Testing procedures
@@ -108,8 +111,9 @@ scripts/
     │   └── item_utilities.dsc
     ├── demeter/          # FARMING role (✅ complete)
     ├── ceres/            # FARMING meta (✅ complete)
+    ├── heracles/         # COMBAT role (✅ complete)
+    ├── mars/             # COMBAT meta (✅ complete)
     ├── hephaestus/       # MINING role (🚧 placeholder)
-    ├── heracles/         # COMBAT role (🚧 placeholder)
     └── admin/            # Admin commands
 ```
 

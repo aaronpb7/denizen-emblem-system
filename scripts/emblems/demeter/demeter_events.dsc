@@ -21,7 +21,7 @@ farming_crop_harvest:
     events:
         after player breaks wheat|carrots|potatoes|beetroots|nether_wart|cocoa|pumpkin|melon|sugar_cane|cactus|kelp|bamboo:
         # Role gate - only FARMING role counts
-        - if <player.flag[role.active]> != FARMING:
+        - if <player.flag[role.active].if_null[NONE]> != FARMING:
             - stop
 
         # Get material name
@@ -87,7 +87,7 @@ farming_animal_breeding:
             - stop
 
         # Role gate
-        - if <[breeder].flag[role.active]> != FARMING:
+        - if <[breeder].flag[role.active].if_null[NONE]> != FARMING:
             - stop
 
         # Award XP based on animal type
@@ -128,7 +128,7 @@ farming_food_crafting:
     events:
         after player crafts cake|pumpkin_pie|mushroom_stew|rabbit_stew|beetroot_soup|suspicious_stew:
         # Role gate
-        - if <player.flag[role.active]> != FARMING:
+        - if <player.flag[role.active].if_null[NONE]> != FARMING:
             - stop
 
         # Get food name and amount (context.amount handles shift-click)

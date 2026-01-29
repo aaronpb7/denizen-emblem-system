@@ -26,16 +26,17 @@ profile_inventory:
 
 get_profile_items:
     type: procedure
+    debug: false
     script:
     - define items <list>
-    - define filler <item[gray_stained_glass_pane].with[display_name=<&7>]>
+    - define filler <item[gray_stained_glass_pane].with[display=<&7>]>
 
     # Fill all slots with filler
     - repeat 45:
         - define items <[items].include[<[filler]>]>
 
     # Row 1: Player head (centered slot 5)
-    - define head <item[<player.skull_item>].with[display_name=<&2><player.name>;lore=<&7>Welcome to your profile!|<&7>UUID<&co> <&e><player.uuid>]>
+    - define head <item[<player.skull_item>].with[display=<&2><player.name>;lore=<&7>Welcome to your profile!|<&7>UUID<&co> <&e><player.uuid>]>
     - define items <[items].set[<[head]>].at[5]>
 
     # Row 3: Active role (19), Ranks (21), Emblems (23), Cosmetics (25), Bulletin (27) - centered 5-item layout
@@ -78,6 +79,7 @@ open_profile_gui:
 
 get_role_display_item:
     type: procedure
+    debug: false
     script:
     - if !<player.has_flag[role.active]>:
         - define lore <list>
@@ -86,7 +88,7 @@ get_role_display_item:
         - define lore <[lore].include[<&7>You have not chosen a role yet.]>
         - define lore <[lore].include[<empty>]>
         - define lore <[lore].include[<&e>Speak to Promachos to choose]>
-        - determine <item[compass].with[display_name=<&6>No Role Selected;lore=<[lore]>]>
+        - determine <item[compass].with[display=<&6>No Role Selected;lore=<[lore]>]>
 
     - define role <player.flag[role.active]>
     - define display <proc[get_role_display_name].context[<[role]>]>
@@ -132,41 +134,100 @@ get_role_display_item:
         - case COMBAT:
             - define lore <[lore].include[<&e>Patron<&co> <&6><[god]><&7>, Hero of Strength]>
             - define lore "<[lore].include[<&sp>]>"
-            - define lore <[lore].include[<&7>Prove your might through combat.]>
+
+            # Show actual progress stats
+            - define pillagers <player.flag[heracles.pillagers.count].if_null[0]>
+            - define raids <player.flag[heracles.raids.count].if_null[0]>
+            - define emeralds <player.flag[heracles.emeralds.count].if_null[0]>
+            - define keys_pil <player.flag[heracles.pillagers.keys_awarded].if_null[0]>
+            - define keys_raid <player.flag[heracles.raids.count].if_null[0].mul[2]>
+            - define keys_em <player.flag[heracles.emeralds.keys_awarded].if_null[0]>
+            - define keys <[keys_pil].add[<[keys_raid]>].add[<[keys_em]>]>
+            - define xp <player.flag[heracles.xp].if_null[0]>
+            - define rank <proc[get_combat_rank_from_xp].context[<[xp]>]>
+
+            - define lore <[lore].include[<&c>Your<&sp>Progress<&co>]>
+            - define lore <[lore].include[<&7>•<&sp>Pillagers<&sp>slain<&co><&sp><&c><[pillagers].format_number>]>
+            - define lore <[lore].include[<&7>•<&sp>Raids<&sp>defended<&co><&sp><&c><[raids].format_number>]>
+            - define lore <[lore].include[<&7>•<&sp>Emeralds<&sp>traded<&co><&sp><&c><[emeralds].format_number>]>
             - define lore "<[lore].include[<&sp>]>"
-            - define lore <[lore].include[<&6>Your Activities<&co>]>
-            - define lore <[lore].include[<&8><&o>Coming soon...]>
+            - define lore <[lore].include[<&c>Keys<&sp>earned<&co><&sp><&c><[keys]><&sp><&7>Heracles<&sp>Keys]>
+            - define lore <[lore].include[<&c>Combat<&sp>XP<&co><&sp><&c><[xp].format_number><&sp><&7>XP]>
+
+            # Show rank if they have one
+            - if <[rank]> > 0:
+                - define rank_name <proc[get_combat_rank_name].context[<[rank]>]>
+                - define lore <[lore].include[<&c>Rank<&co><&sp><&c><[rank_name]>]>
+            - else:
+                - define lore <[lore].include[<&c>Rank<&co><&sp><&7>Unranked]>
     - define lore "<[lore].include[<&sp>]>"
     - define lore <[lore].include[<&8>Change role by speaking to Promachos]>
 
-    - determine <item[<[icon]>].with[display_name=<&6><&l><[display]>;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+    - determine <item[<[icon]>].with[display=<&6><&l><[display]>;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
 
 get_ranks_icon_item:
     type: procedure
+    debug: false
     script:
-    - define xp <player.flag[farming.xp].if_null[0]>
-    - define rank <player.flag[farming.rank].if_null[0]>
-    - define rank_name <proc[get_farming_rank_name].context[<[rank]>]>
+    - define active_role <player.flag[role.active].if_null[NONE]>
 
-    - define lore <list>
-    - if <[rank]> == 0:
-        - define lore <[lore].include[<&7>No rank achieved yet]>
-        - define lore <[lore].include[<empty>]>
-        - define lore <[lore].include[<&e>Start farming to gain XP!]>
-    - else:
-        - define lore <[lore].include[<&6>Current Rank<&co> <&e><[rank_name]>]>
-        - define lore <[lore].include[<empty>]>
-        - define lore <[lore].include[<&7>Total XP<&co> <&e><[xp].format_number>]>
-    - define lore <[lore].include[<empty>]>
-    - define lore <[lore].include[<&e>Click to view ranks]>
+    # Show farming ranks if FARMING role
+    - if <[active_role]> == FARMING:
+        - define xp <player.flag[farming.xp].if_null[0]>
+        - define rank <proc[get_farming_rank].context[<[xp]>]>
+        - define rank_name <proc[get_farming_rank_name].context[<[rank]>]>
 
-    - if <[rank]> > 0:
-        - determine <item[experience_bottle].with[display_name=<&6><&l>Farming Ranks;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+        - define lore <list>
+        - if <[rank]> == 0:
+            - define lore <[lore].include[<&7>No rank achieved yet]>
+            - define lore <[lore].include[<empty>]>
+            - define lore <[lore].include[<&e>Start farming to gain XP!]>
+        - else:
+            - define lore <[lore].include[<&6>Current Rank<&co> <&e><[rank_name]>]>
+            - define lore <[lore].include[<empty>]>
+            - define lore <[lore].include[<&7>Total XP<&co> <&e><[xp].format_number>]>
+        - define lore <[lore].include[<empty>]>
+        - define lore <[lore].include[<&e>Click to view ranks]>
+
+        - if <[rank]> > 0:
+            - determine <item[experience_bottle].with[display=<&6><&l>Farming Ranks;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+        - else:
+            - determine <item[experience_bottle].with[display=<&6><&l>Farming Ranks;lore=<[lore]>]>
+
+    # Show combat ranks if COMBAT role
+    - else if <[active_role]> == COMBAT:
+        - define xp <player.flag[heracles.xp].if_null[0]>
+        - define rank <proc[get_combat_rank_from_xp].context[<[xp]>]>
+        - define rank_name <proc[get_combat_rank_name].context[<[rank]>]>
+
+        - define lore <list>
+        - if <[rank]> == 0:
+            - define lore <[lore].include[<&7>No<&sp>rank<&sp>achieved<&sp>yet]>
+            - define lore "<[lore].include[<&sp>]>"
+            - define lore <[lore].include[<&e>Start<&sp>fighting<&sp>to<&sp>gain<&sp>XP!]>
+        - else:
+            - define lore <[lore].include[<&c>Current<&sp>Rank<&co><&sp><&c><[rank_name]>]>
+            - define lore "<[lore].include[<&sp>]>"
+            - define lore <[lore].include[<&7>Total<&sp>XP<&co><&sp><&c><[xp].format_number>]>
+        - define lore "<[lore].include[<&sp>]>"
+        - define lore <[lore].include[<&e>Click<&sp>to<&sp>view<&sp>ranks]>
+
+        - if <[rank]> > 0:
+            - determine <item[experience_bottle].with[display=<&c><&l>Combat Ranks;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+        - else:
+            - determine <item[experience_bottle].with[display=<&c><&l>Combat Ranks;lore=<[lore]>]>
+
+    # No role selected - show generic message
     - else:
-        - determine <item[experience_bottle].with[display_name=<&6><&l>Farming Ranks;lore=<[lore]>]>
+        - define lore <list>
+        - define lore <[lore].include[<&7>Choose<&sp>a<&sp>role<&sp>to<&sp>view<&sp>ranks]>
+        - define lore "<[lore].include[<&sp>]>"
+        - define lore <[lore].include[<&e>Speak<&sp>to<&sp>Promachos]>
+        - determine <item[experience_bottle].with[display=<&7><&l>Skill<&sp>Ranks;lore=<[lore]>]>
 
 get_emblems_icon_item:
     type: procedure
+    debug: false
     script:
     - if !<player.has_flag[met_promachos]>:
         - determine <item[profile_emblems_locked]>
@@ -197,6 +258,7 @@ profile_emblems_icon:
 
 get_bulletin_icon_item:
     type: procedure
+    debug: false
     script:
     - define current_version <script[bulletin_data].data_key[version]>
     - define seen_version <player.flag[bulletin.seen_version].if_null[0]>
@@ -232,6 +294,7 @@ profile_bulletin_new:
 
 get_demeter_progress_item:
     type: procedure
+    debug: false
     script:
     - define wheat_count <player.flag[demeter.wheat.count].if_null[0]>
     - define cows_count <player.flag[demeter.cows.count].if_null[0]>
@@ -284,7 +347,7 @@ get_demeter_progress_item:
             - define components <[components].add[1]>
         - define lore <[lore].include[<&6>Emblem: <&7>In Progress (<[components]>/3 components)]>
 
-    - determine <item[wheat].with[display_name=<&e><&l>Demeter;lore=<[lore]>]>
+    - determine <item[wheat].with[display=<&e><&l>Demeter;lore=<[lore]>]>
 
 # ============================================
 # PROFILE CLICK HANDLER
@@ -295,7 +358,14 @@ profile_click_handler:
     debug: false
     events:
         after player clicks experience_bottle in profile_inventory:
-        - inventory open d:farming_ranks_gui
+        - define active_role <player.flag[role.active].if_null[NONE]>
+        - if <[active_role]> == FARMING:
+            - inventory open d:farming_ranks_gui
+        - else if <[active_role]> == COMBAT:
+            - inventory open d:combat_ranks_gui
+        - else:
+            - narrate "<&7>Choose a role first by speaking to Promachos"
+            - playsound <player> sound:entity_villager_no
 
         after player clicks profile_emblems_locked in profile_inventory:
         - narrate "<&7>You must speak to <&e>Promachos <&7>first."
@@ -318,12 +388,19 @@ profile_click_handler:
         # Check if clicking Demeter emblem (wheat item)
         - if <context.item.material.name> == wheat:
             - inventory open d:demeter_progress_gui
+        # Check if clicking Heracles emblem (diamond sword item)
+        - else if <context.item.material.name> == diamond_sword:
+            - inventory open d:heracles_progress_gui
 
         after player clicks emblem_check_back_button in emblem_check_gui:
         - inventory open d:profile_inventory
 
         # Demeter progress GUI clicks
         after player clicks demeter_progress_back_button in demeter_progress_gui:
+        - inventory open d:emblem_check_gui
+
+        # Heracles progress GUI clicks
+        after player clicks heracles_progress_back_button in heracles_progress_gui:
         - inventory open d:emblem_check_gui
 
 # ============================================
@@ -341,9 +418,10 @@ demeter_progress_gui:
 
 get_demeter_progress_items:
     type: procedure
+    debug: false
     script:
     - define items <list>
-    - define filler <item[gray_stained_glass_pane].with[display_name=<&7>]>
+    - define filler <item[gray_stained_glass_pane].with[display=<&7>]>
 
     # Fill all slots
     - repeat 27:
@@ -366,6 +444,7 @@ get_demeter_progress_items:
 
 get_demeter_wheat_progress_item:
     type: procedure
+    debug: false
     script:
     - define count <player.flag[demeter.wheat.count].if_null[0]>
     - define keys <player.flag[demeter.wheat.keys_awarded].if_null[0]>
@@ -395,12 +474,13 @@ get_demeter_wheat_progress_item:
     - define lore <[lore].include[<&8><&o>from Farming XP ranks.]>
 
     - if <[complete]>:
-        - determine <item[wheat].with[display_name=<&e><&l>Wheat Harvest;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+        - determine <item[wheat].with[display=<&e><&l>Wheat Harvest;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
     - else:
-        - determine <item[wheat].with[display_name=<&e><&l>Wheat Harvest;lore=<[lore]>]>
+        - determine <item[wheat].with[display=<&e><&l>Wheat Harvest;lore=<[lore]>]>
 
 get_demeter_cow_progress_item:
     type: procedure
+    debug: false
     script:
     - define count <player.flag[demeter.cows.count].if_null[0]>
     - define keys <player.flag[demeter.cows.keys_awarded].if_null[0]>
@@ -430,12 +510,13 @@ get_demeter_cow_progress_item:
     - define lore <[lore].include[<&8><&o>from Farming XP ranks.]>
 
     - if <[complete]>:
-        - determine <item[leather].with[display_name=<&e><&l>Cow Breeding;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+        - determine <item[leather].with[display=<&e><&l>Cow Breeding;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
     - else:
-        - determine <item[leather].with[display_name=<&e><&l>Cow Breeding;lore=<[lore]>]>
+        - determine <item[leather].with[display=<&e><&l>Cow Breeding;lore=<[lore]>]>
 
 get_demeter_cake_progress_item:
     type: procedure
+    debug: false
     script:
     - define count <player.flag[demeter.cakes.count].if_null[0]>
     - define keys <player.flag[demeter.cakes.keys_awarded].if_null[0]>
@@ -465,19 +546,173 @@ get_demeter_cake_progress_item:
     - define lore <[lore].include[<&8><&o>from Farming XP ranks.]>
 
     - if <[complete]>:
-        - determine <item[cake].with[display_name=<&e><&l>Cake Crafting;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+        - determine <item[cake].with[display=<&e><&l>Cake Crafting;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
     - else:
-        - determine <item[cake].with[display_name=<&e><&l>Cake Crafting;lore=<[lore]>]>
+        - determine <item[cake].with[display=<&e><&l>Cake Crafting;lore=<[lore]>]>
 
 demeter_progress_back_button:
     type: item
     material: arrow
     display name: <&e>← Back
     lore:
-    - <&7>Return to emblems
+    - <&7>Return<&sp>to<&sp>emblems
+
+# ============================================
+# HERACLES DETAILED PROGRESS GUI
+# ============================================
+
+heracles_progress_gui:
+    type: inventory
+    inventory: chest
+    gui: true
+    title: <&8>Heracles - Activity Progress
+    size: 27
+    procedural items:
+    - determine <proc[get_heracles_progress_items]>
+
+get_heracles_progress_items:
+    type: procedure
+    debug: false
+    script:
+    - define items <list>
+    - define filler <item[gray_stained_glass_pane].with[display=<&7>]>
+
+    # Fill all slots
+    - repeat 27:
+        - define items <[items].include[<[filler]>]>
+
+    # Row 2: Three activity items centered (slots 12, 14, 16)
+    - define pillagers_item <proc[get_heracles_pillagers_progress_item]>
+    - define items <[items].set[<[pillagers_item]>].at[12]>
+
+    - define raids_item <proc[get_heracles_raids_progress_item]>
+    - define items <[items].set[<[raids_item]>].at[14]>
+
+    - define emeralds_item <proc[get_heracles_emeralds_progress_item]>
+    - define items <[items].set[<[emeralds_item]>].at[16]>
+
+    # Back button (bottom left slot 19)
+    - define items <[items].set[<item[heracles_progress_back_button]>].at[19]>
+
+    - determine <[items]>
+
+get_heracles_pillagers_progress_item:
+    type: procedure
+    debug: false
+    script:
+    - define count <player.flag[heracles.pillagers.count].if_null[0]>
+    - define keys <player.flag[heracles.pillagers.keys_awarded].if_null[0]>
+    - define complete <player.has_flag[heracles.component.pillagers]>
+
+    - define lore <list>
+    - if <[complete]>:
+        - define lore <[lore].include[<&2><&l>✓<&sp>COMPONENT<&sp>COMPLETE]>
+    - else:
+        - define lore <[lore].include[<&7>Component<&sp>In<&sp>Progress]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&7><&o>"Strike<&sp>down<&sp>the<&sp>raiders<&sp>who<&sp>threaten<&sp>peace"]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&c>Task<&co><&sp><&7>Defeat<&sp>pillagers<&sp>that<&sp>roam<&sp>the<&sp>land.]>
+    - define lore <[lore].include[<&7>Each<&sp>marauder<&sp>slain<&sp>brings<&sp>justice<&sp>and]>
+    - define lore <[lore].include[<&7>earns<&sp>the<&sp>hero's<&sp>respect.]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&c>Component<&sp>Progress<&co>]>
+    - define lore <[lore].include[<&7><[count]><&sp>/<&sp>2,500<&sp>pillagers<&sp>slain]>
+    - if <[complete]>:
+        - define percent 100
+    - else:
+        - define percent <[count].div[2500].mul[100].round>
+    - define lore <[lore].include[<&7>(<[percent]>%<&sp>complete)]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&8><&o>Component<&sp>progress<&sp>is<&sp>independent]>
+    - define lore <[lore].include[<&8><&o>from<&sp>Combat<&sp>XP<&sp>ranks.]>
+
+    - if <[complete]>:
+        - determine <item[iron_sword].with[display=<&c><&l>Pillager<&sp>Slayer;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+    - else:
+        - determine <item[iron_sword].with[display=<&c><&l>Pillager<&sp>Slayer;lore=<[lore]>]>
+
+get_heracles_raids_progress_item:
+    type: procedure
+    debug: false
+    script:
+    - define count <player.flag[heracles.raids.count].if_null[0]>
+    - define complete <player.has_flag[heracles.component.raids]>
+
+    - define lore <list>
+    - if <[complete]>:
+        - define lore <[lore].include[<&2><&l>✓<&sp>COMPONENT<&sp>COMPLETE]>
+    - else:
+        - define lore <[lore].include[<&7>Component<&sp>In<&sp>Progress]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&7><&o>"Stand<&sp>as<&sp>shield<&sp>between<&sp>chaos<&sp>and<&sp>home"]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&c>Task<&co><&sp><&7>Defend<&sp>villages<&sp>from<&sp>illager<&sp>raids.]>
+    - define lore <[lore].include[<&7>Every<&sp>victory<&sp>preserves<&sp>innocent<&sp>lives]>
+    - define lore <[lore].include[<&7>and<&sp>proves<&sp>your<&sp>heroism.]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&c>Component<&sp>Progress<&co>]>
+    - define lore <[lore].include[<&7><[count]><&sp>/<&sp>50<&sp>raids<&sp>defended]>
+    - if <[complete]>:
+        - define percent 100
+    - else:
+        - define percent <[count].div[50].mul[100].round>
+    - define lore <[lore].include[<&7>(<[percent]>%<&sp>complete)]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&8><&o>Component<&sp>progress<&sp>is<&sp>independent]>
+    - define lore <[lore].include[<&8><&o>from<&sp>Combat<&sp>XP<&sp>ranks.]>
+
+    - if <[complete]>:
+        - determine <item[shield].with[display=<&c><&l>Raid<&sp>Victor;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+    - else:
+        - determine <item[shield].with[display=<&c><&l>Raid<&sp>Victor;lore=<[lore]>]>
+
+get_heracles_emeralds_progress_item:
+    type: procedure
+    debug: false
+    script:
+    - define count <player.flag[heracles.emeralds.count].if_null[0]>
+    - define keys <player.flag[heracles.emeralds.keys_awarded].if_null[0]>
+    - define complete <player.has_flag[heracles.component.emeralds]>
+
+    - define lore <list>
+    - if <[complete]>:
+        - define lore <[lore].include[<&2><&l>✓<&sp>COMPONENT<&sp>COMPLETE]>
+    - else:
+        - define lore <[lore].include[<&7>Component<&sp>In<&sp>Progress]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&7><&o>"Forge<&sp>bonds<&sp>of<&sp>commerce<&sp>and<&sp>prosperity"]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&c>Task<&co><&sp><&7>Trade<&sp>emeralds<&sp>with<&sp>villagers.]>
+    - define lore <[lore].include[<&7>Each<&sp>transaction<&sp>strengthens<&sp>the<&sp>bonds]>
+    - define lore <[lore].include[<&7>between<&sp>warrior<&sp>and<&sp>community.]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&c>Component<&sp>Progress<&co>]>
+    - define lore <[lore].include[<&7><[count]><&sp>/<&sp>10,000<&sp>emeralds<&sp>spent]>
+    - if <[complete]>:
+        - define percent 100
+    - else:
+        - define percent <[count].div[10000].mul[100].round>
+    - define lore <[lore].include[<&7>(<[percent]>%<&sp>complete)]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&8><&o>Component<&sp>progress<&sp>is<&sp>independent]>
+    - define lore <[lore].include[<&8><&o>from<&sp>Combat<&sp>XP<&sp>ranks.]>
+
+    - if <[complete]>:
+        - determine <item[emerald].with[display=<&c><&l>Trade<&sp>Master;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+    - else:
+        - determine <item[emerald].with[display=<&c><&l>Trade<&sp>Master;lore=<[lore]>]>
+
+heracles_progress_back_button:
+    type: item
+    material: arrow
+    display name: <&e>← Back
+    lore:
+    - <&7>Return<&sp>to<&sp>emblems
 
 create_progress_bar:
     type: procedure
+    debug: false
     definitions: percent
     script:
     - define total_bars 10
@@ -492,6 +727,7 @@ create_progress_bar:
 
 get_cosmetics_icon_item:
     type: procedure
+    debug: false
     script:
     - define lore <list>
     - define lore <[lore].include[<&7>Manage your cosmetic unlocks]>
@@ -500,6 +736,12 @@ get_cosmetics_icon_item:
     # Count available titles
     - define title_count 0
     - if <player.has_flag[ceres.item.title]>:
+        - define title_count <[title_count].add[1]>
+    - if <player.has_flag[demeter.item.title]>:
+        - define title_count <[title_count].add[1]>
+    - if <player.has_flag[heracles.item.title]>:
+        - define title_count <[title_count].add[1]>
+    - if <player.has_flag[mars.item.title]>:
         - define title_count <[title_count].add[1]>
 
     - define lore <[lore].include[<&e>Available Titles<&co> <&6><[title_count]>]>
@@ -512,6 +754,12 @@ get_cosmetics_icon_item:
         - choose <[active_title]>:
             - case ceres:
                 - define lore "<[lore].include[<&6><&lb>Ceres' Chosen<&rb>]>"
+            - case demeter:
+                - define lore "<[lore].include[<&6><&lb>Harvest Queen<&rb>]>"
+            - case heracles:
+                - define lore "<[lore].include[<&4><&lb>Hero of Olympus<&rb>]>"
+            - case mars:
+                - define lore "<[lore].include[<&4><&lb>Mars' Chosen<&rb>]>"
     - else:
         - define lore "<[lore].include[<&sp>]>"
         - define lore <[lore].include[<&7>No title equipped]>
@@ -519,7 +767,7 @@ get_cosmetics_icon_item:
     - define lore "<[lore].include[<&sp>]>"
     - define lore <[lore].include[<&e>Click to manage cosmetics]>
 
-    - determine <item[armor_stand].with[display_name=<&d><&l>Cosmetics;lore=<[lore]>]>
+    - determine <item[armor_stand].with[display=<&d><&l>Cosmetics;lore=<[lore]>]>
 
 # ============================================
 # COSMETICS MENU
@@ -536,23 +784,27 @@ cosmetics_inventory:
 
 get_cosmetics_menu_items:
     type: procedure
+    debug: false
     script:
     - define items <list>
-    - define filler <item[gray_stained_glass_pane].with[display_name=<&7>]>
+    - define filler <item[gray_stained_glass_pane].with[display=<&7>]>
 
     # Fill with filler
     - repeat 27:
         - define items <[items].include[<[filler]>]>
 
-    # Show all 3 titles in center row (slots 12, 14, 16)
-    - define title1 <proc[get_ceres_title_item]>
-    - define items <[items].set[<[title1]>].at[12]>
+    # Show all 4 titles (2 farming, 2 combat) in center row (slots 11, 13, 15, 17)
+    - define ceres_title <proc[get_ceres_title_item]>
+    - define items <[items].set[<[ceres_title]>].at[11]>
 
-    - define title2 <proc[get_demeter_title_item]>
-    - define items <[items].set[<[title2]>].at[14]>
+    - define demeter_title <proc[get_demeter_title_item]>
+    - define items <[items].set[<[demeter_title]>].at[13]>
 
-    - define title3 <proc[get_heracles_title_item]>
-    - define items <[items].set[<[title3]>].at[16]>
+    - define heracles_title <proc[get_heracles_title_item]>
+    - define items <[items].set[<[heracles_title]>].at[15]>
+
+    - define mars_title <proc[get_mars_title_item]>
+    - define items <[items].set[<[mars_title]>].at[17]>
 
     # Back button (bottom left)
     - define items <[items].set[<item[cosmetics_back_button]>].at[19]>
@@ -561,6 +813,7 @@ get_cosmetics_menu_items:
 
 get_ceres_title_item:
     type: procedure
+    debug: false
     script:
     - define lore <list>
 
@@ -572,20 +825,21 @@ get_ceres_title_item:
             - define lore <[lore].include[<&2>✓ Currently Active]>
             - define lore "<[lore].include[<&sp>]>"
             - define lore <[lore].include[<&e>Click to unequip]>
-            - determine <item[name_tag].with[display_name=<&6><&l>Ceres Title;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+            - determine <item[name_tag].with[display=<&6><&l>Ceres Title;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
         - else:
             - define lore <[lore].include[<&7>Not equipped]>
             - define lore "<[lore].include[<&sp>]>"
             - define lore <[lore].include[<&e>Click to equip]>
-            - determine <item[name_tag].with[display_name=<&6><&l>Ceres Title;lore=<[lore]>]>
+            - determine <item[name_tag].with[display=<&6><&l>Ceres Title;lore=<[lore]>]>
     - else:
         - define lore <[lore].include[<&8>???]>
         - define lore "<[lore].include[<&sp>]>"
         - define lore <[lore].include[<&7>Unlock from<&co> <&b>Ceres Crates]>
-        - determine <item[gray_dye].with[display_name=<&8>???;lore=<[lore]>]>
+        - determine <item[gray_dye].with[display=<&8>???;lore=<[lore]>]>
 
 get_demeter_title_item:
     type: procedure
+    debug: false
     script:
     - define lore <list>
 
@@ -597,42 +851,69 @@ get_demeter_title_item:
             - define lore <[lore].include[<&2>✓ Currently Active]>
             - define lore "<[lore].include[<&sp>]>"
             - define lore <[lore].include[<&e>Click to unequip]>
-            - determine <item[name_tag].with[display_name=<&e><&l>Demeter Title;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+            - determine <item[name_tag].with[display=<&e><&l>Demeter Title;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
         - else:
             - define lore <[lore].include[<&7>Not equipped]>
             - define lore "<[lore].include[<&sp>]>"
             - define lore <[lore].include[<&e>Click to equip]>
-            - determine <item[name_tag].with[display_name=<&e><&l>Demeter Title;lore=<[lore]>]>
+            - determine <item[name_tag].with[display=<&e><&l>Demeter Title;lore=<[lore]>]>
     - else:
         - define lore <[lore].include[<&8>???]>
         - define lore "<[lore].include[<&sp>]>"
         - define lore <[lore].include[<&7>Unlock from<&co> <&6>Demeter Crates]>
-        - determine <item[gray_dye].with[display_name=<&8>???;lore=<[lore]>]>
+        - determine <item[gray_dye].with[display=<&8>???;lore=<[lore]>]>
 
 get_heracles_title_item:
     type: procedure
+    debug: false
     script:
     - define lore <list>
 
-    # Check if unlocked (placeholder - not implemented yet)
+    # Check if unlocked
     - if <player.has_flag[heracles.item.title]>:
-        - define lore "<[lore].include[<&c><&lb>The Unconquered<&rb>]>"
+        - define lore "<[lore].include[<&4><&lb>Hero of Olympus<&rb>]>"
         - define lore "<[lore].include[<&sp>]>"
         - if <player.has_flag[cosmetic.title.active]> && <player.flag[cosmetic.title.active]> == heracles:
             - define lore <[lore].include[<&2>✓ Currently Active]>
             - define lore "<[lore].include[<&sp>]>"
             - define lore <[lore].include[<&e>Click to unequip]>
-            - determine <item[name_tag].with[display_name=<&c><&l>Heracles Title;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+            - determine <item[name_tag].with[display=<&c><&l>Heracles Title;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
         - else:
             - define lore <[lore].include[<&7>Not equipped]>
             - define lore "<[lore].include[<&sp>]>"
             - define lore <[lore].include[<&e>Click to equip]>
-            - determine <item[name_tag].with[display_name=<&c><&l>Heracles Title;lore=<[lore]>]>
+            - determine <item[name_tag].with[display=<&c><&l>Heracles Title;lore=<[lore]>]>
     - else:
         - define lore <[lore].include[<&8>???]>
         - define lore "<[lore].include[<&sp>]>"
         - define lore <[lore].include[<&7>Unlock from<&co> <&4>Heracles Crates]>
-        - determine <item[gray_dye].with[display_name=<&8>???;lore=<[lore]>]>
+        - determine <item[gray_dye].with[display=<&8>???;lore=<[lore]>]>
+
+get_mars_title_item:
+    type: procedure
+    debug: false
+    script:
+    - define lore <list>
+
+    # Check if unlocked
+    - if <player.has_flag[mars.item.title]>:
+        - define lore "<[lore].include[<&4><&lb>Mars' Chosen<&rb>]>"
+        - define lore "<[lore].include[<&sp>]>"
+        - if <player.has_flag[cosmetic.title.active]> && <player.flag[cosmetic.title.active]> == mars:
+            - define lore <[lore].include[<&2>✓ Currently Active]>
+            - define lore "<[lore].include[<&sp>]>"
+            - define lore <[lore].include[<&e>Click to unequip]>
+            - determine <item[name_tag].with[display=<&c><&l>Mars Title;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+        - else:
+            - define lore <[lore].include[<&7>Not equipped]>
+            - define lore "<[lore].include[<&sp>]>"
+            - define lore <[lore].include[<&e>Click to equip]>
+            - determine <item[name_tag].with[display=<&c><&l>Mars Title;lore=<[lore]>]>
+    - else:
+        - define lore <[lore].include[<&8>???]>
+        - define lore "<[lore].include[<&sp>]>"
+        - define lore <[lore].include[<&7>Unlock from<&co> <&4>Mars Crates]>
+        - determine <item[gray_dye].with[display=<&8>???;lore=<[lore]>]>
 
 cosmetics_back_button:
     type: item
@@ -662,18 +943,22 @@ cosmetics_click_handler:
         - define clicked_title ""
 
         # Determine which title was clicked based on slot
-        - if <context.slot> == 12:
+        - if <context.slot> == 11:
             - define clicked_title ceres
             - define title_flag ceres.item.title
             - define title_name "<&6>[Ceres' Chosen]"
-        - else if <context.slot> == 14:
+        - else if <context.slot> == 13:
             - define clicked_title demeter
             - define title_flag demeter.item.title
             - define title_name "<&6>[Harvest Queen]"
-        - else if <context.slot> == 16:
+        - else if <context.slot> == 15:
             - define clicked_title heracles
             - define title_flag heracles.item.title
-            - define title_name "<&c>[The Unconquered]"
+            - define title_name "<&4>[Hero of Olympus]"
+        - else if <context.slot> == 17:
+            - define clicked_title mars
+            - define title_flag mars.item.title
+            - define title_name "<&4>[Mars' Chosen]"
 
         # Check if player has this title unlocked
         - if !<player.has_flag[<[title_flag]>]>:
@@ -703,6 +988,10 @@ cosmetics_click_handler:
         on player clicks farming_ranks_back_button in farming_ranks_gui:
         - inventory open d:profile_inventory
 
+        # Combat ranks GUI
+        on player clicks combat_ranks_back_button in combat_ranks_gui:
+        - inventory open d:profile_inventory
+
 # ============================================
 # FARMING RANKS GUI
 # ============================================
@@ -718,16 +1007,17 @@ farming_ranks_gui:
 
 get_farming_ranks_items:
     type: procedure
+    debug: false
     script:
     - define items <list>
-    - define filler <item[gray_stained_glass_pane].with[display_name=<&7>]>
+    - define filler <item[gray_stained_glass_pane].with[display=<&7>]>
 
     # Fill all slots
     - repeat 54:
         - define items <[items].include[<[filler]>]>
 
     # Build rank info item
-    - define rank <player.flag[farming.rank].if_null[0]>
+    - define rank <proc[get_farming_rank].context[<player.flag[farming.xp].if_null[0]>]>
     - define xp <player.flag[farming.xp].if_null[0]>
     - define rank_name <proc[get_farming_rank_name].context[<[rank]>]>
 
@@ -757,7 +1047,7 @@ get_farming_ranks_items:
     - else:
         - define rank_lore <[rank_lore].include[<&6><&l>MAX<&sp>RANK<&sp>ACHIEVED!]>
 
-    - define rank_item <item[experience_bottle].with[display_name=<&6><&l>Your<&sp>Farming<&sp>Rank;lore=<[rank_lore]>]>
+    - define rank_item <item[experience_bottle].with[display=<&6><&l>Your<&sp>Farming<&sp>Rank;lore=<[rank_lore]>]>
     - define items <[items].set[<[rank_item]>].at[14]>
 
     # XP method items
@@ -824,8 +1114,124 @@ farming_ranks_back_button:
     lore:
     - <&7>Return<&sp>to<&sp>profile
 
+# ============================================
+# COMBAT RANKS GUI
+# ============================================
+
+combat_ranks_gui:
+    type: inventory
+    inventory: chest
+    gui: true
+    title: <&8>Combat Skill Ranks
+    size: 54
+    procedural items:
+    - determine <proc[get_combat_ranks_items]>
+
+get_combat_ranks_items:
+    type: procedure
+    debug: false
+    script:
+    - define items <list>
+    - define filler <item[gray_stained_glass_pane].with[display=<&7>]>
+
+    # Fill all slots
+    - repeat 54:
+        - define items <[items].include[<[filler]>]>
+
+    # Build rank info item
+    - define rank <proc[get_combat_rank_from_xp].context[<player.flag[heracles.xp].if_null[0]>]>
+    - define xp <player.flag[heracles.xp].if_null[0]>
+    - define rank_name <proc[get_combat_rank_name].context[<[rank]>]>
+
+    - define rank_lore <list>
+    - define rank_lore <[rank_lore].include[<&7>Current<&sp>Rank<&co><&sp><&c><[rank_name]>]>
+    - define rank_lore <[rank_lore].include[<&7>Total<&sp>XP<&co><&sp><&c><[xp].format_number>]>
+    - define rank_lore "<[rank_lore].include[<&sp>]>"
+
+    # Show current buffs if player has a rank
+    - if <[rank]> > 0:
+        - define rank_data <script[combat_rank_data].data_key[ranks.<[rank]>]>
+        - define xp_bonus <[rank_data].get[xp_bonus]>
+        - define regen_amp <[rank_data].get[regen_amplifier]>
+        - define rank_lore <[rank_lore].include[<&e>Active<&sp>Buffs<&co>]>
+        - define regen_level <[regen_amp].add[1]>
+        - define rank_lore <[rank_lore].include[<&7>•<&sp>Low<&sp>HP<&sp>Regen<&sp><[regen_level]>]>
+        - define rank_lore <[rank_lore].include[<&7>•<&sp>Vanilla<&sp>XP<&sp>Bonus<&co><&sp><&a>+<[xp_bonus]>%]>
+        - define rank_lore "<[rank_lore].include[<&sp>]>"
+
+    # Show progress
+    - if <[rank]> < 5:
+        - define next_rank <[rank].add[1]>
+        - define next_rank_data <script[combat_rank_data].data_key[ranks.<[next_rank]>]>
+        - define next_xp <[next_rank_data].get[xp_total]>
+        - define rank_lore <[rank_lore].include[<&6>Progress<&sp>to<&sp>Next<&sp>Rank<&co>]>
+        - define rank_lore <[rank_lore].include[<&7><[xp].format_number><&sp>/<&sp><[next_xp].format_number><&sp>XP]>
+    - else:
+        - define rank_lore <[rank_lore].include[<&6><&l>MAX<&sp>RANK<&sp>ACHIEVED!]>
+
+    - define rank_item <item[experience_bottle].with[display=<&c><&l>Your<&sp>Combat<&sp>Rank;lore=<[rank_lore]>]>
+    - define items <[items].set[<[rank_item]>].at[14]>
+
+    # XP method items
+    - define items <[items].set[<item[combat_xp_mobs]>].at[30]>
+    - define items <[items].set[<item[combat_xp_raids]>].at[32]>
+    - define items <[items].set[<item[combat_xp_emeralds]>].at[34]>
+
+    # Back button
+    - define items <[items].set[<item[combat_ranks_back_button]>].at[46]>
+
+    - determine <[items]>
+
+combat_xp_mobs:
+    type: item
+    material: zombie_head
+    display name: <&c><&l>Combat<&sp>Kills
+    lore:
+    - <&7>Kill<&sp>hostile<&sp>mobs
+    - <&7>while<&sp>COMBAT<&sp>role<&sp>is<&sp>active
+    - <&sp>
+    - <&6>XP<&sp>Rates<&co>
+    - <&7>•<&sp>Common<&sp>(Zombie,<&sp>Skeleton)<&co><&sp><&c>2<&sp>XP
+    - <&7>•<&sp>Uncommon<&sp>(Enderman,<&sp>Blaze)<&co><&sp><&c>5<&sp>XP
+    - <&7>•<&sp>Rare<&sp>(Vindicator,<&sp>Ravager)<&co><&sp><&c>8<&sp>XP
+    - <&7>•<&sp>Elite<&sp>(Guardian)<&co><&sp><&c>15<&sp>XP
+
+combat_xp_raids:
+    type: item
+    material: shield
+    display name: <&c><&l>Raid<&sp>Defense
+    lore:
+    - <&7>Complete<&sp>village<&sp>raids
+    - <&7>while<&sp>COMBAT<&sp>role<&sp>is<&sp>active
+    - <&sp>
+    - <&6>XP<&sp>Rates<&co>
+    - <&7>•<&sp>Bad<&sp>Omen<&sp>I<&co><&sp><&c>50<&sp>XP
+    - <&7>•<&sp>Bad<&sp>Omen<&sp>II<&co><&sp><&c>75<&sp>XP
+    - <&7>•<&sp>Bad<&sp>Omen<&sp>III<&co><&sp><&c>100<&sp>XP
+    - <&7>•<&sp>Bad<&sp>Omen<&sp>IV<&co><&sp><&c>150<&sp>XP
+    - <&7>•<&sp>Bad<&sp>Omen<&sp>V<&co><&sp><&c>200<&sp>XP
+
+combat_xp_emeralds:
+    type: item
+    material: emerald
+    display name: <&c><&l>Emerald<&sp>Trading
+    lore:
+    - <&7>Trade<&sp>with<&sp>villagers
+    - <&7>while<&sp>COMBAT<&sp>role<&sp>is<&sp>active
+    - <&sp>
+    - <&6>XP<&sp>Rate<&co>
+    - <&7>•<&sp>Per<&sp>emerald<&sp>spent<&co><&sp><&c>1<&sp>XP
+
+combat_ranks_back_button:
+    type: item
+    material: arrow
+    display name: <&e>← Back
+    lore:
+    - <&7>Return<&sp>to<&sp>profile
+
 get_current_farming_rank_item:
     type: procedure
+    debug: false
     script:
     - define xp <player.flag[farming.xp].if_null[0]>
     - define rank <player.flag[farming.rank].if_null[0]>
@@ -841,7 +1247,7 @@ get_current_farming_rank_item:
         - define lore <[lore].include[<[bar]>]>
         - define lore "<[lore].include[<&sp>]>"
         - define lore <[lore].include[<&e>Next<&sp>Rank<&co><&sp><&6>Acolyte<&sp>of<&sp>the<&sp>Farm]>
-        - determine <item[wheat_seeds].with[display_name=<&6><&l>Your<&sp>Farming<&sp>Rank;lore=<[lore]>]>
+        - determine <item[wheat_seeds].with[display=<&6><&l>Your<&sp>Farming<&sp>Rank;lore=<[lore]>]>
     - else:
         - define rank_data <script[farming_rank_data].data_key[ranks.<[rank]>]>
         - define lore <[lore].include[<&6><&l>CURRENT<&sp>RANK]>
@@ -875,10 +1281,11 @@ get_current_farming_rank_item:
             - define lore "<[lore].include[<&sp>]>"
             - define lore <[lore].include[<&6><&l>MAX<&sp>RANK<&sp>ACHIEVED!]>
 
-        - determine <item[golden_hoe].with[display_name=<&6><&l><[rank_name]>;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+        - determine <item[golden_hoe].with[display=<&6><&l><[rank_name]>;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
 
 get_rank_detail_item:
     type: procedure
+    debug: false
     definitions: tier|status
     script:
     - define rank_data <script[farming_rank_data].data_key[ranks.<[tier]>]>
@@ -928,12 +1335,13 @@ get_rank_detail_item:
             - define material netherite_hoe
 
     - if <[status]> == current:
-        - determine <item[<[material]>].with[display_name=<&6><&l><[rank_name]>;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+        - determine <item[<[material]>].with[display=<&6><&l><[rank_name]>;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
     - else:
-        - determine <item[<[material]>].with[display_name=<&6><&l><[rank_name]>;lore=<[lore]>]>
+        - determine <item[<[material]>].with[display=<&6><&l><[rank_name]>;lore=<[lore]>]>
 
 get_crops_xp_item:
     type: procedure
+    debug: false
     script:
     - define lore <list>
     - define lore <[lore].include[<&7>Harvest<&sp>fully<&sp>grown<&sp>crops]>
@@ -945,10 +1353,11 @@ get_crops_xp_item:
     - define lore <[lore].include[<&7>•<&sp>Nether<&sp>Wart<&co><&sp><&e>3<&sp>XP]>
     - define lore <[lore].include[<&7>•<&sp>Cocoa<&co><&sp><&e>1<&sp>XP]>
     - define lore <[lore].include[<&7>•<&sp>Sugar<&sp>Cane/Cactus/Kelp/Bamboo<&co><&sp><&e>1<&sp>XP]>
-    - determine <item[wheat].with[display_name=<&e><&l>Crop<&sp>Harvesting;lore=<[lore]>]>
+    - determine <item[wheat].with[display=<&e><&l>Crop<&sp>Harvesting;lore=<[lore]>]>
 
 get_animals_xp_item:
     type: procedure
+    debug: false
     script:
     - define lore <list>
     - define lore <[lore].include[<&7>Breed<&sp>animals<&sp>while<&sp>FARMING]>
@@ -961,10 +1370,11 @@ get_animals_xp_item:
     - define lore <[lore].include[<&7>•<&sp>Cow/Sheep/Pig<&co><&sp><&e>10<&sp>XP]>
     - define lore <[lore].include[<&7>•<&sp>Rabbit/Bee<&co><&sp><&e>8<&sp>XP]>
     - define lore <[lore].include[<&7>•<&sp>Chicken<&co><&sp><&e>6<&sp>XP]>
-    - determine <item[beef].with[display_name=<&e><&l>Animal<&sp>Breeding;lore=<[lore]>]>
+    - determine <item[beef].with[display=<&e><&l>Animal<&sp>Breeding;lore=<[lore]>]>
 
 get_foods_xp_item:
     type: procedure
+    debug: false
     script:
     - define lore <list>
     - define lore <[lore].include[<&7>Craft<&sp>food<&sp>items<&sp>while<&sp>FARMING]>
@@ -977,4 +1387,4 @@ get_foods_xp_item:
     - define lore <[lore].include[<&7>•<&sp>Suspicious<&sp>Stew<&co><&sp><&e>8<&sp>XP]>
     - define lore <[lore].include[<&7>•<&sp>Beetroot<&sp>Soup<&co><&sp><&e>6<&sp>XP]>
     - define lore <[lore].include[<&7>•<&sp>Mushroom<&sp>Stew<&co><&sp><&e>4<&sp>XP]>
-    - determine <item[cake].with[display_name=<&e><&l>Food<&sp>Crafting;lore=<[lore]>]>
+    - determine <item[cake].with[display=<&e><&l>Food<&sp>Crafting;lore=<[lore]>]>

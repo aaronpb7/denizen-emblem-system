@@ -132,6 +132,7 @@ award_farming_xp:
 # Get player's current rank (1-5) based on total XP
 get_farming_rank:
     type: procedure
+    debug: false
     definitions: total_xp
     script:
     - if <[total_xp]> >= 64438:
@@ -149,6 +150,7 @@ get_farming_rank:
 # Get display name for a rank level
 get_farming_rank_name:
     type: procedure
+    debug: false
     definitions: rank
     script:
     - choose <[rank]>:
@@ -168,6 +170,7 @@ get_farming_rank_name:
 # Get rank data for a rank level
 get_farming_rank_data:
     type: procedure
+    debug: false
     definitions: rank
     script:
     - if <[rank]> >= 1 && <[rank]> <= 5:
@@ -178,6 +181,7 @@ get_farming_rank_data:
 # Get haste amplifier for rank (-1 = no haste, 0 = Speed I, 1 = Speed II)
 get_farming_speed_bonus:
     type: procedure
+    debug: false
     definitions: rank
     script:
     - choose <[rank]>:
@@ -191,6 +195,7 @@ get_farming_speed_bonus:
 # Get extra crop drop chance for rank (percentage)
 get_extra_crop_chance:
     type: procedure
+    debug: false
     definitions: rank
     script:
     - choose <[rank]>:
@@ -264,7 +269,7 @@ farming_speed_buff:
     events:
         after player breaks wheat|carrots|potatoes|beetroots|nether_wart|cocoa|pumpkin|melon:
         # Role gate
-        - if <player.flag[role.active]> != FARMING:
+        - if <player.flag[role.active].if_null[NONE]> != FARMING:
             - stop
 
         # Get rank and apply speed if qualified
@@ -281,7 +286,7 @@ farming_extra_crops:
     events:
         after player breaks wheat:
         # Role gate
-        - if <player.flag[role.active]> != FARMING:
+        - if <player.flag[role.active].if_null[NONE]> != FARMING:
             - stop
 
         # Only fully grown wheat

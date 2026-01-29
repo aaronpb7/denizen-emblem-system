@@ -7,7 +7,7 @@
 
 bulletin_data:
     type: data
-    version: 3
+    version: 4
 
 # ==================== JOIN EVENT ====================
 
@@ -38,7 +38,7 @@ bulletin_inventory:
     size: 45
     slots:
     - [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler]
-    - [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_promachos_new] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler]
+    - [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_combat_new] [bulletin_promachos_new] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler]
     - [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler]
     - [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler]
     - [bulletin_back_button] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler]
@@ -83,6 +83,32 @@ bulletin_promachos_new:
     - <&8><&o>Mining and Combat roles coming soon!
     - <empty>
     - <&e>Type /profile to get started!
+
+bulletin_combat_new:
+    type: item
+    material: enchanted_book
+    display name: <&c><&l>29/01 - Combat Role Now Available!
+    lore:
+    - <&7><&o>"The hero's path calls to the brave..."
+    - <empty>
+    - <&4><&l>COMBAT ROLE - LIVE NOW!
+    - <&c>Heracles<&7>, Greatest of Greek Heroes
+    - <&7>• Slay pillagers, defend villages, trade emeralds
+    - <&7>• Earn <&c>Heracles Keys <&7>from combat deeds
+    - <&7>• Open crates for weapons and upgrades
+    - <&7>• Gain <&e>Combat XP <&7>for permanent buffs
+    - <&7>• Unlock <&d>Mars Arena <&7>meta-progression
+    - <empty>
+    - <&c>What You Get<&co>
+    - <&7>• Low Health Regeneration (auto-trigger)
+    - <&7>• Vanilla XP Bonus (+5% to +25%)
+    - <&7>• Mythic weapons and gear
+    - <&7>• Exclusive combat titles
+    - <empty>
+    - <&6>Farming Role <&7>still available!
+    - <&8><&o>Mining role coming soon!
+    - <empty>
+    - <&e>Talk to Promachos to choose your path!
 
 # ==================== PROFILE ICON ====================
 

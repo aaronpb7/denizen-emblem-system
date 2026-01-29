@@ -51,7 +51,7 @@ ceres_hoe_replant:
             - stop
 
         # Take 1 seed from inventory
-        - take <[seed_item]> qty:1
+        - take item:<[seed_item]> quantity:1
 
         # Wait for block break to complete, then replant at age 0
         - wait 1t
@@ -203,4 +203,8 @@ title_chat_handler:
             - case demeter:
                 - announce "<&6>[Harvest Queen]<&r> <player.display_name><&7>: <context.message>"
             - case heracles:
-                - announce "<&c>[The Unconquered]<&r> <player.display_name><&7>: <context.message>"
+                - announce "<&4>[Hero of Olympus]<&r> <player.display_name><&7>: <context.message>"
+            - case mars:
+                - announce "<&4>[Mars' Chosen]<&r> <player.display_name><&7>: <context.message>"
+            - default:
+                - announce "<player.display_name><&7>: <context.message>"

@@ -55,6 +55,7 @@ role_data:
 # Returns: "Georgos"
 get_role_display_name:
     type: procedure
+    debug: false
     definitions: role
     script:
     - determine <script[role_data].data_key[greek_names.<[role]>]>
@@ -64,6 +65,7 @@ get_role_display_name:
 # Returns: "Demeter"
 get_god_for_role:
     type: procedure
+    debug: false
     definitions: role
     script:
     - determine <script[role_data].data_key[gods.<[role]>]>
@@ -73,6 +75,7 @@ get_god_for_role:
 # Returns: "<&6>"
 get_role_color:
     type: procedure
+    debug: false
     definitions: role
     script:
     - determine <script[role_data].data_key[colors.<[role]>]>
@@ -82,6 +85,7 @@ get_role_color:
 # Returns: "golden_hoe"
 get_role_icon:
     type: procedure
+    debug: false
     definitions: role
     script:
     - determine <script[role_data].data_key[icons.<[role]>]>
@@ -91,6 +95,7 @@ get_role_icon:
 # Returns: true/false
 player_has_role:
     type: procedure
+    debug: false
     definitions: player
     script:
     - if <[player].has_flag[role.active]>:
@@ -102,6 +107,7 @@ player_has_role:
 # Returns: "FARMING", "MINING", "COMBAT", or null if no role
 get_player_role:
     type: procedure
+    debug: false
     definitions: player
     script:
     - determine <[player].flag[role.active]>
@@ -111,6 +117,7 @@ get_player_role:
 # Returns: true/false
 is_valid_role:
     type: procedure
+    debug: false
     definitions: role
     script:
     - determine <script[role_data].data_key[roles].contains[<[role]>]>

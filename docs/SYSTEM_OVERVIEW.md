@@ -42,9 +42,15 @@ scripts/
     ├── hephaestus/  (MINING - PLACEHOLDER)
     │   ├── hephaestus_crate.dsc   # Placeholder crate system
     │   └── vulcan_crate.dsc       # Placeholder meta-progression
-    └── heracles/  (COMBAT - PLACEHOLDER)
-        ├── heracles_crate.dsc     # Placeholder crate system
-        └── mars_crate.dsc         # Placeholder meta-progression
+    ├── heracles/  (COMBAT - ✅ COMPLETE)
+    │   ├── heracles_events.dsc    # Activity tracking (pillagers, raids, emeralds)
+    │   ├── heracles_ranks.dsc     # Rank progression system
+    │   ├── heracles_crate.dsc     # Heracles crate opening system
+    │   ├── heracles_blessing.dsc  # Heracles Blessing consumable
+    │   └── heracles_items.dsc     # Custom items (key, sword, blessing, title)
+    └── mars/  (COMBAT META - ✅ COMPLETE)
+        ├── mars_crate.dsc         # Mars arena (meta-progression)
+        └── mars_items.dsc         # Unique items (sword, shield, title, shulker)
 ```
 
 ---
@@ -59,7 +65,7 @@ Players interact with **Promachos NPC** (requires `met_promachos` flag) to choos
 |---------|--------------|------------|-----|------------|
 | FARMING | Farmer | Georgos | Demeter | Wheat harvesting, cow breeding, cake crafting |
 | MINING | Miner | Metallourgos | Hephaestus | Mining ores, smelting (TBD) |
-| COMBAT | Warrior | Hoplites | Heracles | Mob killing, raids (TBD) |
+| COMBAT | Warrior | Hoplites | Heracles | Pillager slaying, raid defense, emerald trading |
 
 **Key Mechanics:**
 - Players can switch roles at any time
@@ -242,11 +248,24 @@ Players can equip one chat title prefix at a time via `/profile` → Cosmetics m
 |-------------|----------|---------|
 | `hephaestus_key` | tripwire_hook | Opens Hephaestus Crate (TBD) |
 
-### Heracles Items (Placeholder)
+### Heracles Items (✅ Complete)
 
 | Script Name | Material | Purpose |
 |-------------|----------|---------|
-| `heracles_key` | tripwire_hook | Opens Heracles Crate (TBD) |
+| `heracles_key` | tripwire_hook | Opens Heracles Crate (5 tiers) |
+| `heracles_sword` | diamond_sword | Unbreakable cosmetic sword (MYTHIC) |
+| `heracles_blessing` | enchanted_book | +10% progress boost consumable (MYTHIC) |
+| `heracles_title` | flag-based | `[Hero of Olympus]` chat prefix (MYTHIC) |
+
+### Mars Items (✅ Complete)
+
+| Script Name | Material | Purpose |
+|-------------|----------|---------|
+| `mars_key` | nether_star | Opens Mars Crate (50/50 system) |
+| `mars_sword` | netherite_sword | 10% lifesteal netherite sword |
+| `mars_shield` | shield | Active resistance buff (3min cooldown) |
+| `mars_title` | flag-based | `[Mars' Chosen]` chat prefix |
+| `gray_shulker_box` | gray_shulker_box | Unique collectible |
 
 ---
 
@@ -394,26 +413,30 @@ bulletin.seen_version      # Integer: Last bulletin version viewed
 
 - ✅ Core role selection and switching
 - ✅ Demeter activity tracking (wheat, cows, cakes)
-- ✅ Demeter rank progression (5 ranks)
+- ✅ Demeter rank progression (5 ranks with buffs)
 - ✅ Demeter crate system (5 tiers, scrolling animation)
-- ✅ Ceres meta-progression crate (finite pool)
+- ✅ Demeter Blessing consumable (+10% progress boost)
+- ✅ Ceres meta-progression crate (50/50 system, 4 unique items)
+- ✅ Ceres custom items (hoe auto-replant, wand bee summon)
+- ✅ Heracles rank progression (5 ranks with buffs)
+- ✅ Heracles crate system (5 tiers, combat theme)
+- ✅ Heracles Blessing consumable (+10% progress boost)
+- ✅ Mars meta-progression crate (50/50 system, 4 unique items)
+- ✅ Mars custom items (sword lifesteal, shield resistance buff)
 - ✅ Cosmetics system (title equipping/unequipping)
-- ✅ Chat title prefixes
+- ✅ Chat title prefixes (Demeter, Ceres, Heracles, Mars)
 - ✅ Profile GUI with role display
+- ✅ Promachos NPC with emblem unlock ceremonies
 - ✅ Bulletin system
 - ✅ Admin commands for testing
 - ✅ Early close handling for crates (no duplicate awards)
 
 ### 🚧 Placeholder/Incomplete
 
-- 🚧 Hephaestus (Mining) activity tracking
-- 🚧 Hephaestus crate system
-- 🚧 Vulcan meta-progression
-- 🚧 Heracles (Combat) activity tracking
-- 🚧 Heracles crate system
-- 🚧 Mars meta-progression
-- 🚧 Demeter Blessing functionality (item exists but needs mechanics)
-- 🚧 Custom item abilities (hoes, wands, etc.)
+- 🚧 Hephaestus (Mining) - All systems (role exists but no activities)
+- 🚧 Vulcan meta-progression (Mining meta)
+- 🚧 Heracles activity tracking events (pillagers, raids, emerald trading)
+- 🚧 Heracles rank buff mechanics (low health regen, vanilla XP bonus)
 
 ### 🔜 Future Enhancements
 

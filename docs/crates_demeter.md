@@ -32,7 +32,7 @@ Each key use consumes 1 key and awards exactly 1 loot entry.
 
 **Purpose**: Create anticipation and excitement for loot reveal
 
-**Duration**: 2 seconds total
+**Duration**: ~4.75 seconds total (with early close support)
 
 **Inventory**: 27 slots (3 rows)
 
@@ -40,27 +40,40 @@ Each key use consumes 1 key and awards exactly 1 loot entry.
 
 ### Animation Sequence
 
-**Phase 1: Opening (0.0s - 0.5s)**
-- All slots filled with gray stained glass panes
-- Title: `Demeter Crate - Rolling...`
+**Phase 1: Fast Scroll (0.0s - 2.0s)**
+- Yellow border frame around entire GUI
+- Center row (slots 12-16) displays scrolling reel of 5 items
+- Items scroll left to right (new items appear on right)
+- 20 cycles at 2 ticks each (0.1s per cycle)
+- Random preview items from pool (bread, beef, wheat, emeralds, etc.)
+- Sound: `ui_button_click` at pitch 1.5
 
-**Phase 2: Cycling (0.5s - 1.5s)**
-- Center slot (13) cycles through random item previews every 0.2s
-- Previews drawn from loot pool (all tiers mixed)
-- Creates "slot machine" effect
-- Border panes remain gray
+**Phase 2: Medium Scroll (2.0s - 3.5s)**
+- Same scrolling pattern, slower speed
+- 10 cycles at 3 ticks each (0.15s per cycle)
+- Sound: `ui_button_click` at pitch 1.2
 
-**Phase 3: Tier Reveal (1.5s - 2.0s)**
-- Stop cycling
-- Replace center slot with tier indicator item (colored pane)
-- Update title: `Demeter Crate - <TIER NAME>!`
+**Phase 3: Slow Scroll (3.5s - 4.75s)**
+- Further deceleration creating anticipation
+- 5 cycles at 5 ticks each (0.25s per cycle)
+- Sound: `ui_button_click` at pitch 0.9
 
-**Phase 4: Loot Reveal (2.0s)**
-- Replace tier indicator with actual loot item
-- Play sound based on tier
-- Wait 1s for player to see item
-- Give item to player
-- Close GUI
+**Phase 4: Final Landing (4.75s - 5.5s)**
+- Actual loot item scrolls into view from right
+- 3 steps to reach center position (slot 14)
+- Each step takes 5 ticks (0.25s)
+- Sound: `ui_button_click` at pitch 1.0
+
+**Phase 5: Reveal (5.5s - 6.3s)**
+- Clear surrounding slots (only center item visible)
+- Wait 16 ticks (0.8s) for player to see result
+- Close GUI and award loot
+
+**Early Close Support:**
+- Player can close GUI at any time during animation
+- Loot is pre-rolled before animation starts
+- Closing early awards pending loot immediately
+- No animation time wasted for players who want speed
 
 ### Tier Indicator Items
 
@@ -121,13 +134,13 @@ Equally weighted within tier (each entry ~8% of tier, ~4.5% overall):
 
 | Item | Quantity | Display Name |
 |------|----------|--------------|
-| Bread | 16 | `Bread` |
-| Cooked Beef | 8 | `Cooked Beef` |
-| Baked Potato | 8 | `Baked Potato` |
-| Wheat | 32 | `Wheat` |
-| Hay Bale | 8 | `Hay Bale` |
-| Bone Meal | 16 | `Bone Meal` |
-| Pumpkin Pie | 8 | `Pumpkin Pie` |
+| Bread | 8 | `Bread x8` |
+| Cooked Beef | 4 | `Cooked Beef x4` |
+| Baked Potato | 4 | `Baked Potato x4` |
+| Wheat | 16 | `Wheat x16` |
+| Hay Block | 4 | `Hay Block x4` |
+| Bone Meal | 8 | `Bone Meal x8` |
+| Pumpkin Pie | 4 | `Pumpkin Pie x4` |
 
 **7 entries**, equal weight per entry
 
@@ -299,24 +312,53 @@ See full specification in `ceres.md`.
 ### Implementation Example
 
 ```yaml
-demeter_crate_roll:
+demeter_key_usage:
+    type: world
+    events:
+        on player right clicks block with:demeter_key:
+        - determine cancelled passively
+
+        # Pre-roll outcome BEFORE consuming key
+        - define tier_result <proc[roll_demeter_tier]>
+        - define tier <[tier_result].get[1]>
+        - define tier_color <[tier_result].get[2]>
+        - define loot <proc[roll_demeter_loot].context[<[tier]>]>
+
+        # Consume key after successful roll
+        - take item:demeter_key quantity:1
+
+        # Start animation with unique queue ID for early close handling
+        - run demeter_crate_animation def.tier:<[tier]> def.tier_color:<[tier_color]> def.loot:<[loot]> id:demeter_crate_<player.uuid>
+
+        # Track statistics
+        - flag player demeter.crates_opened:++
+        - flag player demeter.tier.<[tier].to_lowercase>:++
+
+demeter_crate_animation:
     type: task
+    definitions: tier|tier_color|loot
     script:
-    - define tier <proc[roll_demeter_tier]>
-    - define loot <proc[get_demeter_loot].context[<[tier]>]>
+    # Store pending data for early close recovery
+    - flag player demeter.crate.pending_loot:<[loot]>
+    - flag player demeter.crate.pending_tier:<[tier]>
+    - flag player demeter.crate.pending_tier_color:<[tier_color]>
+    - flag player demeter.crate.animation_running:true
+
+    # Run scrolling animation (checks flag every cycle for early stop)
+    # ... animation code ...
+
+    # Clear flag before closing to prevent race condition
+    - flag player demeter.crate.animation_running:!
+    - inventory close
 
     # Award loot
-    - choose <[loot.type]>:
+    - choose <[loot].get[type]>:
         - case ITEM:
-            - give <[loot.item]> quantity:<[loot.quantity]>
+            - give <item[<[loot].get[material]>].with[quantity=<[loot].get[quantity]>]>
         - case EXPERIENCE:
-            - experience give <[loot.amount]>
+            - experience give <[loot].get[amount]>
         - case CUSTOM:
-            - give <[loot.script]>
-
-    # Feedback
-    - narrate "<&7>[<[tier].color>]<[tier]><&7> <[loot.display]>"
-    - playsound <player> sound:<[tier].sound>
+            - give <item[<[loot].get[script]>].with[quantity=<[loot].get[quantity]>]>
 ```
 
 ---
@@ -363,22 +405,39 @@ demeter_crate_roll:
 - If no space, drop at player location: `drop <[loot]> <player.location>`
 - Narrate: `<&c>Inventory full! Item dropped at your feet.`
 
+### GUI Closed During Animation
+
+**Problem**: Player closes GUI mid-animation (intentional or accidental)
+
+**Solution**:
+- Loot and tier are pre-rolled BEFORE animation starts
+- Results stored in temporary flags (`demeter.crate.pending_loot`, etc.)
+- Animation queue checks `demeter.crate.animation_running` flag every cycle
+- Early close handler:
+  1. Clears `animation_running` flag to signal stop
+  2. Waits 1 tick for queue to notice
+  3. Awards pending loot immediately
+  4. Clears pending flags
+- No loot lost, faster experience for impatient players
+
 ### Key Removed During Animation
 
 **Problem**: Player drops key or GUI closes mid-animation
 
 **Solution**:
-- Check key count BEFORE starting animation
-- Remove key immediately on event trigger (before GUI opens)
-- Animation runs regardless (loot already committed)
+- Key is consumed BEFORE animation starts
+- Loot is pre-rolled BEFORE key consumption
+- Animation is purely visual (outcome already determined)
+- Dropping key after use has no effect on reward
 
 ### Multiple Keys Used Rapidly
 
 **Problem**: Player spam-clicks with stack of keys
 
 **Solution**:
-- Event cooldown: `- ratelimit <player> 3s`
-- Or: Check if GUI already open, stop if true
+- Each key use creates unique queue with player UUID
+- `determine cancelled passively` prevents block interaction spam
+- Subsequent clicks while GUI is open are ignored (GUI blocks input)
 
 ---
 

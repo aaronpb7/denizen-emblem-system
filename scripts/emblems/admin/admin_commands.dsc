@@ -307,6 +307,146 @@ ceresadmin_command:
             - narrate "<&c>Invalid action. Use: keys, item, or reset"
 
 # ============================================
+# HERACLES ADMIN COMMAND
+# ============================================
+
+heraclesadmin_command:
+    type: command
+    name: heraclesadmin
+    description: Manage Heracles progression
+    usage: /heraclesadmin (player) (action) [args...]
+    permission: emblems.admin
+    debug: false
+    script:
+    - if <context.args.size> < 2:
+        - narrate "<&c>Usage: /heraclesadmin <player> <keys|set|xp|component|raid|reset> [args...]"
+        - stop
+
+    - define target <server.match_player[<context.args.get[1]>].if_null[null]>
+    - if <[target]> == null:
+        - narrate "<&c>Player not found"
+        - stop
+
+    - define action <context.args.get[2].to_lowercase>
+
+    - choose <[action]>:
+        # Give keys
+        - case keys:
+            - if <context.args.size> < 3:
+                - narrate "<&c>Usage: /heraclesadmin <player> keys <amount>"
+                - stop
+            - define amount <context.args.get[3]>
+            - if !<[amount].is_integer>:
+                - narrate "<&c>Amount must be a number"
+                - stop
+            - run give_item_to_player def:<[target]>|heracles_key|<[amount]>
+            - narrate "<&a>Gave <[target].name> <[amount]> Heracles Keys"
+
+        # Set activity counter
+        - case set:
+            - if <context.args.size> < 4:
+                - narrate "<&c>Usage: /heraclesadmin <player> set <pillagers|raids|emeralds> <count>"
+                - stop
+            - define activity <context.args.get[3].to_lowercase>
+            - define count <context.args.get[4]>
+            - if !<[count].is_integer>:
+                - narrate "<&c>Count must be a number"
+                - stop
+            - choose <[activity]>:
+                - case pillagers:
+                    - flag <[target]> heracles.pillagers.count:<[count]>
+                    - narrate "<&a>Set <[target].name>'s pillagers to <[count]>"
+                - case raids:
+                    - flag <[target]> heracles.raids.count:<[count]>
+                    - narrate "<&a>Set <[target].name>'s raids to <[count]>"
+                - case emeralds:
+                    - flag <[target]> heracles.emeralds.count:<[count]>
+                    - narrate "<&a>Set <[target].name>'s emeralds to <[count]>"
+                - default:
+                    - narrate "<&c>Invalid activity. Use: pillagers, raids, or emeralds"
+
+        # Give combat XP
+        - case xp:
+            - if <context.args.size> < 3:
+                - narrate "<&c>Usage: /heraclesadmin <player> xp <amount>"
+                - stop
+            - define amount <context.args.get[3]>
+            - if !<[amount].is_integer>:
+                - narrate "<&c>Amount must be a number"
+                - stop
+            - run award_combat_xp def.player:<[target]> def.amount:<[amount]> def.source:admin_command
+            - define total <[target].flag[heracles.xp].if_null[0]>
+            - narrate "<&a>Gave <[target].name> <[amount]> combat XP (Total: <[total]>)"
+
+        # Toggle component
+        - case component:
+            - if <context.args.size> < 4:
+                - narrate "<&c>Usage: /heraclesadmin <player> component <pillagers|raids|emeralds> <true|false>"
+                - stop
+            - define component <context.args.get[3].to_lowercase>
+            - define value <context.args.get[4].to_lowercase>
+            - if <[value]> != true && <[value]> != false:
+                - narrate "<&c>Value must be true or false"
+                - stop
+            - choose <[component]>:
+                - case pillagers:
+                    - if <[value]> == true:
+                        - flag <[target]> heracles.component.pillagers:true
+                        - narrate "<&a>Set pillagers component to true for <[target].name>"
+                    - else:
+                        - flag <[target]> heracles.component.pillagers:!
+                        - narrate "<&a>Removed pillagers component for <[target].name>"
+                - case raids:
+                    - if <[value]> == true:
+                        - flag <[target]> heracles.component.raids:true
+                        - narrate "<&a>Set raids component to true for <[target].name>"
+                    - else:
+                        - flag <[target]> heracles.component.raids:!
+                        - narrate "<&a>Removed raids component for <[target].name>"
+                - case emeralds:
+                    - if <[value]> == true:
+                        - flag <[target]> heracles.component.emeralds:true
+                        - narrate "<&a>Set emeralds component to true for <[target].name>"
+                    - else:
+                        - flag <[target]> heracles.component.emeralds:!
+                        - narrate "<&a>Removed emeralds component for <[target].name>"
+                - default:
+                    - narrate "<&c>Invalid component. Use: pillagers, raids, or emeralds"
+
+        # Award raid completion (with XP and keys)
+        - case raid:
+            - if <context.args.size> < 3:
+                - narrate "<&c>Usage: /heraclesadmin <player> raid <level>"
+                - narrate "<&7>Level 1-5 (Bad Omen I-V)"
+                - stop
+            - define level <context.args.get[3]>
+            - if !<list[1|2|3|4|5].contains[<[level]>]>:
+                - narrate "<&c>Level must be 1, 2, 3, 4, or 5"
+                - stop
+            # Award XP based on level
+            - define xp_amount <script[combat_xp_rates].data_key[rates.raids.<[level]>].if_null[50]>
+            - run award_combat_xp def.player:<[target]> def.amount:<[xp_amount]> def.source:admin_raid
+            # Award 2 keys
+            - give heracles_key quantity:2 player:<[target]>
+            # Increment raid count
+            - flag <[target]> heracles.raids.count:++
+            - define count <[target].flag[heracles.raids.count]>
+            - narrate "<&a>Awarded raid completion to <[target].name>:"
+            - narrate "<&7>  Level: <[level]> | XP: +<[xp_amount]> | Keys: +2 | Total raids: <[count]>/50"
+            - narrate "<&7>Player notified." targets:<player>
+            - narrate "<&c><&l>ADMIN RAID AWARD<&r> <&7>Level <[level]> raid completion" targets:<[target]>
+            - narrate "<&7>+<[xp_amount]> Combat XP | +2 Heracles Keys" targets:<[target]>
+            - narrate "<&7>Raids: <&a><[count]><&7>/50" targets:<[target]>
+
+        # Reset all Heracles flags
+        - case reset:
+            - flag <[target]> heracles:!
+            - narrate "<&a>Reset all Heracles flags for <[target].name>"
+
+        - default:
+            - narrate "<&c>Invalid action. Use: keys, set, xp, component, raid, or reset"
+
+# ============================================
 # TEST ROLL COMMANDS
 # ============================================
 

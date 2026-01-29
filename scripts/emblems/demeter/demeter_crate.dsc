@@ -51,8 +51,8 @@ demeter_crate_animation:
     - playsound <player> sound:block_chest_open volume:1.0
 
     # Open GUI with yellow border around rolling area
-    - define filler <item[gray_stained_glass_pane].with[display_name=<&7>]>
-    - define border <item[yellow_stained_glass_pane].with[display_name=<&e>]>
+    - define filler <item[gray_stained_glass_pane].with[display=<&7>]>
+    - define border <item[yellow_stained_glass_pane].with[display=<&e>]>
     - define gui_items <list>
     - repeat 27:
         - define gui_items <[gui_items].include[<[filler]>]>
@@ -91,14 +91,25 @@ demeter_crate_animation:
     # Middle row center slots: 12, 13, 14, 15, 16 (5 slots centered, scrolls left to right)
     # Final result lands in center (slot 14)
 
-    - define preview_pool <list[bread|cooked_beef|baked_potato|wheat|emerald|golden_carrot|golden_apple|enchanted_golden_apple|hay_bale|bone_meal]>
+    # Define preview pool as actual ItemTags instead of material names
+    - define preview_pool <list>
+    - define preview_pool <[preview_pool].include[<item[bread]>]>
+    - define preview_pool <[preview_pool].include[<item[cooked_beef]>]>
+    - define preview_pool <[preview_pool].include[<item[baked_potato]>]>
+    - define preview_pool <[preview_pool].include[<item[wheat]>]>
+    - define preview_pool <[preview_pool].include[<item[emerald]>]>
+    - define preview_pool <[preview_pool].include[<item[golden_carrot]>]>
+    - define preview_pool <[preview_pool].include[<item[golden_apple]>]>
+    - define preview_pool <[preview_pool].include[<item[enchanted_golden_apple]>]>
+    - define preview_pool <[preview_pool].include[<item[hay_block]>]>
+    - define preview_pool <[preview_pool].include[<item[bone_meal]>]>
 
     # Initialize scrolling slots with random items
-    - define slot1 <item[<[preview_pool].random>]>
-    - define slot2 <item[<[preview_pool].random>]>
-    - define slot3 <item[<[preview_pool].random>]>
-    - define slot4 <item[<[preview_pool].random>]>
-    - define slot5 <item[<[preview_pool].random>]>
+    - define slot1 <[preview_pool].random>
+    - define slot2 <[preview_pool].random>
+    - define slot3 <[preview_pool].random>
+    - define slot4 <[preview_pool].random>
+    - define slot5 <[preview_pool].random>
 
     # Phase 1: Fast scroll (20 cycles, 2t each = 2s)
     - repeat 20:
@@ -111,7 +122,7 @@ demeter_crate_animation:
         - define slot2 <[slot3]>
         - define slot3 <[slot4]>
         - define slot4 <[slot5]>
-        - define slot5 <item[<[preview_pool].random>]>
+        - define slot5 <[preview_pool].random>
 
         - inventory set d:<player.open_inventory> slot:12 o:<[slot1]>
         - inventory set d:<player.open_inventory> slot:13 o:<[slot2]>
@@ -132,7 +143,7 @@ demeter_crate_animation:
         - define slot2 <[slot3]>
         - define slot3 <[slot4]>
         - define slot4 <[slot5]>
-        - define slot5 <item[<[preview_pool].random>]>
+        - define slot5 <[preview_pool].random>
 
         - inventory set d:<player.open_inventory> slot:12 o:<[slot1]>
         - inventory set d:<player.open_inventory> slot:13 o:<[slot2]>
@@ -153,7 +164,7 @@ demeter_crate_animation:
         - define slot2 <[slot3]>
         - define slot3 <[slot4]>
         - define slot4 <[slot5]>
-        - define slot5 <item[<[preview_pool].random>]>
+        - define slot5 <[preview_pool].random>
 
         - inventory set d:<player.open_inventory> slot:12 o:<[slot1]>
         - inventory set d:<player.open_inventory> slot:13 o:<[slot2]>
@@ -190,7 +201,7 @@ demeter_crate_animation:
     - define slot2 <[slot3]>
     - define slot3 <[slot4]>
     - define slot4 <[slot5]>
-    - define slot5 <item[<[preview_pool].random>]>
+    - define slot5 <[preview_pool].random>
 
     - inventory set d:<player.open_inventory> slot:12 o:<[slot1]>
     - inventory set d:<player.open_inventory> slot:13 o:<[slot2]>
@@ -205,7 +216,7 @@ demeter_crate_animation:
     - define slot2 <[slot3]>
     - define slot3 <[slot4]>
     - define slot4 <[slot5]>
-    - define slot5 <item[<[preview_pool].random>]>
+    - define slot5 <[preview_pool].random>
 
     - inventory set d:<player.open_inventory> slot:12 o:<[slot1]>
     - inventory set d:<player.open_inventory> slot:13 o:<[slot2]>
@@ -286,6 +297,7 @@ demeter_crate_gui:
 
 roll_demeter_tier:
     type: procedure
+    debug: false
     script:
     - define roll <util.random.int[1].to[100]>
 
@@ -311,19 +323,20 @@ roll_demeter_tier:
 
 get_tier_indicator_pane:
     type: procedure
+    debug: false
     definitions: tier
     script:
     - choose <[tier]>:
         - case MORTAL:
-            - determine <item[white_stained_glass_pane].with[display_name=<&f>MORTAL]>
+            - determine <item[white_stained_glass_pane].with[display=<&f>MORTAL]>
         - case HEROIC:
-            - determine <item[yellow_stained_glass_pane].with[display_name=<&e>HEROIC]>
+            - determine <item[yellow_stained_glass_pane].with[display=<&e>HEROIC]>
         - case LEGENDARY:
-            - determine <item[orange_stained_glass_pane].with[display_name=<&6>LEGENDARY]>
+            - determine <item[orange_stained_glass_pane].with[display=<&6>LEGENDARY]>
         - case MYTHIC:
-            - determine <item[magenta_stained_glass_pane].with[display_name=<&d>MYTHIC]>
+            - determine <item[magenta_stained_glass_pane].with[display=<&d>MYTHIC]>
         - case OLYMPIAN:
-            - determine <item[nether_star].with[display_name=<&b>OLYMPIAN;enchantments=mending,1;item_flags=HIDE_ENCHANTS]>
+            - determine <item[nether_star].with[display=<&b>OLYMPIAN;enchantments=mending,1;item_flags=HIDE_ENCHANTS]>
 
 # ============================================
 # LOOT TABLES
@@ -331,6 +344,7 @@ get_tier_indicator_pane:
 
 roll_demeter_loot:
     type: procedure
+    debug: false
     definitions: tier
     script:
     - choose <[tier]>:
@@ -340,7 +354,7 @@ roll_demeter_loot:
             - define pool <[pool].include[cooked_beef:4]>
             - define pool <[pool].include[baked_potato:4]>
             - define pool <[pool].include[wheat:16]>
-            - define pool <[pool].include[hay_bale:4]>
+            - define pool <[pool].include[hay_block:4]>
             - define pool <[pool].include[bone_meal:8]>
             - define pool <[pool].include[pumpkin_pie:4]>
             - define choice <[pool].random>
@@ -420,6 +434,7 @@ roll_demeter_loot:
 
 build_loot_display_item:
     type: procedure
+    debug: false
     definitions: loot
     script:
     # Builds the final display item with quantity embedded
@@ -437,11 +452,11 @@ build_loot_display_item:
 
         - case EXPERIENCE:
             # Experience displays as a bottle
-            - determine <item[experience_bottle].with[display_name=<&a>+<[loot].get[amount]> Experience]>
+            - determine <item[experience_bottle].with[display=<&a>+<[loot].get[amount]> Experience]>
 
         - case TITLE:
             # Title displays as a name tag
-            - determine <item[name_tag].with[display_name=<&6><&l><[loot].get[display]>;enchantments=mending,1;hides=ALL]>
+            - determine <item[name_tag].with[display=<&6><&l><[loot].get[display]>;enchantments=mending,1;hides=ALL]>
 
 # ============================================
 # DEPRECATED LOOT AWARDING
@@ -510,11 +525,12 @@ demeter_crate_early_close:
         - if !<player.has_flag[demeter.crate.animation_running]>:
             - stop
 
-        # Stop the animation queue immediately
-        - queue stop demeter_crate_<player.uuid>
-
-        # Animation was interrupted - award pending loot
+        # Clear the animation running flag to signal the queue to stop naturally
+        # Don't try to force-stop the queue - it may have already finished
         - flag player demeter.crate.animation_running:!
+
+        # Wait a tick to ensure the queue sees the flag change
+        - wait 1t
 
         - define loot <player.flag[demeter.crate.pending_loot]>
         - define tier <player.flag[demeter.crate.pending_tier]>
