@@ -21,17 +21,8 @@ ceres_hoe_replant:
         - if <player.item_in_hand.script.name.if_null[null]> != ceres_hoe:
             - stop
 
-        # Get material and age from the broken block (context.material stores what was broken)
+        # Get material from the broken block (context.material stores what was broken)
         - define material <context.material.name>
-        - define age <context.material.age>
-
-        # Check if fully grown (nether_wart max age is 3, others are 7)
-        - if <[material]> == nether_wart:
-            - if <[age]> != 3:
-                - stop
-        - else:
-            - if <[age]> != 7:
-                - stop
 
         # Determine which seed item is needed
         - choose <[material]>:
