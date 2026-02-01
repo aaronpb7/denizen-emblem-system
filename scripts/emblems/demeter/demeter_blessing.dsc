@@ -25,7 +25,7 @@ demeter_blessing_usage:
 
         # Check if all components complete (block use if so)
         - if <player.has_flag[demeter.component.wheat]> && <player.has_flag[demeter.component.cow]> && <player.has_flag[demeter.component.cake]>:
-            - narrate "<&e><&l>Demeter<&r><&7> has no further need of this blessing."
+            - narrate "<&e>All Demeter activities already complete!"
             - playsound <player> sound:entity_villager_no
             - stop
 

@@ -7,7 +7,7 @@
 
 bulletin_data:
     type: data
-    version: 4
+    version: 5
 
 # ==================== JOIN EVENT ====================
 
@@ -38,14 +38,14 @@ bulletin_inventory:
     size: 45
     slots:
     - [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler]
-    - [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_combat_new] [bulletin_promachos_new] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler]
+    - [bulletin_filler] [bulletin_filler] [bulletin_mining_new] [bulletin_combat_new] [bulletin_promachos_new] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler]
     - [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler]
     - [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler]
     - [bulletin_back_button] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler]
 
 bulletin_filler:
     type: item
-    material: black_stained_glass_pane
+    material: gray_stained_glass_pane
     display name: <empty>
 
 bulletin_back_button:
@@ -80,7 +80,7 @@ bulletin_promachos_new:
     - <&7>• Mythic tools and consumables
     - <&7>• Exclusive cosmetic titles
     - <empty>
-    - <&8><&o>Mining and Combat roles coming soon!
+    - <&c>Combat <&7>and <&8>Mining <&7>roles now available!
     - <empty>
     - <&e>Type /profile to get started!
 
@@ -105,8 +105,32 @@ bulletin_combat_new:
     - <&7>• Mythic weapons and gear
     - <&7>• Exclusive combat titles
     - <empty>
-    - <&6>Farming Role <&7>still available!
-    - <&8><&o>Mining role coming soon!
+    - <&6>Farming <&7>and <&7>Mining <&7>roles also available!
+    - <empty>
+    - <&e>Talk to Promachos to choose your path!
+
+bulletin_mining_new:
+    type: item
+    material: enchanted_book
+    display name: <&8><&l>31/01 - Mining Role Now Available!
+    lore:
+    - <&8><&o>"The forge awaits those who shape the earth..."
+    - <empty>
+    - <&8><&l>MINING ROLE - LIVE NOW!
+    - <&8>Hephaestus<&7>, God of the Forge
+    - <&7>• Mine iron ore, smelt in blast furnace, craft golems
+    - <&7>• Earn <&8>Hephaestus Keys <&7>from forge work
+    - <&7>• Open crates for tools and upgrades
+    - <&7>• Gain <&8>Mining XP <&7>for permanent buffs
+    - <&7>• Unlock <&d>Vulcan Vault <&7>meta-progression
+    - <empty>
+    - <&8>What You Get<&co>
+    - <&7>• Mining Speed (Haste I/II)
+    - <&7>• Ore XP Bonus (+5% to +25%)
+    - <&7>• Mythic pickaxes and consumables
+    - <&7>• Exclusive forge titles
+    - <empty>
+    - <&6>Farming <&7>and <&c>Combat <&7>roles also available!
     - <empty>
     - <&e>Talk to Promachos to choose your path!
 

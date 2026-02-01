@@ -1,52 +1,52 @@
 # ============================================
-# HERACLES CUSTOM ITEMS
+# HEPHAESTUS CUSTOM ITEMS
 # ============================================
 #
-# Custom items from Heracles MYTHIC crate tier:
-# - Heracles Sword (cosmetic prestige sword)
-# - Heracles Blessing (10% progress boost consumable)
-# - Heracles Title (flag-based chat prefix unlock)
+# Custom items from Hephaestus MYTHIC crate tier:
+# - Hephaestus Pickaxe (cosmetic prestige pickaxe)
+# - Hephaestus Blessing (10% progress boost consumable)
+# - Hephaestus Title (flag-based chat prefix unlock)
 #
 
 # ============================================
-# HERACLES SWORD (MYTHIC)
+# HEPHAESTUS PICKAXE (MYTHIC)
 # ============================================
 
-heracles_sword:
+hephaestus_pickaxe:
     type: item
-    material: diamond_sword
-    display name: <&d>Heracles Sword<&r>
+    material: diamond_pickaxe
+    display name: <&d>Hephaestus Pickaxe<&r>
     mechanisms:
         unbreakable: true
     lore:
-    - <&7>A diamond blade blessed by
-    - <&7>Heracles, unbreakable and eternal.
+    - <&7>A diamond pickaxe blessed by
+    - <&7>Hephaestus, unbreakable and eternal.
     - <empty>
     - <&8>Unbreakable
     - <empty>
-    - <&d><&l>MYTHIC SWORD
+    - <&d><&l>MYTHIC PICKAXE
 
 # No special mechanics - cosmetic prestige item
 
 # ============================================
-# HERACLES BLESSING (MYTHIC)
+# HEPHAESTUS BLESSING (MYTHIC)
 # ============================================
 
-heracles_blessing:
+hephaestus_blessing:
     type: item
     material: nether_star
-    display name: <&d>Heracles Blessing<&r>
+    display name: <&d>Hephaestus Blessing<&r>
     enchantments:
     - mending:1
     mechanisms:
         hides: ENCHANTS
     lore:
     - <&7>A divine blessing from the
-    - <&7>greatest of Greek heroes,
-    - <&7>imbued with heroic valor.
+    - <&7>god of the forge, imbued
+    - <&7>with craftsmanship.
     - <empty>
     - <&e>Right-click to boost progress
-    - <&e>on all incomplete Heracles
+    - <&e>on all incomplete Hephaestus
     - <&e>activities by 10%.
     - <empty>
     - <&8>Single-use consumable
@@ -55,12 +55,12 @@ heracles_blessing:
     - <&d><&l>MYTHIC CONSUMABLE
 
 # ============================================
-# HERACLES TITLE (MYTHIC)
+# HEPHAESTUS TITLE (MYTHIC)
 # ============================================
 #
 # Not a physical item - this is a flag-based unlock
-# Flag: heracles.item.title: true
-# Title Text: <&4>[Hero of Olympus]<&r>
+# Flag: hephaestus.item.title: true
+# Title Text: <&8>[Master Smith]<&r>
 #
 # Awarded directly from crate (TITLE type in loot table)
 # Chat integration handled in cosmetics system

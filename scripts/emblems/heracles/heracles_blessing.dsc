@@ -25,7 +25,7 @@ heracles_blessing_usage:
 
         # Check if all components complete (block use if so)
         - if <player.has_flag[heracles.component.pillagers]> && <player.has_flag[heracles.component.raids]> && <player.has_flag[heracles.component.emeralds]>:
-            - narrate "<&c><&l>Heracles<&r><&7> has no further need of this blessing."
+            - narrate "<&c>All Heracles activities already complete!"
             - playsound <player> sound:entity_villager_no
             - stop
 
@@ -42,9 +42,9 @@ heracles_blessing_usage:
             - flag player heracles.pillagers.count:<[new_count]>
             - define boosted <[boosted].include[<&4>Pillagers<&7>: +<[actual_boost]> (<[current]> → <[new_count]>)]>
 
-            # Check for key awards
+            # Check for key awards (every 25 pillagers)
             - define keys_awarded <player.flag[heracles.pillagers.keys_awarded].if_null[0]>
-            - define keys_should_have <[new_count].div[100].round_down>
+            - define keys_should_have <[new_count].div[25].round_down>
             - if <[keys_should_have]> > <[keys_awarded]>:
                 - define keys_to_give <[keys_should_have].sub[<[keys_awarded]>]>
                 - give heracles_key quantity:<[keys_to_give]>
@@ -69,11 +69,13 @@ heracles_blessing_usage:
             - flag player heracles.raids.count:<[new_count]>
             - define boosted <[boosted].include[<&4>Raids<&7>: +<[actual_boost]> (<[current]> → <[new_count]>)]>
 
-            # Raids award 2 keys each directly, not in batches
-            # So we give 2 keys per raid added
-            - define keys_to_give <[actual_boost].mul[2]>
-            - if <[keys_to_give]> > 0:
+            # Check for key awards (2 keys per raid)
+            - define keys_awarded <player.flag[heracles.raids.keys_awarded].if_null[0]>
+            - define keys_should_have <[new_count].mul[2]>
+            - if <[keys_should_have]> > <[keys_awarded]>:
+                - define keys_to_give <[keys_should_have].sub[<[keys_awarded]>]>
                 - give heracles_key quantity:<[keys_to_give]>
+                - flag player heracles.raids.keys_awarded:<[keys_should_have]>
                 - narrate "<&c><&l>BONUS KEYS!<&r> <&7>+<[keys_to_give]> Heracles Keys (Raids)"
 
             # Check for component milestone

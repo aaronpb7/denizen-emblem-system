@@ -354,7 +354,7 @@ roll_mars_outcome:
         - case title:
             - define result_map <map[type=UNIQUE;item_id=title;item=<item[book].with[display=<&4><&l>MARS TITLE<&r>;lore=<&7>Cosmetic unlock:|<&4>[Mars' Chosen]<&7> title]>;display=Mars Title]>
         - case shulker:
-            - define result_map <map[type=UNIQUE;item_id=shulker;item=<item[gray_shulker_box]>;display=Gray Shulker Box]>
+            - define result_map <map[type=UNIQUE;item_id=shulker;item=<item[red_shulker_box]>;display=Red Shulker Box]>
         - case shield:
             - define result_map <map[type=UNIQUE;item_id=shield;item=<item[mars_shield]>;display=Mars Shield]>
 
@@ -391,7 +391,7 @@ award_mars_loot:
                     - flag player mars.item.title:true
                     # No physical item for title (just flag)
                 - case shulker:
-                    - give gray_shulker_box
+                    - give red_shulker_box
                     - flag player mars.item.shulker:true
                 - case shield:
                     - give mars_shield

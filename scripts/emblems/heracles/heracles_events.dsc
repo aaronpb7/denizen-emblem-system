@@ -79,9 +79,14 @@ combat_raid_victory:
             - flag <[hero]> heracles.raids.count:++
             - define count <[hero].flag[heracles.raids.count]>
 
-            # Award 2 keys per raid immediately
-            - give heracles_key quantity:2 player:<[hero]>
-            - narrate "<&c><&l>RAID VICTORY!<&r> <&7>+2 Heracles Keys" targets:<[hero]>
+            # Key award logic (2 keys per raid, with tracking for catch-up)
+            - define keys_awarded <[hero].flag[heracles.raids.keys_awarded].if_null[0]>
+            - define keys_should_have <[count].mul[2]>
+            - if <[keys_should_have]> > <[keys_awarded]>:
+                - define keys_to_give <[keys_should_have].sub[<[keys_awarded]>]>
+                - give heracles_key quantity:<[keys_to_give]> player:<[hero]>
+                - flag <[hero]> heracles.raids.keys_awarded:<[keys_should_have]>
+                - narrate "<&c><&l>RAID VICTORY!<&r> <&7>+<[keys_to_give]> Heracles Keys" targets:<[hero]>
             - narrate "<&7>Raids completed: <&a><[count]><&7>/50" targets:<[hero]>
             - playsound <[hero]> sound:ui_toast_challenge_complete
 
@@ -106,15 +111,22 @@ combat_emerald_trading:
         - if <player.flag[role.active].if_null[NONE]> != COMBAT:
             - stop
 
-        # Count emeralds spent in this trade
-        - define emeralds_spent 0
+        # Count emeralds spent in this trade (accounting for discounts)
+        - define base_emeralds 0
         - foreach <context.trade.inputs> as:input:
             - if <[input].material.name> == emerald:
-                - define emeralds_spent <[emeralds_spent].add[<[input].quantity>]>
+                - define base_emeralds <[base_emeralds].add[<[input].quantity>]>
 
-        # Stop if no emeralds spent
-        - if <[emeralds_spent]> == 0:
+        # Stop if no emeralds in trade
+        - if <[base_emeralds]> == 0:
             - stop
+
+        # Apply discount (special_price is negative for discounts)
+        - define special <context.trade.special_price.if_null[0]>
+        - define emeralds_spent <[base_emeralds].add[<[special]>]>
+
+        # Clamp to valid range (1-64)
+        - define emeralds_spent <[emeralds_spent].max[1].min[64]>
 
         # Award XP (1 XP per emerald spent)
         - define xp_amount <script[combat_xp_rates].data_key[rates.emerald].if_null[1]>
@@ -125,9 +137,9 @@ combat_emerald_trading:
         - flag player heracles.emeralds.count:+:<[emeralds_spent]>
         - define count <player.flag[heracles.emeralds.count]>
 
-        # Key award logic (every 150)
+        # Key award logic (every 100)
         - define keys_awarded <player.flag[heracles.emeralds.keys_awarded].if_null[0]>
-        - define keys_should_have <[count].div[150].round_down>
+        - define keys_should_have <[count].div[100].round_down>
         - if <[keys_should_have]> > <[keys_awarded]>:
             - define keys_to_give <[keys_should_have].sub[<[keys_awarded]>]>
             - give heracles_key quantity:<[keys_to_give]>
@@ -191,7 +203,14 @@ award_combat_xp:
         - give heracles_key quantity:<[key_reward]> player:<[player]>
 
         # Announce rank up
-        - narrate "<&4><&l>RANK UP!<&r> <&c><[rank_name]>" targets:<[player]>
-        - narrate "<&7>Reward: <&e>+<[key_reward]> Heracles Keys" targets:<[player]>
+        - title title:<&4><&l>COMBAT<&sp>RANK<&sp>UP! subtitle:<&c><[rank_name]> targets:<[player]> fade_in:10t stay:70t fade_out:20t
+        - narrate "<&4>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" targets:<[player]>
+        - narrate "<&c><&l>⚔ COMBAT RANK ACHIEVED ⚔" targets:<[player]>
+        - narrate "<&7>You have become<&co> <&c><[rank_name]>" targets:<[player]>
+        - narrate "" targets:<[player]>
+        - narrate "<&b>Rewards Unlocked:" targets:<[player]>
+        - narrate "<&7>• <&f>Rank Reward: <&e><[key_reward]> Heracles Keys" targets:<[player]>
+        - narrate "<&4>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" targets:<[player]>
         - playsound <[player]> sound:ui_toast_challenge_complete
         - playeffect effect:totem at:<[player].eye_location> quantity:30 offset:0.5
+        - announce "<&c>[Promachos]<&r> <&f><[player].name> <&7>has achieved <&4><[rank_name]><&7>!"

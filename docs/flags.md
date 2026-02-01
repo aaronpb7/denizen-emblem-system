@@ -100,57 +100,127 @@ This document lists ALL flags used in the Emblem System V2. Flags are organized 
 
 ---
 
-## Future God Flags (Placeholder Structure)
+## Hephaestus Progression Flags
 
-### Hephaestus (Mining - To Be Implemented)
+### Activity Counters
 
-```
-hephaestus.iron.count
-hephaestus.iron.keys_awarded
-hephaestus.golems.count
-hephaestus.golems.keys_awarded
-hephaestus.smelting.count
-hephaestus.smelting.keys_awarded
+| Flag | Type | Purpose | Example Value | Incremented When |
+|------|------|---------|---------------|------------------|
+| `hephaestus.iron.count` | Integer | Total iron ore mined | `3500` | Iron ore broken, role=MINING |
+| `hephaestus.smelting.count` | Integer | Total items smelted in blast furnace | `4200` | Item taken from blast furnace, role=MINING |
+| `hephaestus.golems.count` | Integer | Total iron golems created | `75` | Iron golem spawns near player, role=MINING |
 
-hephaestus.component.iron
-hephaestus.component.golem
-hephaestus.component.smelting
+### Key Award Tracking
 
-hephaestus.emblem.unlocked
-hephaestus.emblem.unlock_date
-```
+| Flag | Type | Purpose | Example Value |
+|------|------|---------|---------------|
+| `hephaestus.iron.keys_awarded` | Integer | Keys awarded from iron | `70` |
+| `hephaestus.smelting.keys_awarded` | Integer | Keys awarded from smelting | `84` |
+| `hephaestus.golems.keys_awarded` | Integer | Keys awarded from golems | `75` |
 
-### Heracles (Combat - To Be Implemented)
+### Component Flags
 
-```
-heracles.pillagers.count
-heracles.pillagers.keys_awarded
-heracles.raids.count
-heracles.raids.keys_awarded
-heracles.bosses.count
-heracles.bosses.keys_awarded
+| Flag | Type | Purpose | Set When |
+|------|------|---------|----------|
+| `hephaestus.component.iron` | Boolean | Iron component obtained | Counter reaches 5,000 |
+| `hephaestus.component.smelting` | Boolean | Smelting component obtained | Counter reaches 5,000 |
+| `hephaestus.component.golem` | Boolean | Golem component obtained | Counter reaches 100 |
 
-heracles.component.pillager
-heracles.component.raid
-heracles.component.boss
+### Emblem Unlock
 
-heracles.emblem.unlocked
-heracles.emblem.unlock_date
-```
+| Flag | Type | Purpose |
+|------|------|---------|
+| `hephaestus.emblem.unlocked` | Boolean | Hephaestus emblem unlocked |
+| `hephaestus.emblem.unlock_date` | Timestamp | When emblem unlocked |
 
-### Vulcan & Mars (Meta - To Be Implemented)
+---
 
-```
-vulcan.item.hammer
-vulcan.item.title
-vulcan.item.furnace
-vulcan.item.tool
+## Heracles Progression Flags
 
-mars.item.sword
-mars.item.title
-mars.item.shield
-mars.item.banner
-```
+### Activity Counters
+
+| Flag | Type | Purpose | Example Value | Incremented When |
+|------|------|---------|---------------|------------------|
+| `heracles.pillagers.count` | Integer | Total pillagers killed | `1800` | Pillager killed, role=COMBAT |
+| `heracles.raids.count` | Integer | Total raids completed | `35` | Raid finished with player as hero, role=COMBAT |
+| `heracles.emeralds.count` | Integer | Total emeralds spent trading | `7500` | Emeralds used in villager trades, role=COMBAT |
+
+### Key Award Tracking
+
+| Flag | Type | Purpose | Example Value |
+|------|------|---------|---------------|
+| `heracles.pillagers.keys_awarded` | Integer | Keys awarded from pillagers | `18` |
+| `heracles.raids.keys_awarded` | Integer | Keys awarded from raids (2 per raid) | `70` |
+| `heracles.emeralds.keys_awarded` | Integer | Keys awarded from emeralds | `75` |
+
+### Component Flags
+
+| Flag | Type | Purpose | Set When |
+|------|------|---------|----------|
+| `heracles.component.pillagers` | Boolean | Pillager component obtained | Counter reaches 2,500 |
+| `heracles.component.raids` | Boolean | Raid component obtained | Counter reaches 50 |
+| `heracles.component.emeralds` | Boolean | Emerald component obtained | Counter reaches 10,000 |
+
+### Emblem Unlock
+
+| Flag | Type | Purpose |
+|------|------|---------|
+| `heracles.emblem.unlocked` | Boolean | Heracles emblem unlocked |
+| `heracles.emblem.unlock_date` | Timestamp | When emblem unlocked |
+
+---
+
+## Vulcan Meta-Progression Flags
+
+### Item Obtained Flags
+
+| Flag | Type | Purpose | Set When |
+|------|------|---------|----------|
+| `vulcan.item.pickaxe` | Boolean | Vulcan Pickaxe obtained | Vulcan crate rolls pickaxe |
+| `vulcan.item.title` | Boolean | Vulcan Title obtained | Vulcan crate rolls title |
+| `vulcan.item.charm` | Boolean | Vulcan Forge Charm obtained | Vulcan crate rolls charm |
+| `vulcan.item.shulker` | Boolean | Gray Shulker obtained | Vulcan crate rolls shulker |
+
+### Cooldowns & Toggles
+
+| Flag | Type | Purpose |
+|------|------|---------|
+| `vulcan.autosmelt` | Boolean | Pickaxe auto-smelt mode enabled |
+
+### Optional Statistics
+
+| Flag | Type | Purpose |
+|------|------|---------|
+| `vulcan.crates_opened` | Integer | Total Vulcan crates opened |
+| `vulcan.god_apples` | Integer | God apples from Vulcan |
+| `vulcan.unique_items` | Integer | Unique items from Vulcan (0-4) |
+
+---
+
+## Mars Meta-Progression Flags
+
+### Item Obtained Flags
+
+| Flag | Type | Purpose | Set When |
+|------|------|---------|----------|
+| `mars.item.sword` | Boolean | Mars Sword obtained | Mars crate rolls sword |
+| `mars.item.title` | Boolean | Mars Title obtained | Mars crate rolls title |
+| `mars.item.shield` | Boolean | Mars Shield obtained | Mars crate rolls shield |
+| `mars.item.shulker` | Boolean | Gray Shulker obtained | Mars crate rolls shulker |
+
+### Cooldowns
+
+| Flag | Type | Purpose |
+|------|------|---------|
+| `mars.shield_cooldown` | Expiring | Shield ability cooldown (expire:180s) |
+
+### Optional Statistics
+
+| Flag | Type | Purpose |
+|------|------|---------|
+| `mars.crates_opened` | Integer | Total Mars crates opened |
+| `mars.god_apples` | Integer | God apples from Mars |
+| `mars.unique_items` | Integer | Unique items from Mars (0-4) |
 
 ---
 
@@ -220,8 +290,6 @@ emblem.heracles.stage2.claimed
 ... (up to stage5)
 emblem.heracles.stage5.completed
 ```
-
-**Migration**: See `docs/migration.md` for mapping strategy.
 
 ---
 

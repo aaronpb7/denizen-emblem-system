@@ -64,10 +64,7 @@ demeter_hoe:
     type: item
     material: diamond_hoe
     display name: <&d>Demeter Hoe<&r>
-    enchantments:
-    - mending:1
     mechanisms:
-        hides: ENCHANTS
         unbreakable: true
     lore:
     - <&7>A diamond hoe blessed by

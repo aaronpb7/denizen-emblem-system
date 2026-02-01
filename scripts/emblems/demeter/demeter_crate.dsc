@@ -355,7 +355,7 @@ roll_demeter_loot:
             - define pool <[pool].include[baked_potato:4]>
             - define pool <[pool].include[wheat:16]>
             - define pool <[pool].include[hay_block:4]>
-            - define pool <[pool].include[bone_meal:8]>
+            - define pool <[pool].include[bone_meal:16]>
             - define pool <[pool].include[pumpkin_pie:4]>
             - define choice <[pool].random>
             - define parts <[choice].split[<&co>]>

@@ -19,6 +19,7 @@ profile_inventory:
     type: inventory
     inventory: chest
     gui: true
+    debug: false
     title: <&8><player.name>'s Profile
     size: 45
     procedural items:
@@ -29,7 +30,7 @@ get_profile_items:
     debug: false
     script:
     - define items <list>
-    - define filler <item[gray_stained_glass_pane].with[display=<&7>]>
+    - define filler <item[gray_stained_glass_pane].with[display=<empty>]>
 
     # Fill all slots with filler
     - repeat 45:
@@ -127,10 +128,29 @@ get_role_display_item:
         - case MINING:
             - define lore <[lore].include[<&e>Patron<&co> <&6><[god]><&7>, God of the Forge]>
             - define lore "<[lore].include[<&sp>]>"
-            - define lore <[lore].include[<&7>Delve into stone and strike the earth.]>
+
+            # Show actual progress stats
+            - define iron <player.flag[hephaestus.iron.count].if_null[0]>
+            - define smelting <player.flag[hephaestus.smelting.count].if_null[0]>
+            - define golems <player.flag[hephaestus.golems.count].if_null[0]>
+            - define keys <player.flag[hephaestus.iron.keys_awarded].if_null[0].add[<player.flag[hephaestus.smelting.keys_awarded].if_null[0]>].add[<player.flag[hephaestus.golems.keys_awarded].if_null[0]>]>
+            - define xp <player.flag[mining.xp].if_null[0]>
+            - define rank <player.flag[mining.rank].if_null[0]>
+
+            - define lore <[lore].include[<&7>Your Progress<&co>]>
+            - define lore <[lore].include[<&8>• Iron ore mined<&co> <&f><[iron].format_number>]>
+            - define lore <[lore].include[<&8>• Items smelted<&co> <&f><[smelting].format_number>]>
+            - define lore <[lore].include[<&8>• Golems created<&co> <&f><[golems].format_number>]>
             - define lore "<[lore].include[<&sp>]>"
-            - define lore <[lore].include[<&6>Your Activities<&co>]>
-            - define lore <[lore].include[<&8><&o>Coming soon...]>
+            - define lore <[lore].include[<&7>Keys earned<&co> <&f><[keys]> <&8>Hephaestus Keys]>
+            - define lore <[lore].include[<&7>Mining XP<&co> <&f><[xp].format_number> <&8>XP]>
+
+            # Show rank if they have one
+            - if <[rank]> > 0:
+                - define rank_name <proc[get_mining_rank_name].context[<[rank]>]>
+                - define lore <[lore].include[<&7>Rank<&co> <&f><[rank_name]>]>
+            - else:
+                - define lore <[lore].include[<&7>Rank<&co> <&8>Unranked]>
         - case COMBAT:
             - define lore <[lore].include[<&e>Patron<&co> <&6><[god]><&7>, Hero of Strength]>
             - define lore "<[lore].include[<&sp>]>"
@@ -216,6 +236,29 @@ get_ranks_icon_item:
             - determine <item[experience_bottle].with[display=<&c><&l>Combat Ranks;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
         - else:
             - determine <item[experience_bottle].with[display=<&c><&l>Combat Ranks;lore=<[lore]>]>
+
+    # Show mining ranks if MINING role
+    - else if <[active_role]> == MINING:
+        - define xp <player.flag[mining.xp].if_null[0]>
+        - define rank <proc[get_mining_rank].context[<[xp]>]>
+        - define rank_name <proc[get_mining_rank_name].context[<[rank]>]>
+
+        - define lore <list>
+        - if <[rank]> == 0:
+            - define lore <[lore].include[<&8>No rank achieved yet]>
+            - define lore "<[lore].include[<&sp>]>"
+            - define lore <[lore].include[<&f>Start mining to gain XP!]>
+        - else:
+            - define lore <[lore].include[<&7>Current Rank<&co> <&f><[rank_name]>]>
+            - define lore "<[lore].include[<&sp>]>"
+            - define lore <[lore].include[<&8>Total XP<&co> <&f><[xp].format_number>]>
+        - define lore "<[lore].include[<&sp>]>"
+        - define lore <[lore].include[<&f>Click to view ranks]>
+
+        - if <[rank]> > 0:
+            - determine <item[experience_bottle].with[display=<&8><&l>Mining Ranks;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+        - else:
+            - determine <item[experience_bottle].with[display=<&8><&l>Mining Ranks;lore=<[lore]>]>
 
     # No role selected - show generic message
     - else:
@@ -363,6 +406,8 @@ profile_click_handler:
             - inventory open d:farming_ranks_gui
         - else if <[active_role]> == COMBAT:
             - inventory open d:combat_ranks_gui
+        - else if <[active_role]> == MINING:
+            - inventory open d:mining_ranks_gui
         - else:
             - narrate "<&7>Choose a role first by speaking to Promachos"
             - playsound <player> sound:entity_villager_no
@@ -391,6 +436,9 @@ profile_click_handler:
         # Check if clicking Heracles emblem (diamond sword item)
         - else if <context.item.material.name> == diamond_sword:
             - inventory open d:heracles_progress_gui
+        # Check if clicking Hephaestus emblem (iron pickaxe item)
+        - else if <context.item.material.name> == iron_pickaxe:
+            - inventory open d:hephaestus_progress_gui
 
         after player clicks emblem_check_back_button in emblem_check_gui:
         - inventory open d:profile_inventory
@@ -403,6 +451,10 @@ profile_click_handler:
         after player clicks heracles_progress_back_button in heracles_progress_gui:
         - inventory open d:emblem_check_gui
 
+        # Hephaestus progress GUI clicks
+        after player clicks hephaestus_progress_back_button in hephaestus_progress_gui:
+        - inventory open d:emblem_check_gui
+
 # ============================================
 # DEMETER DETAILED PROGRESS GUI
 # ============================================
@@ -411,6 +463,7 @@ demeter_progress_gui:
     type: inventory
     inventory: chest
     gui: true
+    debug: false
     title: <&8>Demeter - Activity Progress
     size: 27
     procedural items:
@@ -421,7 +474,7 @@ get_demeter_progress_items:
     debug: false
     script:
     - define items <list>
-    - define filler <item[gray_stained_glass_pane].with[display=<&7>]>
+    - define filler <item[gray_stained_glass_pane].with[display=<empty>]>
 
     # Fill all slots
     - repeat 27:
@@ -565,6 +618,7 @@ heracles_progress_gui:
     type: inventory
     inventory: chest
     gui: true
+    debug: false
     title: <&8>Heracles - Activity Progress
     size: 27
     procedural items:
@@ -575,7 +629,7 @@ get_heracles_progress_items:
     debug: false
     script:
     - define items <list>
-    - define filler <item[gray_stained_glass_pane].with[display=<&7>]>
+    - define filler <item[gray_stained_glass_pane].with[display=<empty>]>
 
     # Fill all slots
     - repeat 27:
@@ -710,6 +764,161 @@ heracles_progress_back_button:
     lore:
     - <&7>Return<&sp>to<&sp>emblems
 
+# ============================================
+# HEPHAESTUS DETAILED PROGRESS GUI
+# ============================================
+
+hephaestus_progress_gui:
+    type: inventory
+    inventory: chest
+    gui: true
+    debug: false
+    title: <&8>Hephaestus - Activity Progress
+    size: 27
+    procedural items:
+    - determine <proc[get_hephaestus_progress_items]>
+
+get_hephaestus_progress_items:
+    type: procedure
+    debug: false
+    script:
+    - define items <list>
+    - define filler <item[gray_stained_glass_pane].with[display=<empty>]>
+
+    # Fill all slots
+    - repeat 27:
+        - define items <[items].include[<[filler]>]>
+
+    # Row 2: Three activity items centered (slots 12, 14, 16)
+    - define iron_item <proc[get_hephaestus_iron_progress_item]>
+    - define items <[items].set[<[iron_item]>].at[12]>
+
+    - define smelting_item <proc[get_hephaestus_smelting_progress_item]>
+    - define items <[items].set[<[smelting_item]>].at[14]>
+
+    - define golem_item <proc[get_hephaestus_golem_progress_item]>
+    - define items <[items].set[<[golem_item]>].at[16]>
+
+    # Back button (bottom left slot 19)
+    - define items <[items].set[<item[hephaestus_progress_back_button]>].at[19]>
+
+    - determine <[items]>
+
+get_hephaestus_iron_progress_item:
+    type: procedure
+    debug: false
+    script:
+    - define count <player.flag[hephaestus.iron.count].if_null[0]>
+    - define keys <player.flag[hephaestus.iron.keys_awarded].if_null[0]>
+    - define complete <player.has_flag[hephaestus.component.iron]>
+
+    - define lore <list>
+    - if <[complete]>:
+        - define lore <[lore].include[<&2><&l>✓ COMPONENT COMPLETE]>
+    - else:
+        - define lore <[lore].include[<&7>Component In Progress]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&7><&o>"Strike the earth and claim its hidden treasures"]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&8>Task<&co> <&7>Mine iron ore from the depths.]>
+    - define lore <[lore].include[<&7>Each vein broken brings you closer]>
+    - define lore <[lore].include[<&7>to the Forge God's blessing.]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&8>Component Progress<&co>]>
+    - define lore <[lore].include[<&7><[count]> / 5,000 iron ore mined]>
+    - if <[complete]>:
+        - define percent 100
+    - else:
+        - define percent <[count].div[5000].mul[100].round>
+    - define lore <[lore].include[<&7>(<[percent]>% complete)]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&7><&o>Component progress is independent]>
+    - define lore <[lore].include[<&7><&o>from Mining XP ranks.]>
+
+    - if <[complete]>:
+        - determine <item[iron_ore].with[display=<&8><&l>Iron Mining;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+    - else:
+        - determine <item[iron_ore].with[display=<&8><&l>Iron Mining;lore=<[lore]>]>
+
+get_hephaestus_smelting_progress_item:
+    type: procedure
+    debug: false
+    script:
+    - define count <player.flag[hephaestus.smelting.count].if_null[0]>
+    - define keys <player.flag[hephaestus.smelting.keys_awarded].if_null[0]>
+    - define complete <player.has_flag[hephaestus.component.smelting]>
+
+    - define lore <list>
+    - if <[complete]>:
+        - define lore <[lore].include[<&2><&l>✓ COMPONENT COMPLETE]>
+    - else:
+        - define lore <[lore].include[<&7>Component In Progress]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&7><&o>"Transform raw ore in the sacred flames"]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&8>Task<&co> <&7>Smelt items in the blast furnace.]>
+    - define lore <[lore].include[<&7>The forge's heat purifies metal]>
+    - define lore <[lore].include[<&7>and pleases Hephaestus.]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&8>Component Progress<&co>]>
+    - define lore <[lore].include[<&7><[count]> / 5,000 items smelted]>
+    - if <[complete]>:
+        - define percent 100
+    - else:
+        - define percent <[count].div[5000].mul[100].round>
+    - define lore <[lore].include[<&7>(<[percent]>% complete)]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&7><&o>Component progress is independent]>
+    - define lore <[lore].include[<&7><&o>from Mining XP ranks.]>
+
+    - if <[complete]>:
+        - determine <item[blast_furnace].with[display=<&8><&l>Forge Smelting;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+    - else:
+        - determine <item[blast_furnace].with[display=<&8><&l>Forge Smelting;lore=<[lore]>]>
+
+get_hephaestus_golem_progress_item:
+    type: procedure
+    debug: false
+    script:
+    - define count <player.flag[hephaestus.golems.count].if_null[0]>
+    - define keys <player.flag[hephaestus.golems.keys_awarded].if_null[0]>
+    - define complete <player.has_flag[hephaestus.component.golem]>
+
+    - define lore <list>
+    - if <[complete]>:
+        - define lore <[lore].include[<&2><&l>✓ COMPONENT COMPLETE]>
+    - else:
+        - define lore <[lore].include[<&7>Component In Progress]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&7><&o>"Breathe life into iron sentinels"]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&8>Task<&co> <&7>Create iron golems to guard]>
+    - define lore <[lore].include[<&7>villages. Each construct is a tribute]>
+    - define lore <[lore].include[<&7>to divine craftsmanship.]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&8>Component Progress<&co>]>
+    - define lore <[lore].include[<&7><[count]> / 100 golems created]>
+    - if <[complete]>:
+        - define percent 100
+    - else:
+        - define percent <[count].div[100].mul[100].round>
+    - define lore <[lore].include[<&7>(<[percent]>% complete)]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&7><&o>Component progress is independent]>
+    - define lore <[lore].include[<&7><&o>from Mining XP ranks.]>
+
+    - if <[complete]>:
+        - determine <item[carved_pumpkin].with[display=<&8><&l>Golem Crafting;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+    - else:
+        - determine <item[carved_pumpkin].with[display=<&8><&l>Golem Crafting;lore=<[lore]>]>
+
+hephaestus_progress_back_button:
+    type: item
+    material: arrow
+    display name: <&e>← Back
+    lore:
+    - <&7>Return<&sp>to<&sp>emblems
+
 create_progress_bar:
     type: procedure
     debug: false
@@ -739,6 +948,10 @@ get_cosmetics_icon_item:
         - define title_count <[title_count].add[1]>
     - if <player.has_flag[demeter.item.title]>:
         - define title_count <[title_count].add[1]>
+    - if <player.has_flag[hephaestus.item.title]>:
+        - define title_count <[title_count].add[1]>
+    - if <player.has_flag[vulcan.item.title]>:
+        - define title_count <[title_count].add[1]>
     - if <player.has_flag[heracles.item.title]>:
         - define title_count <[title_count].add[1]>
     - if <player.has_flag[mars.item.title]>:
@@ -756,6 +969,10 @@ get_cosmetics_icon_item:
                 - define lore "<[lore].include[<&6><&lb>Ceres' Chosen<&rb>]>"
             - case demeter:
                 - define lore "<[lore].include[<&6><&lb>Harvest Queen<&rb>]>"
+            - case hephaestus:
+                - define lore "<[lore].include[<&7><&lb>Master Smith<&rb>]>"
+            - case vulcan:
+                - define lore "<[lore].include[<&7><&lb>Vulcan's Chosen<&rb>]>"
             - case heracles:
                 - define lore "<[lore].include[<&4><&lb>Hero of Olympus<&rb>]>"
             - case mars:
@@ -777,6 +994,7 @@ cosmetics_inventory:
     type: inventory
     inventory: chest
     gui: true
+    debug: false
     title: <&8>Cosmetics
     size: 27
     procedural items:
@@ -787,21 +1005,28 @@ get_cosmetics_menu_items:
     debug: false
     script:
     - define items <list>
-    - define filler <item[gray_stained_glass_pane].with[display=<&7>]>
+    - define filler <item[gray_stained_glass_pane].with[display=<empty>]>
 
     # Fill with filler
     - repeat 27:
         - define items <[items].include[<[filler]>]>
 
-    # Show all 4 titles (2 farming, 2 combat) in center row (slots 11, 13, 15, 17)
+    # Show all 6 titles (2 farming, 2 mining, 2 combat) in center row
+    # Farming (left): slots 10, 11 | Mining (center): slots 13, 14 | Combat (right): slots 16, 17
     - define ceres_title <proc[get_ceres_title_item]>
-    - define items <[items].set[<[ceres_title]>].at[11]>
+    - define items <[items].set[<[ceres_title]>].at[10]>
 
     - define demeter_title <proc[get_demeter_title_item]>
-    - define items <[items].set[<[demeter_title]>].at[13]>
+    - define items <[items].set[<[demeter_title]>].at[11]>
+
+    - define hephaestus_title <proc[get_hephaestus_title_item]>
+    - define items <[items].set[<[hephaestus_title]>].at[13]>
+
+    - define vulcan_title <proc[get_vulcan_title_item]>
+    - define items <[items].set[<[vulcan_title]>].at[14]>
 
     - define heracles_title <proc[get_heracles_title_item]>
-    - define items <[items].set[<[heracles_title]>].at[15]>
+    - define items <[items].set[<[heracles_title]>].at[16]>
 
     - define mars_title <proc[get_mars_title_item]>
     - define items <[items].set[<[mars_title]>].at[17]>
@@ -861,6 +1086,58 @@ get_demeter_title_item:
         - define lore <[lore].include[<&8>???]>
         - define lore "<[lore].include[<&sp>]>"
         - define lore <[lore].include[<&7>Unlock from<&co> <&6>Demeter Crates]>
+        - determine <item[gray_dye].with[display=<&8>???;lore=<[lore]>]>
+
+get_hephaestus_title_item:
+    type: procedure
+    debug: false
+    script:
+    - define lore <list>
+
+    # Check if unlocked
+    - if <player.has_flag[hephaestus.item.title]>:
+        - define lore "<[lore].include[<&7><&lb>Master Smith<&rb>]>"
+        - define lore "<[lore].include[<&sp>]>"
+        - if <player.has_flag[cosmetic.title.active]> && <player.flag[cosmetic.title.active]> == hephaestus:
+            - define lore <[lore].include[<&2>✓ Currently Active]>
+            - define lore "<[lore].include[<&sp>]>"
+            - define lore <[lore].include[<&e>Click to unequip]>
+            - determine <item[name_tag].with[display=<&8><&l>Hephaestus Title;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+        - else:
+            - define lore <[lore].include[<&8>Not equipped]>
+            - define lore "<[lore].include[<&sp>]>"
+            - define lore <[lore].include[<&e>Click to equip]>
+            - determine <item[name_tag].with[display=<&8><&l>Hephaestus Title;lore=<[lore]>]>
+    - else:
+        - define lore <[lore].include[<&8>???]>
+        - define lore "<[lore].include[<&sp>]>"
+        - define lore <[lore].include[<&7>Unlock from<&co> <&7>Hephaestus Crates]>
+        - determine <item[gray_dye].with[display=<&8>???;lore=<[lore]>]>
+
+get_vulcan_title_item:
+    type: procedure
+    debug: false
+    script:
+    - define lore <list>
+
+    # Check if unlocked
+    - if <player.has_flag[vulcan.item.title]>:
+        - define lore "<[lore].include[<&7><&lb>Vulcan's Chosen<&rb>]>"
+        - define lore "<[lore].include[<&sp>]>"
+        - if <player.has_flag[cosmetic.title.active]> && <player.flag[cosmetic.title.active]> == vulcan:
+            - define lore <[lore].include[<&2>✓ Currently Active]>
+            - define lore "<[lore].include[<&sp>]>"
+            - define lore <[lore].include[<&e>Click to unequip]>
+            - determine <item[name_tag].with[display=<&8><&l>Vulcan Title;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+        - else:
+            - define lore <[lore].include[<&8>Not equipped]>
+            - define lore "<[lore].include[<&sp>]>"
+            - define lore <[lore].include[<&e>Click to equip]>
+            - determine <item[name_tag].with[display=<&8><&l>Vulcan Title;lore=<[lore]>]>
+    - else:
+        - define lore <[lore].include[<&8>???]>
+        - define lore "<[lore].include[<&sp>]>"
+        - define lore <[lore].include[<&7>Unlock from<&co> <&7>Vulcan Crates]>
         - determine <item[gray_dye].with[display=<&8>???;lore=<[lore]>]>
 
 get_heracles_title_item:
@@ -943,15 +1220,24 @@ cosmetics_click_handler:
         - define clicked_title ""
 
         # Determine which title was clicked based on slot
-        - if <context.slot> == 11:
+        # Farming (slots 10, 11) | Mining (slots 13, 14) | Combat (slots 16, 17)
+        - if <context.slot> == 10:
             - define clicked_title ceres
             - define title_flag ceres.item.title
             - define title_name "<&6>[Ceres' Chosen]"
-        - else if <context.slot> == 13:
+        - else if <context.slot> == 11:
             - define clicked_title demeter
             - define title_flag demeter.item.title
             - define title_name "<&6>[Harvest Queen]"
-        - else if <context.slot> == 15:
+        - else if <context.slot> == 13:
+            - define clicked_title hephaestus
+            - define title_flag hephaestus.item.title
+            - define title_name "<&8>[Master Smith]"
+        - else if <context.slot> == 14:
+            - define clicked_title vulcan
+            - define title_flag vulcan.item.title
+            - define title_name "<&8>[Vulcan's Chosen]"
+        - else if <context.slot> == 16:
             - define clicked_title heracles
             - define title_flag heracles.item.title
             - define title_name "<&4>[Hero of Olympus]"
@@ -992,6 +1278,10 @@ cosmetics_click_handler:
         on player clicks combat_ranks_back_button in combat_ranks_gui:
         - inventory open d:profile_inventory
 
+        # Mining ranks GUI
+        on player clicks mining_ranks_back_button in mining_ranks_gui:
+        - inventory open d:profile_inventory
+
 # ============================================
 # FARMING RANKS GUI
 # ============================================
@@ -1000,6 +1290,7 @@ farming_ranks_gui:
     type: inventory
     inventory: chest
     gui: true
+    debug: false
     title: <&8>Farming Skill Ranks
     size: 54
     procedural items:
@@ -1010,7 +1301,7 @@ get_farming_ranks_items:
     debug: false
     script:
     - define items <list>
-    - define filler <item[gray_stained_glass_pane].with[display=<&7>]>
+    - define filler <item[gray_stained_glass_pane].with[display=<empty>]>
 
     # Fill all slots
     - repeat 54:
@@ -1122,6 +1413,7 @@ combat_ranks_gui:
     type: inventory
     inventory: chest
     gui: true
+    debug: false
     title: <&8>Combat Skill Ranks
     size: 54
     procedural items:
@@ -1132,7 +1424,7 @@ get_combat_ranks_items:
     debug: false
     script:
     - define items <list>
-    - define filler <item[gray_stained_glass_pane].with[display=<&7>]>
+    - define filler <item[gray_stained_glass_pane].with[display=<empty>]>
 
     # Fill all slots
     - repeat 54:
@@ -1223,6 +1515,121 @@ combat_xp_emeralds:
     - <&7>•<&sp>Per<&sp>emerald<&sp>spent<&co><&sp><&c>1<&sp>XP
 
 combat_ranks_back_button:
+    type: item
+    material: arrow
+    display name: <&e>← Back
+    lore:
+    - <&7>Return<&sp>to<&sp>profile
+
+# ============================================
+# MINING RANKS GUI
+# ============================================
+
+mining_ranks_gui:
+    type: inventory
+    inventory: chest
+    gui: true
+    debug: false
+    title: <&8>Mining Skill Ranks
+    size: 54
+    procedural items:
+    - determine <proc[get_mining_ranks_items]>
+
+get_mining_ranks_items:
+    type: procedure
+    debug: false
+    script:
+    - define items <list>
+    - define filler <item[gray_stained_glass_pane].with[display=<empty>]>
+
+    # Fill all slots
+    - repeat 54:
+        - define items <[items].include[<[filler]>]>
+
+    # Build rank info item
+    - define rank <proc[get_mining_rank].context[<player.flag[mining.xp].if_null[0]>]>
+    - define xp <player.flag[mining.xp].if_null[0]>
+    - define rank_name <proc[get_mining_rank_name].context[<[rank]>]>
+
+    - define rank_lore <list>
+    - define rank_lore <[rank_lore].include[<&7>Current Rank<&co> <&f><[rank_name]>]>
+    - define rank_lore <[rank_lore].include[<&7>Total XP<&co> <&f><[xp].format_number>]>
+    - define rank_lore "<[rank_lore].include[<&sp>]>"
+
+    # Show current buffs if player has a rank
+    - if <[rank]> > 0:
+        - define rank_data <script[mining_rank_data].data_key[ranks.<[rank]>]>
+        - define ore_xp <[rank_data].get[ore_xp_bonus]>
+        - define haste_amp <[rank_data].get[haste_amplifier]>
+        - define rank_lore <[rank_lore].include[<&8>Active Buffs<&co>]>
+        - if <[haste_amp]> >= 0:
+            - define haste_level <[haste_amp].add[1]>
+            - define rank_lore <[rank_lore].include[<&7>• Mining Speed<&co> <&a>Haste <[haste_level]>]>
+        - define rank_lore <[rank_lore].include[<&7>• Ore XP Bonus<&co> <&a>+<[ore_xp]>%]>
+        - define rank_lore "<[rank_lore].include[<&sp>]>"
+
+    # Show progress
+    - if <[rank]> < 5:
+        - define next_rank <[rank].add[1]>
+        - define next_rank_data <script[mining_rank_data].data_key[ranks.<[next_rank]>]>
+        - define next_xp <[next_rank_data].get[xp_total]>
+        - define rank_lore <[rank_lore].include[<&8>Progress to Next Rank<&co>]>
+        - define rank_lore <[rank_lore].include[<&7><[xp].format_number> / <[next_xp].format_number> XP]>
+    - else:
+        - define rank_lore <[rank_lore].include[<&8><&l>MAX RANK ACHIEVED!]>
+
+    - define rank_item <item[experience_bottle].with[display=<&8><&l>Your Mining Rank;lore=<[rank_lore]>]>
+    - define items <[items].set[<[rank_item]>].at[14]>
+
+    # XP method items
+    - define items <[items].set[<item[mining_xp_ores]>].at[30]>
+    - define items <[items].set[<item[mining_xp_smelting]>].at[32]>
+    - define items <[items].set[<item[mining_xp_golems]>].at[34]>
+
+    # Back button
+    - define items <[items].set[<item[mining_ranks_back_button]>].at[46]>
+
+    - determine <[items]>
+
+mining_xp_ores:
+    type: item
+    material: iron_ore
+    display name: <&8><&l>Ore Mining
+    lore:
+    - <&7>Mine ores while MINING
+    - <&7>role is active
+    - <&sp>
+    - <&8>XP Rates<&co>
+    - <&7>• Coal/Copper/Quartz<&co> <&f>2 XP
+    - <&7>• Iron/Nether Gold<&co> <&f>3 XP
+    - <&7>• Lapis/Redstone<&co> <&f>4 XP
+    - <&7>• Gold<&co> <&f>5 XP
+    - <&7>• Diamond/Emerald<&co> <&f>10 XP
+    - <&7>• Ancient Debris<&co> <&f>20 XP
+
+mining_xp_smelting:
+    type: item
+    material: blast_furnace
+    display name: <&8><&l>Blast Furnace
+    lore:
+    - <&7>Smelt items in blast furnace
+    - <&7>while MINING role is active
+    - <&sp>
+    - <&8>XP Rate<&co>
+    - <&7>• Per item smelted<&co> <&f>1 XP
+
+mining_xp_golems:
+    type: item
+    material: carved_pumpkin
+    display name: <&8><&l>Golem Crafting
+    lore:
+    - <&7>Create iron golems
+    - <&7>while MINING role is active
+    - <&sp>
+    - <&8>XP Rate<&co>
+    - <&7>• Per golem created<&co> <&f>25 XP
+
+mining_ranks_back_button:
     type: item
     material: arrow
     display name: <&e>← Back

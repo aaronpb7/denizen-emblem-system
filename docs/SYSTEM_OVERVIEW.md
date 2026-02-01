@@ -128,7 +128,7 @@ demeter.component.cake
 
 **Flag:** `demeter.rank` (value: 0-3, calculated dynamically)
 
-**See:** `docs/demeter_ranks.md` for complete rank specification
+**See:** `docs/demeter.md` for complete rank specification
 
 ---
 
@@ -418,25 +418,25 @@ bulletin.seen_version      # Integer: Last bulletin version viewed
 - ✅ Demeter Blessing consumable (+10% progress boost)
 - ✅ Ceres meta-progression crate (50/50 system, 4 unique items)
 - ✅ Ceres custom items (hoe auto-replant, wand bee summon)
+- ✅ Hephaestus activity tracking (iron ore, blast furnace, iron golems)
+- ✅ Hephaestus rank progression (5 ranks with buffs)
+- ✅ Hephaestus crate system (5 tiers, forge theme)
+- ✅ Hephaestus Blessing consumable (+10% progress boost)
+- ✅ Vulcan meta-progression crate (50/50 system, 4 unique items)
+- ✅ Vulcan custom items (pickaxe auto-smelt, forge charm)
+- ✅ Heracles activity tracking (pillagers, raids, emerald trading)
 - ✅ Heracles rank progression (5 ranks with buffs)
 - ✅ Heracles crate system (5 tiers, combat theme)
 - ✅ Heracles Blessing consumable (+10% progress boost)
 - ✅ Mars meta-progression crate (50/50 system, 4 unique items)
 - ✅ Mars custom items (sword lifesteal, shield resistance buff)
 - ✅ Cosmetics system (title equipping/unequipping)
-- ✅ Chat title prefixes (Demeter, Ceres, Heracles, Mars)
+- ✅ Chat title prefixes (Demeter, Ceres, Hephaestus, Vulcan, Heracles, Mars)
 - ✅ Profile GUI with role display
 - ✅ Promachos NPC with emblem unlock ceremonies
 - ✅ Bulletin system
 - ✅ Admin commands for testing
 - ✅ Early close handling for crates (no duplicate awards)
-
-### 🚧 Placeholder/Incomplete
-
-- 🚧 Hephaestus (Mining) - All systems (role exists but no activities)
-- 🚧 Vulcan meta-progression (Mining meta)
-- 🚧 Heracles activity tracking events (pillagers, raids, emerald trading)
-- 🚧 Heracles rank buff mechanics (low health regen, vanilla XP bonus)
 
 ### 🔜 Future Enhancements
 

@@ -37,13 +37,13 @@ role_data:
     # Role colors
     colors:
         FARMING: <&6>
-        MINING: <&c>
+        MINING: <&8>
         COMBAT: <&4>
 
     # Role icons (materials for GUI)
     icons:
         FARMING: golden_hoe
-        MINING: diamond_pickaxe
+        MINING: iron_pickaxe
         COMBAT: diamond_sword
 
 # ============================================

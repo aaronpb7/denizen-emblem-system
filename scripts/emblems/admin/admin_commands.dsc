@@ -447,6 +447,361 @@ heraclesadmin_command:
             - narrate "<&c>Invalid action. Use: keys, set, xp, component, raid, or reset"
 
 # ============================================
+# MINING XP ADMIN COMMAND
+# ============================================
+
+miningadmin_command:
+    type: command
+    name: miningadmin
+    description: Manage Mining XP and ranks
+    usage: /miningadmin (player) (action) [args...]
+    permission: emblems.admin
+    debug: false
+    script:
+    - if <context.args.size> < 2:
+        - narrate "<&c>Usage: /miningadmin <player> <xp|setxp|rank|reset> [args...]"
+        - stop
+
+    - define target <server.match_player[<context.args.get[1]>].if_null[null]>
+    - if <[target]> == null:
+        - narrate "<&c>Player not found"
+        - stop
+
+    - define action <context.args.get[2].to_lowercase>
+
+    - choose <[action]>:
+        # Give XP
+        - case xp:
+            - if <context.args.size> < 3:
+                - narrate "<&c>Usage: /miningadmin <player> xp <amount>"
+                - stop
+            - define amount <context.args.get[3]>
+            - if !<[amount].is_integer>:
+                - narrate "<&c>Amount must be a number"
+                - stop
+            - run award_mining_xp def.player:<[target]> def.amount:<[amount]> def.source:admin_command
+            - define total <[target].flag[mining.xp].if_null[0]>
+            - define rank <[target].flag[mining.rank].if_null[0]>
+            - narrate "<&a>Gave <[target].name> <[amount]> Mining XP (Total: <[total]>, Rank: <[rank]>)"
+
+        # Set total XP
+        - case setxp:
+            - if <context.args.size> < 3:
+                - narrate "<&c>Usage: /miningadmin <player> setxp <amount>"
+                - stop
+            - define amount <context.args.get[3]>
+            - if !<[amount].is_integer>:
+                - narrate "<&c>Amount must be a number"
+                - stop
+            - define old_rank <[target].flag[mining.rank].if_null[0]>
+            - flag <[target]> mining.xp:<[amount]>
+            - define new_rank <proc[get_mining_rank].context[<[amount]>]>
+            - flag <[target]> mining.rank:<[new_rank]>
+            - narrate "<&a>Set <[target].name>'s Mining XP to <[amount]> (Rank: <[old_rank]> → <[new_rank]>)"
+            - if <[new_rank]> > <[old_rank]>:
+                - run mining_rank_up_ceremony def.player:<[target]> def.rank:<[new_rank]>
+
+        # Force set rank
+        - case rank:
+            - if <context.args.size> < 3:
+                - narrate "<&c>Usage: /miningadmin <player> rank <0|1|2|3|4|5>"
+                - stop
+            - define new_rank <context.args.get[3]>
+            - if !<list[0|1|2|3|4|5].contains[<[new_rank]>]>:
+                - narrate "<&c>Rank must be 0, 1, 2, 3, 4, or 5"
+                - stop
+            - define old_rank <[target].flag[mining.rank].if_null[0]>
+            - flag <[target]> mining.rank:<[new_rank]>
+            - define rank_name <proc[get_mining_rank_name].context[<[new_rank]>]>
+            - narrate "<&a>Set <[target].name>'s rank from <[old_rank]> to <[new_rank]> (<[rank_name]>)"
+            - if <[new_rank]> > <[old_rank]>:
+                - run mining_rank_up_ceremony def.player:<[target]> def.rank:<[new_rank]>
+
+        # Reset mining XP and rank
+        - case reset:
+            - flag <[target]> mining.xp:!
+            - flag <[target]> mining.rank:!
+            - narrate "<&a>Reset mining XP and rank for <[target].name>"
+
+        - default:
+            - narrate "<&c>Invalid action. Use: xp, setxp, rank, or reset"
+
+# ============================================
+# HEPHAESTUS ADMIN COMMAND
+# ============================================
+
+hephaestusadmin_command:
+    type: command
+    name: hephaestusadmin
+    description: Manage Hephaestus progression
+    usage: /hephaestusadmin (player) (action) [args...]
+    permission: emblems.admin
+    debug: false
+    script:
+    - if <context.args.size> < 2:
+        - narrate "<&c>Usage: /hephaestusadmin <player> <keys|set|component|reset> [args...]"
+        - stop
+
+    - define target <server.match_player[<context.args.get[1]>].if_null[null]>
+    - if <[target]> == null:
+        - narrate "<&c>Player not found"
+        - stop
+
+    - define action <context.args.get[2].to_lowercase>
+
+    - choose <[action]>:
+        # Give keys
+        - case keys:
+            - if <context.args.size> < 3:
+                - narrate "<&c>Usage: /hephaestusadmin <player> keys <amount>"
+                - stop
+            - define amount <context.args.get[3]>
+            - if !<[amount].is_integer>:
+                - narrate "<&c>Amount must be a number"
+                - stop
+            - give hephaestus_key quantity:<[amount]> player:<[target]>
+            - narrate "<&a>Gave <[target].name> <[amount]> Hephaestus Keys"
+
+        # Set activity counter
+        - case set:
+            - if <context.args.size> < 4:
+                - narrate "<&c>Usage: /hephaestusadmin <player> set <iron|smelting|golems> <count>"
+                - stop
+            - define activity <context.args.get[3].to_lowercase>
+            - define count <context.args.get[4]>
+            - if !<[count].is_integer>:
+                - narrate "<&c>Count must be a number"
+                - stop
+            - choose <[activity]>:
+                - case iron:
+                    - flag <[target]> hephaestus.iron.count:<[count]>
+                    - narrate "<&a>Set <[target].name>'s iron count to <[count]>"
+                - case smelting:
+                    - flag <[target]> hephaestus.smelting.count:<[count]>
+                    - narrate "<&a>Set <[target].name>'s smelting count to <[count]>"
+                - case golems:
+                    - flag <[target]> hephaestus.golems.count:<[count]>
+                    - narrate "<&a>Set <[target].name>'s golems count to <[count]>"
+                - default:
+                    - narrate "<&c>Invalid activity. Use: iron, smelting, or golems"
+
+        # Toggle component
+        - case component:
+            - if <context.args.size> < 4:
+                - narrate "<&c>Usage: /hephaestusadmin <player> component <iron|smelting|golem> <true|false>"
+                - stop
+            - define component <context.args.get[3].to_lowercase>
+            - define value <context.args.get[4].to_lowercase>
+            - if <[value]> != true && <[value]> != false:
+                - narrate "<&c>Value must be true or false"
+                - stop
+            - choose <[component]>:
+                - case iron:
+                    - if <[value]> == true:
+                        - flag <[target]> hephaestus.component.iron:true
+                        - narrate "<&a>Set iron component to true for <[target].name>"
+                    - else:
+                        - flag <[target]> hephaestus.component.iron:!
+                        - narrate "<&a>Removed iron component for <[target].name>"
+                - case smelting:
+                    - if <[value]> == true:
+                        - flag <[target]> hephaestus.component.smelting:true
+                        - narrate "<&a>Set smelting component to true for <[target].name>"
+                    - else:
+                        - flag <[target]> hephaestus.component.smelting:!
+                        - narrate "<&a>Removed smelting component for <[target].name>"
+                - case golem:
+                    - if <[value]> == true:
+                        - flag <[target]> hephaestus.component.golem:true
+                        - narrate "<&a>Set golem component to true for <[target].name>"
+                    - else:
+                        - flag <[target]> hephaestus.component.golem:!
+                        - narrate "<&a>Removed golem component for <[target].name>"
+                - default:
+                    - narrate "<&c>Invalid component. Use: iron, smelting, or golem"
+
+        # Reset all Hephaestus flags
+        - case reset:
+            - flag <[target]> hephaestus:!
+            - flag <[target]> mining.xp:!
+            - flag <[target]> mining.rank:!
+            - narrate "<&a>Reset all Hephaestus flags for <[target].name>"
+
+        - default:
+            - narrate "<&c>Invalid action. Use: keys, set, component, or reset"
+
+# ============================================
+# VULCAN ADMIN COMMAND
+# ============================================
+
+vulcanadmin_command:
+    type: command
+    name: vulcanadmin
+    description: Manage Vulcan progression
+    usage: /vulcanadmin (player) (action) [args...]
+    permission: emblems.admin
+    debug: false
+    script:
+    - if <context.args.size> < 2:
+        - narrate "<&c>Usage: /vulcanadmin <player> <keys|item|reset> [args...]"
+        - stop
+
+    - define target <server.match_player[<context.args.get[1]>].if_null[null]>
+    - if <[target]> == null:
+        - narrate "<&c>Player not found"
+        - stop
+
+    - define action <context.args.get[2].to_lowercase>
+
+    - choose <[action]>:
+        # Give Vulcan keys
+        - case keys:
+            - if <context.args.size> < 3:
+                - narrate "<&c>Usage: /vulcanadmin <player> keys <amount>"
+                - stop
+            - define amount <context.args.get[3]>
+            - if !<[amount].is_integer>:
+                - narrate "<&c>Amount must be a number"
+                - stop
+            - give vulcan_key quantity:<[amount]> player:<[target]>
+            - narrate "<&a>Gave <[target].name> <[amount]> Vulcan Keys"
+
+        # Toggle item obtained
+        - case item:
+            - if <context.args.size> < 4:
+                - narrate "<&c>Usage: /vulcanadmin <player> item <pickaxe|title|shulker|charm> <true|false>"
+                - stop
+            - define item <context.args.get[3].to_lowercase>
+            - define value <context.args.get[4].to_lowercase>
+            - if <[value]> != true && <[value]> != false:
+                - narrate "<&c>Value must be true or false"
+                - stop
+            - choose <[item]>:
+                - case pickaxe:
+                    - if <[value]> == true:
+                        - flag <[target]> vulcan.item.pickaxe:true
+                        - narrate "<&a>Set Vulcan Pickaxe obtained for <[target].name>"
+                    - else:
+                        - flag <[target]> vulcan.item.pickaxe:!
+                        - narrate "<&a>Removed Vulcan Pickaxe for <[target].name>"
+                - case title:
+                    - if <[value]> == true:
+                        - flag <[target]> vulcan.item.title:true
+                        - narrate "<&a>Set Vulcan Title obtained for <[target].name>"
+                    - else:
+                        - flag <[target]> vulcan.item.title:!
+                        - narrate "<&a>Removed Vulcan Title for <[target].name>"
+                - case shulker:
+                    - if <[value]> == true:
+                        - flag <[target]> vulcan.item.shulker:true
+                        - narrate "<&a>Set Gray Shulker obtained for <[target].name>"
+                    - else:
+                        - flag <[target]> vulcan.item.shulker:!
+                        - narrate "<&a>Removed Gray Shulker for <[target].name>"
+                - case charm:
+                    - if <[value]> == true:
+                        - flag <[target]> vulcan.item.charm:true
+                        - narrate "<&a>Set Vulcan Forge Charm obtained for <[target].name>"
+                    - else:
+                        - flag <[target]> vulcan.item.charm:!
+                        - narrate "<&a>Removed Vulcan Forge Charm for <[target].name>"
+                - default:
+                    - narrate "<&c>Invalid item. Use: pickaxe, title, shulker, or charm"
+
+        # Reset all Vulcan flags
+        - case reset:
+            - flag <[target]> vulcan:!
+            - narrate "<&a>Reset all Vulcan flags for <[target].name>"
+
+        - default:
+            - narrate "<&c>Invalid action. Use: keys, item, or reset"
+
+# ============================================
+# CHECK KEYS AWARDED COMMAND
+# ============================================
+
+checkkeys_command:
+    type: command
+    name: checkkeys
+    description: Check keys_awarded tracking for a player
+    usage: /checkkeys (player)
+    debug: false
+    script:
+    - if <context.args.size> < 1:
+        - define target <player>
+    - else:
+        - define target <server.match_offline_player[<context.args.get[1]>].if_null[null]>
+        - if <[target]> == null:
+            - narrate "<&c>Player not found: <context.args.get[1]>"
+            - stop
+
+    - narrate "<&6>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    - narrate "<&e><&l>KEY TRACKING FOR <[target].name>"
+    - narrate "<&6>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+    # Demeter
+    - narrate "<&6>DEMETER:"
+    - define wheat_count <[target].flag[demeter.wheat.count].if_null[0]>
+    - define wheat_awarded <[target].flag[demeter.wheat.keys_awarded].if_null[0]>
+    - define wheat_should <[wheat_count].div[150].round_down>
+    - define wheat_owed <[wheat_should].sub[<[wheat_awarded]>].max[0]>
+    - narrate "<&7>  Wheat: <&f><[wheat_count]> <&7>| Awarded: <&f><[wheat_awarded]> <&7>| Should: <&f><[wheat_should]> <&7>| Owed: <&a><[wheat_owed]>"
+
+    - define cows_count <[target].flag[demeter.cows.count].if_null[0]>
+    - define cows_awarded <[target].flag[demeter.cows.keys_awarded].if_null[0]>
+    - define cows_should <[cows_count].div[20].round_down>
+    - define cows_owed <[cows_should].sub[<[cows_awarded]>].max[0]>
+    - narrate "<&7>  Cows: <&f><[cows_count]> <&7>| Awarded: <&f><[cows_awarded]> <&7>| Should: <&f><[cows_should]> <&7>| Owed: <&a><[cows_owed]>"
+
+    - define cakes_count <[target].flag[demeter.cakes.count].if_null[0]>
+    - define cakes_awarded <[target].flag[demeter.cakes.keys_awarded].if_null[0]>
+    - define cakes_should <[cakes_count].div[5].round_down>
+    - define cakes_owed <[cakes_should].sub[<[cakes_awarded]>].max[0]>
+    - narrate "<&7>  Cakes: <&f><[cakes_count]> <&7>| Awarded: <&f><[cakes_awarded]> <&7>| Should: <&f><[cakes_should]> <&7>| Owed: <&a><[cakes_owed]>"
+
+    # Heracles
+    - narrate "<&c>HERACLES:"
+    - define pillagers_count <[target].flag[heracles.pillagers.count].if_null[0]>
+    - define pillagers_awarded <[target].flag[heracles.pillagers.keys_awarded].if_null[0]>
+    - define pillagers_should <[pillagers_count].div[25].round_down>
+    - define pillagers_owed <[pillagers_should].sub[<[pillagers_awarded]>].max[0]>
+    - narrate "<&7>  Pillagers: <&f><[pillagers_count]> <&7>| Awarded: <&f><[pillagers_awarded]> <&7>| Should: <&f><[pillagers_should]> <&7>| Owed: <&a><[pillagers_owed]>"
+
+    - define raids_count <[target].flag[heracles.raids.count].if_null[0]>
+    - define raids_awarded <[target].flag[heracles.raids.keys_awarded].if_null[0]>
+    - define raids_should <[raids_count].mul[2]>
+    - define raids_owed <[raids_should].sub[<[raids_awarded]>].max[0]>
+    - narrate "<&7>  Raids: <&f><[raids_count]> <&7>| Awarded: <&f><[raids_awarded]> <&7>| Should: <&f><[raids_should]> <&7>| Owed: <&a><[raids_owed]>"
+
+    - define emeralds_count <[target].flag[heracles.emeralds.count].if_null[0]>
+    - define emeralds_awarded <[target].flag[heracles.emeralds.keys_awarded].if_null[0]>
+    - define emeralds_should <[emeralds_count].div[100].round_down>
+    - define emeralds_owed <[emeralds_should].sub[<[emeralds_awarded]>].max[0]>
+    - narrate "<&7>  Emeralds: <&f><[emeralds_count]> <&7>| Awarded: <&f><[emeralds_awarded]> <&7>| Should: <&f><[emeralds_should]> <&7>| Owed: <&a><[emeralds_owed]>"
+
+    # Hephaestus
+    - narrate "<&7>HEPHAESTUS:"
+    - define iron_count <[target].flag[hephaestus.iron.count].if_null[0]>
+    - define iron_awarded <[target].flag[hephaestus.iron.keys_awarded].if_null[0]>
+    - define iron_should <[iron_count].div[50].round_down>
+    - define iron_owed <[iron_should].sub[<[iron_awarded]>].max[0]>
+    - narrate "<&7>  Iron: <&f><[iron_count]> <&7>| Awarded: <&f><[iron_awarded]> <&7>| Should: <&f><[iron_should]> <&7>| Owed: <&a><[iron_owed]>"
+
+    - define smelting_count <[target].flag[hephaestus.smelting.count].if_null[0]>
+    - define smelting_awarded <[target].flag[hephaestus.smelting.keys_awarded].if_null[0]>
+    - define smelting_should <[smelting_count].div[50].round_down>
+    - define smelting_owed <[smelting_should].sub[<[smelting_awarded]>].max[0]>
+    - narrate "<&7>  Smelting: <&f><[smelting_count]> <&7>| Awarded: <&f><[smelting_awarded]> <&7>| Should: <&f><[smelting_should]> <&7>| Owed: <&a><[smelting_owed]>"
+
+    - define golems_count <[target].flag[hephaestus.golems.count].if_null[0]>
+    - define golems_awarded <[target].flag[hephaestus.golems.keys_awarded].if_null[0]>
+    - define golems_should <[golems_count]>
+    - define golems_owed <[golems_should].sub[<[golems_awarded]>].max[0]>
+    - narrate "<&7>  Golems: <&f><[golems_count]> <&7>| Awarded: <&f><[golems_awarded]> <&7>| Should: <&f><[golems_should]> <&7>| Owed: <&a><[golems_owed]>"
+
+    - narrate "<&6>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+# ============================================
 # TEST ROLL COMMANDS
 # ============================================
 
@@ -454,12 +809,12 @@ testroll_command:
     type: command
     name: testroll
     description: Simulate crate roll without consuming key
-    usage: /testroll (demeter|ceres)
+    usage: /testroll (demeter|ceres|heracles|mars|hephaestus|vulcan)
     permission: emblems.admin
     debug: false
     script:
     - if <context.args.size> < 1:
-        - narrate "<&c>Usage: /testroll <demeter|ceres>"
+        - narrate "<&c>Usage: /testroll <demeter|ceres|heracles|mars|hephaestus|vulcan>"
         - stop
 
     - define crate <context.args.get[1].to_lowercase>
@@ -467,14 +822,45 @@ testroll_command:
     - choose <[crate]>:
         - case demeter:
             - narrate "<&e>Simulating Demeter crate roll..."
-            - run demeter_crate_animation
+            - define tier_result <proc[roll_demeter_tier]>
+            - define tier <[tier_result].get[1]>
+            - define tier_color <[tier_result].get[2]>
+            - define loot <proc[roll_demeter_loot].context[<[tier]>]>
+            - run demeter_crate_animation def.tier:<[tier]> def.tier_color:<[tier_color]> def.loot:<[loot]>
 
         - case ceres:
             - narrate "<&b>Simulating Ceres crate roll..."
-            - run ceres_crate_animation
+            - define result <proc[roll_ceres_outcome]>
+            - run ceres_crate_animation def.result:<[result]>
+
+        - case heracles:
+            - narrate "<&c>Simulating Heracles crate roll..."
+            - define tier_result <proc[roll_heracles_tier]>
+            - define tier <[tier_result].get[1]>
+            - define tier_color <[tier_result].get[2]>
+            - define loot <proc[roll_heracles_loot].context[<[tier]>]>
+            - run heracles_crate_animation def.tier:<[tier]> def.tier_color:<[tier_color]> def.loot:<[loot]>
+
+        - case mars:
+            - narrate "<&4>Simulating Mars crate roll..."
+            - define result <proc[roll_mars_outcome]>
+            - run mars_crate_animation def.result:<[result]>
+
+        - case hephaestus:
+            - narrate "<&7>Simulating Hephaestus crate roll..."
+            - define tier_result <proc[roll_hephaestus_tier]>
+            - define tier <[tier_result].get[1]>
+            - define tier_color <[tier_result].get[2]>
+            - define loot <proc[roll_hephaestus_loot].context[<[tier]>]>
+            - run hephaestus_crate_animation def.tier:<[tier]> def.tier_color:<[tier_color]> def.loot:<[loot]>
+
+        - case vulcan:
+            - narrate "<&7>Simulating Vulcan crate roll..."
+            - define result <proc[roll_vulcan_outcome]>
+            - run vulcan_crate_animation def.result:<[result]>
 
         - default:
-            - narrate "<&c>Invalid crate. Use: demeter or ceres"
+            - narrate "<&c>Invalid crate. Use: demeter, ceres, heracles, mars, hephaestus, or vulcan"
 
 # ============================================
 # GLOBAL RESET COMMAND

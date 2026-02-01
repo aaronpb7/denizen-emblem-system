@@ -5,7 +5,7 @@
 # Unique items from Mars crate (meta-progression):
 # - Mars Sword (lifesteal mechanic)
 # - Mars Title (flag-based chat prefix unlock)
-# - Gray Shulker Box (standard utility)
+# - Red Shulker Box (standard utility)
 # - Mars Shield (active resistance buff)
 #
 
@@ -17,10 +17,7 @@ mars_sword:
     type: item
     material: netherite_sword
     display name: <&b>Mars Sword<&r>
-    enchantments:
-    - mending:1
     mechanisms:
-        hides: ENCHANTS
         unbreakable: true
     lore:
     - <&7>A netherite blade blessed by
@@ -60,10 +57,10 @@ mars_sword_lifesteal:
 #
 
 # ============================================
-# GRAY SHULKER BOX (UTILITY)
+# RED SHULKER BOX (UTILITY)
 # ============================================
 #
-# Standard gray shulker box - no special mechanics
+# Standard red shulker box - no special mechanics
 # Just a rare/unique collectible from Mars crate
 # Flag: mars.item.shulker: true (tracked but no special behavior)
 #
@@ -76,10 +73,7 @@ mars_shield:
     type: item
     material: shield
     display name: <&b>Mars Shield<&r>
-    enchantments:
-    - mending:1
     mechanisms:
-        hides: ENCHANTS
         unbreakable: true
     lore:
     - <&7>A shield blessed by Mars,
@@ -99,7 +93,7 @@ mars_shield_activate:
     debug: false
     events:
         on player raises mars_shield:
-        # Check cooldown (silently - shield still works normally)
+        # Check cooldown (silent fail)
         - if <player.has_flag[mars.shield_cooldown]>:
             - stop
 
@@ -109,10 +103,20 @@ mars_shield_activate:
         # Grant Resistance I for 15 seconds
         - cast resistance duration:15s amplifier:0 <player> no_icon no_ambient
 
-        # Feedback
-        - narrate "<&e>Mars' divine protection activated!"
+        # Feedback (action bar only)
+        - actionbar "<&4>MARS' PROTECTION <&7>- <&c>Resistance I for 15s"
         - playsound <player> sound:block_beacon_activate volume:1.0 pitch:1.2
         - playeffect effect:flame at:<player.location> quantity:30 offset:1.0
 
-        # Action bar display
-        - actionbar "<&4>MARS' PROTECTION <&7>- <&c>Resistance I for 15 seconds"
+        # Schedule cooldown ready notification
+        - run mars_shield_cooldown_notify def.player:<player> delay:180s
+
+mars_shield_cooldown_notify:
+    type: task
+    debug: false
+    definitions: player
+    script:
+    - if !<[player].is_online>:
+        - stop
+    - actionbar "<&a>Mars Shield ready!" targets:<[player]>
+    - playsound <[player]> sound:block_note_block_chime volume:0.5 pitch:1.5

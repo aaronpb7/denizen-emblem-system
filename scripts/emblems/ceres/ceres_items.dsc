@@ -15,7 +15,7 @@
 
 ceres_key:
     type: item
-    material: echo_shard
+    material: nether_star
     display name: <&b>Ceres Key<&r>
     enchantments:
     - mending:1
@@ -41,10 +41,7 @@ ceres_hoe:
     type: item
     material: netherite_hoe
     display name: <&b>Ceres Hoe<&r>
-    enchantments:
-    - mending:1
     mechanisms:
-        hides: ENCHANTS
         unbreakable: true
     lore:
     - <&7>A netherite hoe blessed by

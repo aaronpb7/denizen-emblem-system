@@ -71,11 +71,8 @@ ceres_wand_activate:
     type: task
     debug: false
     script:
-        # Check cooldown
+        # Check cooldown (silent fail)
         - if <player.has_flag[ceres.wand_cooldown]>:
-            - define remaining <player.flag_expiration[ceres.wand_cooldown].from_now.formatted>
-            - narrate "<&c>Wand on cooldown: <[remaining]>"
-            - playsound <player> sound:ENTITY_VILLAGER_NO
             - stop
 
         # Set cooldown
@@ -99,10 +96,23 @@ ceres_wand_activate:
             # Add to player's bee list
             - flag player ceres.wand_bees:->:<[bee]> expire:30s
 
-        # Feedback
-        - narrate "<&e>Ceres' bees swarm to your aid!"
+        # Feedback (action bar only)
+        - actionbar "<&b>CERES' BEES <&7>- <&e>6 bees summoned for 30s"
         - playsound <player> sound:ENTITY_BEE_LOOP_AGGRESSIVE volume:1.0
         - playeffect effect:VILLAGER_HAPPY at:<player.location> quantity:30 offset:2.0
+
+        # Schedule cooldown ready notification
+        - run ceres_wand_cooldown_notify def.player:<player> delay:30s
+
+ceres_wand_cooldown_notify:
+    type: task
+    debug: false
+    definitions: player
+    script:
+    - if !<[player].is_online>:
+        - stop
+    - actionbar "<&a>Ceres Wand ready!" targets:<[player]>
+    - playsound <[player]> sound:block_note_block_chime volume:0.5 pitch:1.5
 
 # Bees attack what their owner attacks
 ceres_bee_attack_assist:
@@ -197,5 +207,9 @@ title_chat_handler:
                 - announce "<&4>[Hero of Olympus]<&r> <player.display_name><&7>: <context.message>"
             - case mars:
                 - announce "<&4>[Mars' Chosen]<&r> <player.display_name><&7>: <context.message>"
+            - case hephaestus:
+                - announce "<&8>[Master Smith]<&r> <player.display_name><&7>: <context.message>"
+            - case vulcan:
+                - announce "<&8>[Vulcan's Chosen]<&r> <player.display_name><&7>: <context.message>"
             - default:
                 - announce "<player.display_name><&7>: <context.message>"

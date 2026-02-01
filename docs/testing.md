@@ -177,6 +177,105 @@ Visit Promachos to begin your journey!
 
 ---
 
+### Farming XP Admin Commands
+
+#### Give Farming XP
+
+```
+/farmingadmin <player> xp <amount>
+```
+
+**Example**: `/farmingadmin Notch xp 500`
+
+#### Set Total XP
+
+```
+/farmingadmin <player> setxp <amount>
+```
+
+**Example**: `/farmingadmin Notch setxp 10000`
+
+**Note**: Triggers rank-up ceremony if rank increases.
+
+#### Force Set Rank
+
+```
+/farmingadmin <player> rank <0-5>
+```
+
+**Valid Ranks**: 0 (none), 1-5 (Acolyte through Legend)
+
+**Example**: `/farmingadmin Notch rank 3`
+
+#### Reset Farming XP/Rank
+
+```
+/farmingadmin <player> reset
+```
+
+---
+
+### Heracles Admin Commands
+
+#### Give Keys
+
+```
+/heraclesadmin <player> keys <amount>
+```
+
+**Example**: `/heraclesadmin Notch keys 10`
+
+#### Set Activity Counter
+
+```
+/heraclesadmin <player> set <activity> <count>
+```
+
+**Valid Activities**: `pillagers`, `raids`, `emeralds`
+
+**Examples**:
+```
+/heraclesadmin Notch set pillagers 2000
+/heraclesadmin Notch set raids 40
+/heraclesadmin Notch set emeralds 500
+```
+
+#### Give Combat XP
+
+```
+/heraclesadmin <player> xp <amount>
+```
+
+**Example**: `/heraclesadmin Notch xp 1000`
+
+#### Toggle Component
+
+```
+/heraclesadmin <player> component <pillagers|raids|emeralds> <true|false>
+```
+
+**Example**: `/heraclesadmin Notch component pillagers true`
+
+#### Award Raid Completion
+
+```
+/heraclesadmin <player> raid <level>
+```
+
+**Level**: 1-5 (Bad Omen level)
+
+**Awards**: XP based on level + 2 Heracles Keys + increments raid counter
+
+**Example**: `/heraclesadmin Notch raid 3`
+
+#### Reset All Heracles Flags
+
+```
+/heraclesadmin <player> reset
+```
+
+---
+
 ### Ceres Admin Commands
 
 #### Give Ceres Keys
@@ -232,6 +331,32 @@ Visit Promachos to begin your journey!
 **Purpose**: Simulate a Ceres crate roll for the executing player without consuming a key
 
 **Output**: 50/50 roll result, god apple or unique item (if available)
+
+---
+
+### Check Keys Command
+
+```
+/checkkeys [player]
+```
+
+**Purpose**: Check key tracking for a player (shows counts, keys awarded, keys owed)
+
+**Permission**: None (all players can use)
+
+**Supports**: Offline players
+
+**Output**:
+```
+DEMETER:
+  Wheat: 5000 | Awarded: 33 | Should: 33 | Owed: 0
+  Cows: 800 | Awarded: 40 | Should: 40 | Owed: 0
+  Cakes: 150 | Awarded: 30 | Should: 30 | Owed: 0
+HERACLES:
+  Pillagers: 1000 | Awarded: 40 | Should: 40 | Owed: 0
+  Raids: 20 | Awarded: 40 | Should: 40 | Owed: 0
+  Emeralds: 350 | Awarded: 3 | Should: 3 | Owed: 0
+```
 
 ---
 
@@ -405,13 +530,13 @@ Visit Promachos to begin your journey!
 **Setup**: Set role to FARMING
 
 **Steps**:
-1. Craft 3 cakes
+1. Craft 5 cakes
 2. Observe key drop
 
 **Expected**:
 - Counter increments by craft quantity (bulk crafts count individually)
-- At 3: +1 Demeter Key awarded
-- Message: "DEMETER KEY! Cakes: 3/300"
+- At 5: +1 Demeter Key awarded
+- Message: "DEMETER KEY! Cakes: 5/500"
 
 **Pass/Fail**: ___
 
@@ -419,16 +544,16 @@ Visit Promachos to begin your journey!
 
 #### Test 2.8: Cake Bulk Crafting
 
-**Setup**: Set counter to 295
+**Setup**: Set counter to 492
 
 **Steps**:
-1. Shift-click to craft 8 cakes at once
+1. Shift-click to craft 10 cakes at once
 2. Observe key awards
 
 **Expected**:
-- Counter increments to 303
-- 2 keys awarded (for 297 and 300)
-- Component awarded at 300
+- Counter increments to 502
+- 2 keys awarded (for 495 and 500)
+- Component awarded at 500
 
 **Pass/Fail**: ___
 
@@ -539,7 +664,7 @@ Visit Promachos to begin your journey!
 **Expected**:
 - Wheat: +1,500 → 6,500
 - Cows: +200 → 1,000
-- Cakes: +30 → 180
+- Cakes: +50 → 200
 - Blessing consumed
 - Message shows all 3 boosts
 - Keys awarded if thresholds crossed
@@ -562,7 +687,7 @@ Visit Promachos to begin your journey!
 **Expected**:
 - Wheat: NO boost (15,000 unchanged)
 - Cows: +200 → 1,200
-- Cakes: +30 → 230
+- Cakes: +50 → 250
 - Message shows only 2 boosts
 
 **Pass/Fail**: ___
@@ -580,7 +705,7 @@ Visit Promachos to begin your journey!
 
 **Expected**:
 - Blessing NOT consumed
-- Message: "Demeter has no further need of this blessing."
+- Message: "All Demeter activities already complete!"
 - Sound: villager_no
 
 **Pass/Fail**: ___
@@ -598,7 +723,7 @@ Visit Promachos to begin your journey!
 
 **Expected**:
 - Wheat: 15,000 (capped, not 16,300)
-- Message: "+1200 (14,800 → 15,000) MAX REACHED"
+- Message shows actual boost: "+200 (14,800 → 15,000)"
 - Component awarded immediately
 
 **Pass/Fail**: ___
@@ -705,9 +830,10 @@ Visit Promachos to begin your journey!
 
 **Expected**:
 - 6 angry bees spawn around player
+- Action bar: "CERES' BEES - 6 bees summoned for 30s"
 - Bees target nearest hostile mobs
 - Bees despawn after 30s
-- Cooldown message if clicked again before 30s
+- After 30s: action bar "Ceres Wand ready!" + chime sound
 
 **Pass/Fail**: ___
 
@@ -719,12 +845,12 @@ Visit Promachos to begin your journey!
 
 **Steps**:
 1. Try to use wand again immediately
-2. Observe blocked use
+2. Observe silent fail
 
 **Expected**:
-- Message: "Wand on cooldown: <time remaining>"
-- Sound: villager_no
-- Wand NOT consumed/used
+- No message (silent fail)
+- Wand NOT activated
+- After 30s cooldown expires: action bar "Ceres Wand ready!" + chime sound
 
 **Pass/Fail**: ___
 
@@ -834,8 +960,8 @@ Visit Promachos to begin your journey!
 2. Observe progress display
 
 **Expected**:
-- Shows counters: 8000/15000, 1200/2000, 95/300
-- Shows keys earned: 53, 60, 31
+- Shows counters: 8000/15000, 1200/2000, 95/500
+- Shows keys earned: 53, 60, 19
 - Shows component status: ✗, ✗, ✗
 - Progress bars visual (optional)
 

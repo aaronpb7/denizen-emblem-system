@@ -291,24 +291,39 @@ Cakes: [███░░░░░░░] 95 / 500  (19%)
 
 ## Rank System
 
-In addition to component milestones, Demeter has a **separate rank progression system** that provides **permanent passive buffs** while the FARMING role is active.
+In addition to component milestones, Demeter has a **separate XP-based rank progression system** that provides **permanent passive buffs** while the FARMING role is active.
 
-**Ranks:**
-- **Acolyte of Demeter** (2,500 wheat + 50 cows)
-- **Disciple of Demeter** (12,000 wheat + 300 cows)
-- **Hero of Demeter** (50,000 wheat + 700 cows)
+### Rank Tiers
 
-**Buffs Include:**
-- Farming Speed (Haste I/II)
-- Extra Crop Drops (+5% to +50%)
-- Twin Breeding Chance (10% to 30%)
+| Rank | XP Required | Crop Bonus | Speed Bonus | Key Reward |
+|------|-------------|------------|-------------|------------|
+| Acolyte of the Farm | 1,000 | +5% | None | 5 keys |
+| Disciple of the Farm | 3,500 | +10% | Speed I | 5 keys |
+| Hero of the Farm | 9,750 | +15% | Speed I | 5 keys |
+| Champion of the Farm | 25,375 | +20% | Speed I | 5 keys |
+| Legend of the Farm | 64,438 | +25% | Speed II | 10 keys |
 
-**Relationship to Components:**
+### XP Sources
+
+**Crop Harvesting (fully grown only):**
+- Wheat, Carrots, Potatoes, Beetroots: 2 XP
+- Pumpkin, Melon: 5 XP
+- Nether Wart: 3 XP
+- Cocoa, Sugar Cane, Cactus, Kelp, Bamboo: 1 XP
+
+**Animal Breeding:**
+- Horse: 30 XP | Turtle: 20 XP | Llama/Hoglin: 12 XP
+- Cow/Sheep/Pig: 10 XP | Rabbit/Bee: 8 XP | Chicken: 6 XP
+
+**Food Crafting:**
+- Rabbit Stew: 15 XP | Cake: 12 XP | Pumpkin Pie: 10 XP
+- Suspicious Stew: 8 XP | Beetroot Soup: 6 XP | Mushroom Stew: 4 XP
+
+### Relationship to Components
+
 - Ranks and components are **parallel systems**
 - You can achieve ranks without components, and vice versa
 - Ranks provide gameplay benefits; components unlock emblems
-
-**See:** `docs/demeter_ranks.md` for complete rank specification
 
 ---
 

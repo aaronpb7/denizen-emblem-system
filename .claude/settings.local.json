@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)",
+      "Bash(wc:*)",
+      "WebFetch(domain:meta.denizenscript.com)",
+      "WebSearch",
+      "Bash(dir /s /b \"C:\\\\Users\\\\Administrator\\\\Documents\\\\GitHub\\\\denizen-emblem-system\\\\*screenshot*\")",
+      "Bash(dir /b /o-d \"C:\\\\Users\\\\Administrator\\\\Pictures\\\\Screenshots\\\\*.png\")",
+      "Bash(dir /b /o-d \"C:\\\\Users\\\\Administrator\\\\Desktop\\\\*.png\")",
+      "Bash(move \"CLEANUP_SUMMARY_2026-01-28.md\" \"archive\"\" && move \"CODEBASE_AUDIT_2026-01-28.md\" \"archive\"\")",
+      "Bash(move \"DOCUMENTATION_UPDATES_2026-01-28.md\" \"archive\"\" && move \"heracles_PLANNING.md\" \"archive\"\")",
+      "Bash(move \"heracles_CONFIRMED.md\" \"archive\"\")",
+      "WebFetch(domain:hub.spigotmc.org)"
+    ]
+  }
+}

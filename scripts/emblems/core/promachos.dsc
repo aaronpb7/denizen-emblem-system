@@ -33,6 +33,13 @@ promachos_interact:
                 script:
                 - if !<player.has_flag[met_promachos]>:
                     - run promachos_first_meeting
+                # Check for ready emblems (components complete but not unlocked)
+                - else if <proc[check_demeter_components_complete]> && !<player.has_flag[demeter.emblem.unlocked]>:
+                    - run demeter_emblem_unlock_ceremony
+                - else if <proc[check_hephaestus_components_complete]> && !<player.has_flag[hephaestus.emblem.unlocked]>:
+                    - run hephaestus_emblem_unlock_ceremony
+                - else if <proc[check_heracles_components_complete]> && !<player.has_flag[heracles.emblem.unlocked]>:
+                    - run heracles_emblem_unlock_ceremony
                 - else:
                     - inventory open d:promachos_main_menu
 
@@ -83,8 +90,10 @@ promachos_check_emblems_button:
     material: nether_star
     display name: <&6><&l>Check Emblems
     lore:
-    - <&7>View your emblem progress
-    - <&7>and unlock completed emblems.
+    - <&7>View your emblem progress.
+    - <empty>
+    - <&7>When all components are complete,
+    - <&7>speak to Promachos to unlock!
     - <empty>
     - <&e>Click to view status.
 
@@ -137,18 +146,18 @@ promachos_farming_role_button:
 
 promachos_mining_role_button:
     type: item
-    material: diamond_pickaxe
+    material: iron_pickaxe
     display name: <&6><&l>ΜΕΤΑΛΛΟΥΡΓΟΣ<&r> <&8>·<&r> <&e>Metallourgos
     lore:
-    - <&7><&o>"Master of flame and forge, shaped by Hephaestus' will"
+    - <&8><&o>"Master of flame and forge, shaped by Hephaestus' will"
     - <empty>
     - <&6>Path of the Smith
-    - <&7>Delve into stone and strike the earth's veins.
-    - <&7>Extract precious metals from mountain depths.
-    - <&7>Craft legendary works at the divine anvil.
+    - <&7>Delve into stone and strike iron veins.
+    - <&7>Smelt raw metal in the sacred furnace.
+    - <&7>Craft mighty iron golems of war.
     - <empty>
     - <&e>Patron: <&6>Hephaestus, God of the Forge
-    - <&e>Sacred Tasks: <&8><&o>Mysteries yet veiled...
+    - <&e>Sacred Tasks: <&7>Iron Ore · Smelting · Golems
     enchantments:
     - mending:1
     mechanisms:
@@ -280,38 +289,40 @@ system_info_roles:
     - <&7><&o>"Three paths diverge before you..."
     - <empty>
     - <&e>How It Works<&co>
-    - <&7>Pick <&6>Georgos<&7>, <&6>Metallourgos<&7>, or <&6>Hoplites<&7>.
+    - <&7>Pick <&6>Georgos<&7>, <&8>Metallourgos<&7>, or <&c>Hoplites<&7>.
     - <&7>Your active role determines which
     - <&7>activities count toward progression.
     - <empty>
-    - <&6>Georgos Activities<&co>
-    - <&7>• Harvest wheat → Keys every 150
-    - <&7>• Breed cows → Keys every 20
-    - <&7>• Craft cakes → Keys every 5
+    - <&6>Georgos <&7>(Farming)<&co>
+    - <&7>Harvest wheat, breed cows, craft cakes
     - <empty>
-    - <&8>Other roles coming soon!
+    - <&c>Hoplites <&7>(Combat)<&co>
+    - <&7>Slay pillagers, trade emeralds, complete raids
+    - <empty>
+    - <&8>Metallourgos <&7>(Mining)<&co>
+    - <&7>Mine iron ore, smelt in blast furnace, create golems
 
 system_info_ranks:
     type: item
-    material: diamond_hoe
+    material: experience_bottle
     display name: <&6><&l>Ranks & XP System
-    mechanisms:
-        hides: ALL
     lore:
     - <&7><&o>"Rise through mastery, earn divine favor..."
     - <empty>
-    - <&e>Farming Ranks<&co>
-    - <&7>Acolyte → Disciple → Hero → Champion → Legend
-    - <&7>• Speed I/II while farming
-    - <&7>• +5% to +25% extra crop drops
-    - <&7>• Key rewards at each rank up
+    - <&e>How It Works<&co>
+    - <&7>Each role has 5 ranks to unlock.
+    - <&7>Earn XP from role activities to rank up.
+    - <&7>Higher ranks grant permanent buffs.
     - <empty>
-    - <&e>XP Sources<&co>
-    - <&7>Crops<&co> Wheat/carrots/potatoes/beets (2)
-    - <&7>Melons/pumpkins (5), nether wart (3)
-    - <&7>Animals<&co> Cow/sheep/pig (10), horse (30)
-    - <&7>Foods<&co> Cake (12), rabbit stew (15)
-    - <&7>Pumpkin pie (10), suspicious stew (8)
+    - <&6>Farming Ranks<&co>
+    - <&7>Speed boost + extra crop drops
+    - <empty>
+    - <&c>Combat Ranks<&co>
+    - <&7>Low-health regen + vanilla XP bonus
+    - <empty>
+    - <&8>Mining Ranks<&co>
+    - <&7>Haste buff + ore XP bonus
+    - <empty>
     - <&8>View rank progress in /profile
 
 system_info_emblems:
@@ -326,10 +337,14 @@ system_info_emblems:
     - <&7>Get components by hitting milestones.
     - <&7>Once all 3 are done, return to me.
     - <empty>
-    - <&6>Demeter's Emblem<&co>
-    - <&7>• 15,000 wheat = Wheat Component
-    - <&7>• 2,000 cows = Cow Component
-    - <&7>• 500 cakes = Cake Component
+    - <&6>Demeter's Emblem <&7>(Farming)<&co>
+    - <&7>Wheat, cow, and cake milestones
+    - <empty>
+    - <&c>Heracles' Emblem <&7>(Combat)<&co>
+    - <&7>Pillager, emerald, and raid milestones
+    - <empty>
+    - <&8>Hephaestus' Emblem <&7>(Mining)<&co>
+    - <&7>Iron ore, smelting, and golem milestones
     - <empty>
     - <&8>Track progress with /profile → Emblems
 
@@ -340,17 +355,18 @@ system_info_crates:
     lore:
     - <&7><&o>"Fortune's gifts await the worthy..."
     - <empty>
-    - <&e>Demeter Keys<&co>
-    - <&7>Right-click key on any block to open.
+    - <&e>How It Works<&co>
+    - <&7>Right-click keys on any block to open.
     - <&7>5 rarity tiers → better loot at higher tiers
-    - <&7>Rewards<&co> Food, blocks, XP, Demeter items
     - <empty>
-    - <&e>Special Loot<&co>
-    - <&7>• <&6>Demeter Hoe<&7> - Auto-harvest tool
-    - <&7>• <&6>Demeter Blessing<&7> - Activity boosts
-    - <&7>• <&6>Demeter Title<&7> - Chat prefix
+    - <&6>Demeter Crates <&7>(Farming)<&co>
+    - <&7>Food, blocks, tools, blessings
     - <empty>
-    - <&8>1% chance for Ceres Key (meta-progression)
+    - <&c>Heracles Crates <&7>(Combat)<&co>
+    - <&7>Weapons, armor, totems, blessings
+    - <empty>
+    - <&8>Hephaestus Crates <&7>(Mining)<&co>
+    - <&7>Ores, ingots, tools, blessings
 
 system_info_progression:
     type: item
@@ -359,18 +375,15 @@ system_info_progression:
     lore:
     - <&7><&o>"Beyond the gods lies greater glory..."
     - <empty>
-    - <&e>Ceres Keys<&co>
-    - <&7>Roman tier above Greek pantheon
-    - <&7>1% drop from Olympian tier crates
-    - <&7>50/50 god apple or unique item
+    - <&e>Roman Pantheon<&co>
+    - <&7>A tier above the Greek gods.
+    - <&7>How to access? That's for you to discover...
     - <empty>
-    - <&6>Unique Ceres Items<&co>
-    - <&7>• <&b>Ceres Hoe<&7> - Consumes seeds to replant
-    - <&7>• <&b>Ceres Wand<&7> - Summons angry bees
-    - <&7>• <&b>Ceres Title<&7> - [Ceres' Chosen] prefix
-    - <&7>• <&b>Shulker Box<&7> - Portable storage
+    - <&d>Ceres <&7>(Farming)
+    - <&d>Mars <&7>(Combat)
+    - <&d>Vulcan <&7>(Mining)
     - <empty>
-    - <&8>Collect all 4, then only god apples drop
+    - <&8><&o>The worthy shall find a way.
 
 system_info_gui:
     type: inventory
@@ -408,6 +421,7 @@ emblem_check_gui:
     type: inventory
     inventory: chest
     gui: true
+    debug: false
     title: <&8>Emblem Progress
     size: 27
     procedural items:
@@ -486,28 +500,78 @@ get_demeter_emblem_status_item:
 demeter_emblem_ready:
     type: item
     material: nether_star
-    display name: <&e><&l>Demeter's Emblem<&r> <&e>⚠
+    display name: <&6><&l>Demeter's Emblem <&a>✓
     lore:
-    - <&e>READY TO UNLOCK!
+    - <&a><&l>READY TO UNLOCK!
     - <empty>
-    - <&7>All components obtained!
-    - <&2>Click to unlock this emblem.
+    - <&7>You have gathered all three
+    - <&7>sacred offerings of <&6>Demeter<&7>.
+    - <empty>
+    - <&e>Speak to <&6>Promachos<&e> to
+    - <&e>receive your emblem!
     enchantments:
     - mending:1
     mechanisms:
         hides: ENCHANTS
 
-# Hephaestus placeholder
+# Hephaestus emblem status
 get_hephaestus_emblem_status_item:
     type: procedure
     debug: false
     script:
+    # If unlocked
+    - if <player.has_flag[hephaestus.emblem.unlocked]>:
+        - define lore <list>
+        - define lore <[lore].include[<&2>UNLOCKED]>
+        - define lore <[lore].include[<empty>]>
+        - define lore <[lore].include[<&7>Symbol of forge mastery.]>
+        - determine <item[iron_pickaxe].with[display=<&8><&l>Hephaestus' Emblem<&r> <&2>✓;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+
+    # Check if ready
+    - if <proc[check_hephaestus_components_complete]>:
+        - determine <item[hephaestus_emblem_ready]>
+
+    # In progress - high level overview
+    - define iron_complete <player.has_flag[hephaestus.component.iron]>
+    - define smelting_complete <player.has_flag[hephaestus.component.smelting]>
+    - define golem_complete <player.has_flag[hephaestus.component.golem]>
+
+    - define components_done 0
+    - if <[iron_complete]>:
+        - define components_done <[components_done].add[1]>
+    - if <[smelting_complete]>:
+        - define components_done <[components_done].add[1]>
+    - if <[golem_complete]>:
+        - define components_done <[components_done].add[1]>
+
     - define lore <list>
-    - define lore <[lore].include[<&8>???]>
-    - define lore <[lore].include[<empty>]>
-    - define lore <[lore].include[<&8><&o>Select the Metallourgos role]>
-    - define lore <[lore].include[<&8><&o>to begin this path.]>
-    - determine <item[gray_dye].with[display=<&8>???;lore=<[lore]>]>
+    - define lore <[lore].include[<&8><&o>"Emblem of forge mastery"]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&8>Progress<&co> <&7><[components_done]>/3 components]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&7>Complete three sacred activities]>
+    - define lore <[lore].include[<&7>to unlock Hephaestus' blessing.]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&e>Click for detailed progress]>
+
+    - determine <item[iron_pickaxe].with[display=<&8><&l>Hephaestus' Emblem;lore=<[lore]>]>
+
+hephaestus_emblem_ready:
+    type: item
+    material: iron_pickaxe
+    display name: <&8><&l>Hephaestus' Emblem <&a>✓
+    lore:
+    - <&a><&l>READY TO UNLOCK!
+    - <empty>
+    - <&7>You have mastered all three
+    - <&7>sacred crafts of <&8>Hephaestus<&7>.
+    - <empty>
+    - <&e>Speak to <&6>Promachos<&e> to
+    - <&e>receive your emblem!
+    enchantments:
+    - mending:1
+    mechanisms:
+        hides: ENCHANTS
 
 # Heracles emblem status
 get_heracles_emblem_status_item:
@@ -554,12 +618,15 @@ get_heracles_emblem_status_item:
 heracles_emblem_ready:
     type: item
     material: diamond_sword
-    display name: <&c><&l>Heracles' Emblem <&e>⚠
+    display name: <&c><&l>Heracles' Emblem <&a>✓
     lore:
-    - <&e>READY TO UNLOCK!
+    - <&a><&l>READY TO UNLOCK!
     - <empty>
-    - <&7>All components obtained!
-    - <&2>Click to unlock this emblem.
+    - <&7>You have completed all three
+    - <&7>heroic trials of <&c>Heracles<&7>.
+    - <empty>
+    - <&e>Speak to <&6>Promachos<&e> to
+    - <&e>receive your emblem!
     enchantments:
     - mending:1
     mechanisms:
@@ -583,19 +650,18 @@ check_heracles_components_complete:
         - determine true
     - determine false
 
+# Check if all Hephaestus components complete
+check_hephaestus_components_complete:
+    type: procedure
+    debug: false
+    script:
+    - if <player.has_flag[hephaestus.component.iron]> && <player.has_flag[hephaestus.component.smelting]> && <player.has_flag[hephaestus.component.golem]>:
+        - determine true
+    - determine false
+
 # ============================================
 # EMBLEM UNLOCK CEREMONY
 # ============================================
-
-emblem_check_gui_clicks:
-    type: world
-    debug: false
-    events:
-        after player clicks demeter_emblem_ready in emblem_check_gui:
-        - run demeter_emblem_unlock_ceremony
-
-        after player clicks heracles_emblem_ready in emblem_check_gui:
-        - run heracles_emblem_unlock_ceremony
 
 demeter_emblem_unlock_ceremony:
     type: task
@@ -614,11 +680,15 @@ demeter_emblem_unlock_ceremony:
     - narrate "<&e><&l>Promachos<&r><&7>: The goddess of harvest smiles upon you. Receive her emblem!"
     - wait 3s
 
-    - narrate "<&e><&l>Promachos<&r><&2>You have unlocked the <&6><&l>Emblem of Demeter<&2>!"
+    - narrate "<&e><&l>Promachos<&r><&7>: <&2>You have unlocked the <&6><&l>Emblem of Demeter<&2>!"
 
     # Set flags
     - flag player demeter.emblem.unlocked:true
     - flag player demeter.emblem.unlock_date:<util.time_now>
+
+    # Award bonus keys
+    - give demeter_key quantity:30
+    - narrate "<&7>Bonus reward: <&e>30 Demeter Keys"
 
     # Visual effects
     - title "title:<&6><&l>EMBLEM UNLOCKED!" "subtitle:<&e>Demeter's Blessing" fade_in:10t stay:40t fade_out:10t
@@ -632,10 +702,6 @@ demeter_emblem_unlock_ceremony:
     - flag player farming.next_emblem.unlocked:true
     - wait 2s
     - narrate "<&e><&l>Promachos<&r><&7>: A new path has been revealed to you, Georgos. Return when you are ready to pursue the next emblem."
-
-    # Reopen emblem GUI
-    - wait 2s
-    - inventory open d:emblem_check_gui
 
 heracles_emblem_unlock_ceremony:
     type: task
@@ -655,15 +721,15 @@ heracles_emblem_unlock_ceremony:
     - narrate "<&e><&l>Promachos<&r><&7>: The greatest of heroes recognizes your valor. Receive his emblem!"
     - wait 3s
 
-    - narrate "<&e><&l>Promachos<&r><&2>You have unlocked the <&c><&l>Emblem of Heracles<&2>!"
+    - narrate "<&e><&l>Promachos<&r><&7>: <&2>You have unlocked the <&c><&l>Emblem of Heracles<&2>!"
 
     # Set flags
     - flag player heracles.emblem.unlocked:true
     - flag player heracles.emblem.unlock_date:<util.time_now>
 
     # Award bonus keys
-    - give heracles_key quantity:10
-    - narrate "<&7>Bonus reward: <&c>10 Heracles Keys"
+    - give heracles_key quantity:30
+    - narrate "<&7>Bonus reward: <&c>30 Heracles Keys"
 
     # Visual effects
     - title "title:<&c><&l>EMBLEM UNLOCKED!" "subtitle:<&4>Heracles' Favor" fade_in:10t stay:40t fade_out:10t
@@ -678,6 +744,43 @@ heracles_emblem_unlock_ceremony:
     - wait 2s
     - narrate "<&e><&l>Promachos<&r><&7>: A new path has been revealed to you, Hoplites. Return when you are ready to pursue the next emblem."
 
-    # Reopen emblem GUI
+hephaestus_emblem_unlock_ceremony:
+    type: task
+    debug: false
+    script:
+    # Close GUI
+    - inventory close
+
+    # Play epic sound
+    - playsound <player> sound:ui_toast_challenge_complete volume:1.0
+    - playsound <player> sound:block_anvil_use volume:0.5
+
+    # Dialogue sequence
+    - narrate "<&e><&l>Promachos<&r><&7>: You have mastered the sacred crafts of <&8>Hephaestus<&7>."
+    - wait 3s
+
+    - narrate "<&e><&l>Promachos<&r><&7>: The god of the forge blesses your works. Receive his emblem!"
+    - wait 3s
+
+    - narrate "<&e><&l>Promachos<&r><&7>: <&2>You have unlocked the <&8><&l>Emblem of Hephaestus<&2>!"
+
+    # Set flags
+    - flag player hephaestus.emblem.unlocked:true
+    - flag player hephaestus.emblem.unlock_date:<util.time_now>
+
+    # Award bonus keys
+    - give hephaestus_key quantity:30
+    - narrate "<&7>Bonus reward: <&7>30 Hephaestus Keys"
+
+    # Visual effects
+    - title "title:<&8><&l>EMBLEM UNLOCKED!" "subtitle:<&f>Hephaestus' Blessing" fade_in:10t stay:40t fade_out:10t
+    - playeffect effect:lava at:<player.location> quantity:50 offset:1.5
+
+    # Server announcement
+    - announce "<&8><&l>[Promachos]<&r> <&f><player.name> <&8>has unlocked the <&8><&l>Emblem of Hephaestus<&8>!"
+    - playsound <server.online_players> sound:ui_toast_challenge_complete volume:0.5
+
+    # Unlock next mining emblem line (placeholder)
+    - flag player mining.next_emblem.unlocked:true
     - wait 2s
-    - inventory open d:emblem_check_gui
+    - narrate "<&e><&l>Promachos<&r><&7>: A new path has been revealed to you, Metallourgos. Return when you are ready to pursue the next emblem."

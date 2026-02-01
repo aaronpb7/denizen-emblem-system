@@ -83,43 +83,64 @@ This project uses Denizen, a scripting language for Minecraft servers.
 - Component milestones and rank progression
 - Meta-progression via Roman god crates (Ceres, Vulcan, Mars)
 
-**Comprehensive Documentation:**
+**Documentation:**
 - `docs/SYSTEM_OVERVIEW.md` - Complete system reference
-- `docs/overview.md` - Philosophy and design
-- `docs/demeter.md` - Farming role details
-- `docs/demeter_ranks.md` - Rank progression with buffs
-- `docs/crates_demeter.md` - Crate system mechanics
+- `docs/STYLE.md` - Colors, sounds, message patterns, UI conventions
+- `docs/EMBLEM_TEMPLATE.md` - Implementation checklist for new emblems
+- `docs/demeter.md` - Farming role (activities, ranks, crates)
 - `docs/ceres.md` - Farming meta-progression
 - `docs/heracles.md` - Combat role details
 - `docs/mars.md` - Combat meta-progression
-- `docs/heracles_CONFIRMED.md` - Finalized design decisions
 - `docs/promachos.md` - NPC interactions
 - `docs/flags.md` - Flag reference
-- `docs/testing.md` - Testing procedures
-- `docs/DEPLOYMENT_CHECKLIST.md` - Production deployment steps
-- `docs/QUICK_START.md` - Quick setup guide
+- `docs/testing.md` - Testing procedures and admin commands
 
 **Structure:**
 ```
 scripts/
-├── profile_gui.dsc       # Player profile command and GUI
-├── bulletin.dsc          # Server news/updates system
+├── profile_gui.dsc         # Player profile command and GUI
+├── bulletin.dsc            # Server news/updates system
+├── server_restrictions.dsc # Server rules/restrictions
 └── emblems/
     ├── core/
-    │   ├── roles.dsc
-    │   ├── promachos.dsc
-    │   └── item_utilities.dsc
-    ├── demeter/          # FARMING role (✅ complete)
-    ├── ceres/            # FARMING meta (✅ complete)
-    ├── heracles/         # COMBAT role (✅ complete)
-    ├── mars/             # COMBAT meta (✅ complete)
-    ├── hephaestus/       # MINING role (🚧 placeholder)
-    └── admin/            # Admin commands
+    │   ├── roles.dsc           # Role definitions
+    │   ├── promachos.dsc       # NPC interactions
+    │   └── item_utilities.dsc  # Shared item helpers
+    ├── demeter/            # FARMING role
+    │   ├── demeter_events.dsc
+    │   ├── demeter_items.dsc
+    │   ├── demeter_crate.dsc
+    │   ├── demeter_blessing.dsc
+    │   └── demeter_ranks.dsc
+    ├── ceres/              # FARMING meta
+    │   ├── ceres_items.dsc
+    │   ├── ceres_crate.dsc
+    │   └── ceres_mechanics.dsc
+    ├── heracles/           # COMBAT role
+    │   ├── heracles_events.dsc
+    │   ├── heracles_items.dsc
+    │   ├── heracles_crate.dsc
+    │   ├── heracles_blessing.dsc
+    │   └── heracles_ranks.dsc
+    ├── mars/               # COMBAT meta
+    │   ├── mars_items.dsc
+    │   └── mars_crate.dsc
+    ├── hephaestus/         # MINING role (placeholder)
+    └── admin/
+        └── admin_commands.dsc
 ```
 
 **Admin Commands:**
-- `/demeteradmin` - Demeter progression testing
-- See `docs/testing.md` for full command reference
+- `/roleadmin` - Set player role
+- `/demeteradmin` - Demeter progression
+- `/heraclesadmin` - Heracles progression
+- `/farmingadmin` - Farming XP/ranks
+- `/ceresadmin` - Ceres items
+- `/checkkeys` - View key tracking
+- `/testroll` - Simulate crate rolls
+- `/emblemreset` - Full player reset
+
+See `docs/testing.md` for full command reference.
 
 ## Bulletin System
 

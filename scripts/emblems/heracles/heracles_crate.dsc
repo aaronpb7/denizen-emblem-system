@@ -360,7 +360,7 @@ roll_heracles_loot:
             - define pool <[pool].include[bread:8]>
             - define pool <[pool].include[iron_ingot:4]>
             - define pool <[pool].include[emerald:8]>
-            - define pool <[pool].include[bone:16]>
+            - define pool <[pool].include[bone_meal:16]>
             - define pool <[pool].include[leather:4]>
             - define choice <[pool].random>
             - define parts <[choice].split[<&co>]>
