@@ -53,34 +53,35 @@ ceres_crate_animation:
         - define gui_items <[gui_items].include[<[filler]>]>
 
     - inventory open d:ceres_crate_gui
-    - inventory set d:<player.open_inventory> o:<[gui_items]>
+    - define crate_inv <player.open_inventory>
+    - inventory set d:<[crate_inv]> o:<[gui_items]>
 
     # Set cyan border frame around entire GUI
     # Top row (1-9)
-    - inventory set d:<player.open_inventory> o:<[border]> slot:1
-    - inventory set d:<player.open_inventory> o:<[border]> slot:2
-    - inventory set d:<player.open_inventory> o:<[border]> slot:3
-    - inventory set d:<player.open_inventory> o:<[border]> slot:4
-    - inventory set d:<player.open_inventory> o:<[border]> slot:5
-    - inventory set d:<player.open_inventory> o:<[border]> slot:6
-    - inventory set d:<player.open_inventory> o:<[border]> slot:7
-    - inventory set d:<player.open_inventory> o:<[border]> slot:8
-    - inventory set d:<player.open_inventory> o:<[border]> slot:9
+    - inventory set d:<[crate_inv]> o:<[border]> slot:1
+    - inventory set d:<[crate_inv]> o:<[border]> slot:2
+    - inventory set d:<[crate_inv]> o:<[border]> slot:3
+    - inventory set d:<[crate_inv]> o:<[border]> slot:4
+    - inventory set d:<[crate_inv]> o:<[border]> slot:5
+    - inventory set d:<[crate_inv]> o:<[border]> slot:6
+    - inventory set d:<[crate_inv]> o:<[border]> slot:7
+    - inventory set d:<[crate_inv]> o:<[border]> slot:8
+    - inventory set d:<[crate_inv]> o:<[border]> slot:9
     # Middle row sides (10, 11, 17, 18)
-    - inventory set d:<player.open_inventory> o:<[border]> slot:10
-    - inventory set d:<player.open_inventory> o:<[border]> slot:11
-    - inventory set d:<player.open_inventory> o:<[border]> slot:17
-    - inventory set d:<player.open_inventory> o:<[border]> slot:18
+    - inventory set d:<[crate_inv]> o:<[border]> slot:10
+    - inventory set d:<[crate_inv]> o:<[border]> slot:11
+    - inventory set d:<[crate_inv]> o:<[border]> slot:17
+    - inventory set d:<[crate_inv]> o:<[border]> slot:18
     # Bottom row (19-27)
-    - inventory set d:<player.open_inventory> o:<[border]> slot:19
-    - inventory set d:<player.open_inventory> o:<[border]> slot:20
-    - inventory set d:<player.open_inventory> o:<[border]> slot:21
-    - inventory set d:<player.open_inventory> o:<[border]> slot:22
-    - inventory set d:<player.open_inventory> o:<[border]> slot:23
-    - inventory set d:<player.open_inventory> o:<[border]> slot:24
-    - inventory set d:<player.open_inventory> o:<[border]> slot:25
-    - inventory set d:<player.open_inventory> o:<[border]> slot:26
-    - inventory set d:<player.open_inventory> o:<[border]> slot:27
+    - inventory set d:<[crate_inv]> o:<[border]> slot:19
+    - inventory set d:<[crate_inv]> o:<[border]> slot:20
+    - inventory set d:<[crate_inv]> o:<[border]> slot:21
+    - inventory set d:<[crate_inv]> o:<[border]> slot:22
+    - inventory set d:<[crate_inv]> o:<[border]> slot:23
+    - inventory set d:<[crate_inv]> o:<[border]> slot:24
+    - inventory set d:<[crate_inv]> o:<[border]> slot:25
+    - inventory set d:<[crate_inv]> o:<[border]> slot:26
+    - inventory set d:<[crate_inv]> o:<[border]> slot:27
 
     # SCROLLING REEL ANIMATION
     # Middle row center slots: 12, 13, 14, 15, 16 (5 slots centered, scrolls right to left)
@@ -131,11 +132,11 @@ ceres_crate_animation:
         - else:
             - define slot5 <[new_item]>
 
-        - inventory set d:<player.open_inventory> slot:12 o:<[slot1]>
-        - inventory set d:<player.open_inventory> slot:13 o:<[slot2]>
-        - inventory set d:<player.open_inventory> slot:14 o:<[slot3]>
-        - inventory set d:<player.open_inventory> slot:15 o:<[slot4]>
-        - inventory set d:<player.open_inventory> slot:16 o:<[slot5]>
+        - inventory set d:<[crate_inv]> slot:12 o:<[slot1]>
+        - inventory set d:<[crate_inv]> slot:13 o:<[slot2]>
+        - inventory set d:<[crate_inv]> slot:14 o:<[slot3]>
+        - inventory set d:<[crate_inv]> slot:15 o:<[slot4]>
+        - inventory set d:<[crate_inv]> slot:16 o:<[slot5]>
         - playsound <player> sound:ui_button_click volume:0.2 pitch:1.5
         - wait 2t
 
@@ -156,11 +157,11 @@ ceres_crate_animation:
         - else:
             - define slot5 <[new_item]>
 
-        - inventory set d:<player.open_inventory> slot:12 o:<[slot1]>
-        - inventory set d:<player.open_inventory> slot:13 o:<[slot2]>
-        - inventory set d:<player.open_inventory> slot:14 o:<[slot3]>
-        - inventory set d:<player.open_inventory> slot:15 o:<[slot4]>
-        - inventory set d:<player.open_inventory> slot:16 o:<[slot5]>
+        - inventory set d:<[crate_inv]> slot:12 o:<[slot1]>
+        - inventory set d:<[crate_inv]> slot:13 o:<[slot2]>
+        - inventory set d:<[crate_inv]> slot:14 o:<[slot3]>
+        - inventory set d:<[crate_inv]> slot:15 o:<[slot4]>
+        - inventory set d:<[crate_inv]> slot:16 o:<[slot5]>
         - playsound <player> sound:ui_button_click volume:0.3 pitch:1.2
         - wait 3t
 
@@ -181,11 +182,11 @@ ceres_crate_animation:
         - else:
             - define slot5 <[new_item]>
 
-        - inventory set d:<player.open_inventory> slot:12 o:<[slot1]>
-        - inventory set d:<player.open_inventory> slot:13 o:<[slot2]>
-        - inventory set d:<player.open_inventory> slot:14 o:<[slot3]>
-        - inventory set d:<player.open_inventory> slot:15 o:<[slot4]>
-        - inventory set d:<player.open_inventory> slot:16 o:<[slot5]>
+        - inventory set d:<[crate_inv]> slot:12 o:<[slot1]>
+        - inventory set d:<[crate_inv]> slot:13 o:<[slot2]>
+        - inventory set d:<[crate_inv]> slot:14 o:<[slot3]>
+        - inventory set d:<[crate_inv]> slot:15 o:<[slot4]>
+        - inventory set d:<[crate_inv]> slot:16 o:<[slot5]>
         - playsound <player> sound:ui_button_click volume:0.4 pitch:0.9
         - wait 5t
 
@@ -199,11 +200,11 @@ ceres_crate_animation:
     - define slot4 <[slot5]>
     - define slot5 <[final_display_item]>
 
-    - inventory set d:<player.open_inventory> slot:12 o:<[slot1]>
-    - inventory set d:<player.open_inventory> slot:13 o:<[slot2]>
-    - inventory set d:<player.open_inventory> slot:14 o:<[slot3]>
-    - inventory set d:<player.open_inventory> slot:15 o:<[slot4]>
-    - inventory set d:<player.open_inventory> slot:16 o:<[slot5]>
+    - inventory set d:<[crate_inv]> slot:12 o:<[slot1]>
+    - inventory set d:<[crate_inv]> slot:13 o:<[slot2]>
+    - inventory set d:<[crate_inv]> slot:14 o:<[slot3]>
+    - inventory set d:<[crate_inv]> slot:15 o:<[slot4]>
+    - inventory set d:<[crate_inv]> slot:16 o:<[slot5]>
     - playsound <player> sound:ui_button_click volume:0.4 pitch:0.9
     - wait 5t
 
@@ -218,11 +219,11 @@ ceres_crate_animation:
     - else:
         - define slot5 <[new_item]>
 
-    - inventory set d:<player.open_inventory> slot:12 o:<[slot1]>
-    - inventory set d:<player.open_inventory> slot:13 o:<[slot2]>
-    - inventory set d:<player.open_inventory> slot:14 o:<[slot3]>
-    - inventory set d:<player.open_inventory> slot:15 o:<[slot4]>
-    - inventory set d:<player.open_inventory> slot:16 o:<[slot5]>
+    - inventory set d:<[crate_inv]> slot:12 o:<[slot1]>
+    - inventory set d:<[crate_inv]> slot:13 o:<[slot2]>
+    - inventory set d:<[crate_inv]> slot:14 o:<[slot3]>
+    - inventory set d:<[crate_inv]> slot:15 o:<[slot4]>
+    - inventory set d:<[crate_inv]> slot:16 o:<[slot5]>
     - playsound <player> sound:ui_button_click volume:0.4 pitch:0.9
     - wait 5t
 
@@ -237,19 +238,19 @@ ceres_crate_animation:
     - else:
         - define slot5 <[new_item]>
 
-    - inventory set d:<player.open_inventory> slot:12 o:<[slot1]>
-    - inventory set d:<player.open_inventory> slot:13 o:<[slot2]>
-    - inventory set d:<player.open_inventory> slot:14 o:<[slot3]>
-    - inventory set d:<player.open_inventory> slot:15 o:<[slot4]>
-    - inventory set d:<player.open_inventory> slot:16 o:<[slot5]>
+    - inventory set d:<[crate_inv]> slot:12 o:<[slot1]>
+    - inventory set d:<[crate_inv]> slot:13 o:<[slot2]>
+    - inventory set d:<[crate_inv]> slot:14 o:<[slot3]>
+    - inventory set d:<[crate_inv]> slot:15 o:<[slot4]>
+    - inventory set d:<[crate_inv]> slot:16 o:<[slot5]>
     - playsound <player> sound:ui_button_click volume:0.5 pitch:1.0
     - wait 5t
 
     # Clear surrounding slots, leave final item in center
-    - inventory set d:<player.open_inventory> o:<[filler]> slot:12
-    - inventory set d:<player.open_inventory> o:<[filler]> slot:13
-    - inventory set d:<player.open_inventory> o:<[filler]> slot:15
-    - inventory set d:<player.open_inventory> o:<[filler]> slot:16
+    - inventory set d:<[crate_inv]> o:<[filler]> slot:12
+    - inventory set d:<[crate_inv]> o:<[filler]> slot:13
+    - inventory set d:<[crate_inv]> o:<[filler]> slot:15
+    - inventory set d:<[crate_inv]> o:<[filler]> slot:16
     - wait 16t
 
     # Check one final time before closing
