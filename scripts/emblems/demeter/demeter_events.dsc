@@ -1,14 +1,13 @@
 # ============================================
-# DEMETER EVENTS - Activity Tracking & XP
+# DEMETER EVENTS - Activity Tracking
 # ============================================
 #
-# XP-based progression with activity counters for components
-# 1. Wheat harvesting → 2 XP, component at 15,000
-# 2. Cow breeding → 10 XP, component at 2,000
-# 3. Cake crafting → 12 XP, component at 500
+# Activity tracking for component milestones
+# 1. Wheat harvesting → component at 15,000
+# 2. Cow breeding → component at 2,000
+# 3. Cake crafting → component at 500
 #
-# All other crops, animals, and foods also award XP (see farming_xp_rates)
-# Only tracks when player role = FARMING
+# Only tracks when player emblem = DEMETER
 #
 
 # ============================================
@@ -20,8 +19,8 @@ farming_crop_harvest:
     debug: false
     events:
         after player breaks wheat|carrots|potatoes|beetroots|nether_wart|cocoa|pumpkin|melon|sugar_cane|cactus|kelp|bamboo:
-        # Role gate - only FARMING role counts
-        - if <player.flag[role.active].if_null[NONE]> != FARMING:
+        # Emblem gate - only DEMETER emblem counts
+        - if <player.flag[emblem.active].if_null[NONE]> != DEMETER:
             - stop
 
         # Get material name
@@ -38,11 +37,6 @@ farming_crop_harvest:
             # Only award XP for fully grown crops
             - if <context.material.age> != <[max_age]>:
                 - stop
-
-        # Award XP based on crop type
-        - define xp_amount <script[farming_xp_rates].data_key[crops.<[crop]>].if_null[0]>
-        - if <[xp_amount]> > 0:
-            - run award_farming_xp def.player:<player> def.amount:<[xp_amount]> def.source:<[crop]>
 
         # Track wheat specifically for component milestone
         - if <[crop]> == wheat:
@@ -87,13 +81,8 @@ farming_animal_breeding:
             - stop
 
         # Role gate
-        - if <[breeder].flag[role.active].if_null[NONE]> != FARMING:
+        - if <[breeder].flag[emblem.active].if_null[NONE]> != DEMETER:
             - stop
-
-        # Award XP based on animal type
-        - define xp_amount <script[farming_xp_rates].data_key[animals.<[animal]>].if_null[0]>
-        - if <[xp_amount]> > 0:
-            - run award_farming_xp def.player:<[breeder]> def.amount:<[xp_amount]> def.source:<[animal]>
 
         # Track cows specifically for component milestone
         - if <[animal]> == cow:
@@ -128,18 +117,12 @@ farming_food_crafting:
     events:
         after player crafts cake|pumpkin_pie|mushroom_stew|rabbit_stew|beetroot_soup|suspicious_stew:
         # Role gate
-        - if <player.flag[role.active].if_null[NONE]> != FARMING:
+        - if <player.flag[emblem.active].if_null[NONE]> != DEMETER:
             - stop
 
         # Get food name and amount (context.amount handles shift-click)
         - define food <context.item.material.name>
         - define craft_amount <context.amount>
-
-        # Award XP based on food type (multiply by quantity for bulk crafts)
-        - define xp_per_item <script[farming_xp_rates].data_key[foods.<[food]>].if_null[0]>
-        - if <[xp_per_item]> > 0:
-            - define total_xp <[xp_per_item].mul[<[craft_amount]>]>
-            - run award_farming_xp def.player:<player> def.amount:<[total_xp]> def.source:<[food]>
 
         # Track cakes specifically for component milestone
         - if <[food]> == cake:

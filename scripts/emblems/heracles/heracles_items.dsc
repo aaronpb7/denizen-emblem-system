@@ -4,7 +4,7 @@
 #
 # Custom items from Heracles MYTHIC crate tier:
 # - Heracles Sword (cosmetic prestige sword)
-# - Heracles Blessing (10% progress boost consumable)
+# - Heracles Blessing (5% progress boost consumable)
 # - Heracles Title (flag-based chat prefix unlock)
 #
 
@@ -47,7 +47,7 @@ heracles_blessing:
     - <empty>
     - <&e>Right-click to boost progress
     - <&e>on all incomplete Heracles
-    - <&e>activities by 10%.
+    - <&e>activities by 5%.
     - <empty>
     - <&8>Single-use consumable
     - <&8>Stackable & tradeable
@@ -65,3 +65,26 @@ heracles_blessing:
 # Awarded directly from crate (TITLE type in loot table)
 # Chat integration handled in cosmetics system
 #
+
+# ============================================
+# HERACLES MYTHIC FRAGMENT
+# ============================================
+
+heracles_mythic_fragment:
+    type: item
+    material: amethyst_shard
+    display name: <&d>Heracles Mythic Fragment<&r>
+    enchantments:
+    - mending:1
+    mechanisms:
+        hides: ENCHANTS
+    lore:
+    - <&7>A shard of divine energy
+    - <&7>from Heracles' trials of valor.
+    - <empty>
+    - <&e>Right-click to view recipe.
+    - <empty>
+    - <&8>Crafting ingredient
+    - <&8>Stackable & tradeable
+    - <empty>
+    - <&d><&l>MYTHIC FRAGMENT

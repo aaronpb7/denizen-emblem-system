@@ -2,10 +2,10 @@
 # HEPHAESTUS BLESSING
 # ============================================
 #
-# Consumable item that boosts all incomplete Hephaestus activities by +10%
-# - Iron ore: +500 (10% of 5,000)
-# - Blast furnace smelting: +500 (10% of 5,000)
-# - Iron golems: +10 (10% of 100)
+# Consumable item that boosts all incomplete Hephaestus activities by +5%
+# - Iron ore: +250 (5% of 5,000)
+# - Blast furnace smelting: +250 (5% of 5,000)
+# - Iron golems: +5 (5% of 100)
 #
 # Only boosts incomplete activities (component not obtained)
 # Caps at requirement (cannot exceed milestone)
@@ -23,10 +23,14 @@ hephaestus_blessing_usage:
         on player right clicks block with:hephaestus_blessing:
         - determine cancelled passively
 
-        # Check if all components complete (block use if so)
+        # If all components complete, convert blessing to keys
         - if <player.has_flag[hephaestus.component.iron]> && <player.has_flag[hephaestus.component.smelting]> && <player.has_flag[hephaestus.component.golem]>:
-            - narrate "<&c>All Hephaestus activities already complete!"
-            - playsound <player> sound:entity_villager_no
+            - take item:hephaestus_blessing quantity:1
+            - give hephaestus_key quantity:10
+            - narrate "<&d><&l>HEPHAESTUS BLESSING ACTIVATED!<&r>"
+            - narrate "  <&8>All activities complete! <&7>Converted to <&e>10 Hephaestus Keys<&7>."
+            - playsound <player> sound:block_enchantment_table_use
+            - playeffect effect:flame at:<player.location> quantity:30 offset:1.0
             - stop
 
         # Track boosts for feedback
@@ -35,7 +39,7 @@ hephaestus_blessing_usage:
         # ===== IRON ORE BOOST =====
         - if !<player.has_flag[hephaestus.component.iron]>:
             - define current <player.flag[hephaestus.iron.count].if_null[0]>
-            - define boost 500
+            - define boost 250
             - define new_count <[current].add[<[boost]>].min[5000]>
             - define actual_boost <[new_count].sub[<[current]>]>
 
@@ -62,7 +66,7 @@ hephaestus_blessing_usage:
         # ===== SMELTING BOOST =====
         - if !<player.has_flag[hephaestus.component.smelting]>:
             - define current <player.flag[hephaestus.smelting.count].if_null[0]>
-            - define boost 500
+            - define boost 250
             - define new_count <[current].add[<[boost]>].min[5000]>
             - define actual_boost <[new_count].sub[<[current]>]>
 
@@ -89,7 +93,7 @@ hephaestus_blessing_usage:
         # ===== GOLEMS BOOST =====
         - if !<player.has_flag[hephaestus.component.golem]>:
             - define current <player.flag[hephaestus.golems.count].if_null[0]>
-            - define boost 10
+            - define boost 5
             - define new_count <[current].add[<[boost]>].min[100]>
             - define actual_boost <[new_count].sub[<[current]>]>
 

@@ -1,4 +1,4 @@
-# Hephaestus - Mining Role
+# Hephaestus - HEPHAESTUS Emblem
 
 God of the Forge, fire, metalworking, and craftsmanship.
 
@@ -10,14 +10,13 @@ God of the Forge, fire, metalworking, and craftsmanship.
 - [x] `hephaestus_events.dsc` - Activity tracking
 - [x] `hephaestus_crate.dsc` - Crate system
 - [x] `hephaestus_blessing.dsc` - Blessing item
-- [x] `hephaestus_ranks.dsc` - XP/rank system
 - [x] `vulcan_crate.dsc` - Meta crate
 - [x] `vulcan_items.dsc` - Meta items
 
 ### Scripts to Update
 - [x] `promachos.dsc` - System info, emblem check
-- [x] `profile_gui.dsc` - Role display, progress GUI, ranks GUI
-- [x] `roles.dsc` - Role procedures
+- [x] `profile_gui.dsc` - Emblem display, progress GUI
+- [x] `emblem_data.dsc` - Emblem procedures
 - [x] `admin_commands.dsc` - Admin commands
 
 ---
@@ -26,12 +25,12 @@ God of the Forge, fire, metalworking, and craftsmanship.
 
 | Property | Value |
 |----------|-------|
-| Role | MINING |
+| Emblem | HEPHAESTUS |
 | Greek God | Hephaestus |
 | Roman God | Vulcan |
-| Display Name | Metallourgos |
+| Display Name | Hephaestus |
 | Color Code | `<&8>` dark gray |
-| Role Icon | `iron_pickaxe` |
+| Emblem Icon | `iron_pickaxe` |
 | Crate Border | `gray_stained_glass_pane` |
 
 ---
@@ -54,45 +53,9 @@ Iron-themed progression loop:
 
 ---
 
-## Ranks
-
-**Buffs:**
-- Haste (faster mining) - applies while mining
-- Ore XP Bonus (extra vanilla XP from ores)
-
-| Rank | Title | XP Required | Haste | Ore XP Bonus | Key Reward |
-|------|-------|-------------|-------|--------------|------------|
-| 1 | Acolyte of the Forge | 1,000 | None | +5% | 5 keys |
-| 2 | Disciple of the Forge | 3,500 | Haste I | +10% | 5 keys |
-| 3 | Hero of the Forge | 9,750 | Haste I | +15% | 5 keys |
-| 4 | Champion of the Forge | 25,375 | Haste I | +20% | 5 keys |
-| 5 | Legend of the Forge | 64,438 | Haste II | +25% | 10 keys |
-
----
-
-## XP Sources
-
-| Action | XP |
-|--------|-----|
-| Coal ore | 2 |
-| Copper ore | 2 |
-| Nether quartz ore | 2 |
-| Iron ore | 3 |
-| Nether gold ore | 3 |
-| Lapis ore | 4 |
-| Redstone ore | 4 |
-| Gold ore | 5 |
-| Diamond ore | 10 |
-| Emerald ore | 10 |
-| Ancient debris | 20 |
-| Blast furnace smelt | 1 |
-| Iron golem created | 25 |
-
----
-
 ## Crate Loot
 
-### MORTAL (56%)
+### MORTAL (56% / 55% with emblem)
 | Item | Quantity |
 |------|----------|
 | cobblestone | 16 |
@@ -130,7 +93,11 @@ Iron-themed progression loop:
 | gold_block | 16 |
 | emerald_block | 16 |
 
-### OLYMPIAN (1%)
+### MYTHIC Pool Addition: Hephaestus Mythic Fragment
+
+The Hephaestus base crate MYTHIC tier can also drop a **Hephaestus Mythic Fragment** — a crafting ingredient used in the Mythic Forge system. Players combine 4 fragments with a Vulcan Pickaxe Blueprint and 4 Diamond Blocks to forge a Vulcan Pickaxe.
+
+### OLYMPIAN (1% / 2% with emblem)
 | Item | Quantity |
 |------|----------|
 | vulcan_key | 1 |
@@ -177,5 +144,5 @@ Display names use: `<&d>Item Name<&r>` (magenta/purple)
 |---|------|----------|--------|
 | 1 | Vulcan Pickaxe | `netherite_pickaxe` | Unbreakable, right-click toggles auto-smelt (iron/gold ore only) |
 | 2 | Vulcan Title | `name_tag` | Grants `[Vulcan's Chosen]` chat prefix |
-| 3 | Vulcan Forge Charm | `magma_cream` or `blaze_powder` | Hold in offhand for fire resistance + light particles |
+| 3 | Head of Hephaestus | `player_head` | Decorative collectible |
 | 4 | Gray Shulker Box | `gray_shulker_box` | Portable storage |

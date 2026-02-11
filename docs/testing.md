@@ -8,22 +8,22 @@ This document provides a comprehensive testing checklist and admin command refer
 
 ## Admin Commands Reference
 
-### Role Management
+### Emblem Management
 
 ```
-/roleadmin <player> <role>
+/emblemadmin <player> <emblem>
 ```
 
-**Purpose**: Set player's active role
+**Purpose**: Set player's active emblem
 
-**Valid Roles**: `FARMING`, `MINING`, `COMBAT`
+**Valid Emblems**: `DEMETER`, `HEPHAESTUS`, `HERACLES`, `TRITON`
 
 **Example**:
 ```
-/roleadmin Notch FARMING
+/emblemadmin Notch DEMETER
 ```
 
-**Output**: `Set Notch's role to FARMING`
+**Output**: `Set Notch's emblem to DEMETER`
 
 ---
 
@@ -68,6 +68,14 @@ This document provides a comprehensive testing checklist and admin command refer
 /demeteradmin Notch component cow false
 ```
 
+#### Max Out Demeter Emblem
+
+```
+/demeteradmin <player> max
+```
+
+Sets all 3 components to complete, marks emblem as unlocked, and increments rank.
+
 #### Reset All Demeter Flags
 
 ```
@@ -105,32 +113,66 @@ This document provides a comprehensive testing checklist and admin command refer
 
 **Core System:**
 - `met_promachos` - Allows re-introduction to NPC
-- `role.active` - Removes active role
-- `role.changed_before` - Resets role change history
+- `emblem.active` - Removes active emblem
+- `emblem.changed_before` - Resets emblem change history
+- `emblem.rank` - Resets emblem rank
+- `emblem.migrated` - Resets migration flag
 
-**Demeter (FARMING):**
+**Demeter:**
 - All activity counters (wheat, cows, cakes)
 - All keys awarded tracking
 - All components (wheat, cow, cake) + dates
-- Rank progression
 - Crate statistics (opens, tier counts)
 - Item unlocks (demeter title)
 - Animation state flags
 
+**Heracles:**
+- All activity counters (pillagers, raids, emeralds)
+- All keys awarded tracking
+- All components (pillagers, raids, emeralds) + dates
+- Crate statistics (opens, tier counts)
+- Animation state flags
+
+**Hephaestus:**
+- All activity counters (iron, smelting, golems)
+- All keys awarded tracking
+- All components (iron, smelting, golem) + dates
+- Crate statistics (opens, tier counts)
+- Animation state flags
+
 **Ceres (Meta-Progression):**
 - Crate open count
-- All unique items (hoe, title, shulker, wand)
+- All unique items (title, shulker, wand, head)
 - Unique item counter
 - Animation state flags
 
+**Mars (Meta-Progression):**
+- Crate open count
+- All unique items (title, shulker, shield, head)
+- Unique item counter
+
+**Vulcan (Meta-Progression):**
+- Crate open count
+- All unique items (pickaxe, title, shulker, head)
+- Unique item counter
+
+**Triton:**
+- All activity counters (lanterns, guardians, conduits)
+- All keys awarded tracking
+- All components (lanterns, guardians, conduits) + dates
+- Crate statistics (opens, tier counts)
+- Animation state flags
+
+**Neptune (Meta-Progression):**
+- Crate open count
+- All unique items (title, shulker, trident, head)
+- Unique item counter
+
+**Crafting System:**
+- `crafting.viewing_recipe` flag
+
 **Cosmetics:**
 - Active title selection
-
-**Future Systems:**
-- Hephaestus flags (wildcard removal)
-- Heracles flags (wildcard removal)
-- Vulcan flags (wildcard removal)
-- Mars flags (wildcard removal)
 
 **Example Workflow:**
 ```bash
@@ -139,9 +181,10 @@ This document provides a comprehensive testing checklist and admin command refer
 
 # Output shows warning:
 # ⚠ WARNING: This will permanently delete:
-# - Role selection and active role
+# - Emblem selection and active emblem
+# - Emblem rank progression
 # - All Demeter progress (wheat, cows, cakes)
-# - All Demeter components and ranks
+# - All Demeter components
 # - All Ceres unlocks (hoe, title, shulker, wand)
 # - All cosmetic titles
 # - All crate statistics
@@ -177,41 +220,53 @@ Visit Promachos to begin your journey!
 
 ---
 
-### Farming XP Admin Commands
-
-#### Give Farming XP
+### Rank Admin Commands
 
 ```
-/farmingadmin <player> xp <amount>
+/rankadmin <player> set <rank>
 ```
 
-**Example**: `/farmingadmin Notch xp 500`
+**Purpose**: Set player's emblem rank directly
 
-#### Set Total XP
+**Example**: `/rankadmin Notch set 3`
 
-```
-/farmingadmin <player> setxp <amount>
-```
-
-**Example**: `/farmingadmin Notch setxp 10000`
-
-**Note**: Triggers rank-up ceremony if rank increases.
-
-#### Force Set Rank
+**Output**: `Set Notch's emblem rank to 3`
 
 ```
-/farmingadmin <player> rank <0-5>
+/rankadmin <player> reset
 ```
 
-**Valid Ranks**: 0 (none), 1-5 (Acolyte through Legend)
+**Purpose**: Reset player's emblem rank to 0
 
-**Example**: `/farmingadmin Notch rank 3`
+---
 
-#### Reset Farming XP/Rank
+### Inventory Viewer Commands
+
+#### View Player Inventory
 
 ```
-/farmingadmin <player> reset
+/invsee <player>
 ```
+
+**Purpose**: Open a player's inventory for viewing/editing
+
+**Supports**: Offline players
+
+**Example**: `/invsee Notch`
+
+---
+
+#### View Player Ender Chest
+
+```
+/endersee <player>
+```
+
+**Purpose**: Open a player's ender chest for viewing/editing
+
+**Supports**: Offline players
+
+**Example**: `/endersee Notch`
 
 ---
 
@@ -240,14 +295,6 @@ Visit Promachos to begin your journey!
 /heraclesadmin Notch set emeralds 500
 ```
 
-#### Give Combat XP
-
-```
-/heraclesadmin <player> xp <amount>
-```
-
-**Example**: `/heraclesadmin Notch xp 1000`
-
 #### Toggle Component
 
 ```
@@ -264,15 +311,230 @@ Visit Promachos to begin your journey!
 
 **Level**: 1-5 (Bad Omen level)
 
-**Awards**: XP based on level + 2 Heracles Keys + increments raid counter
+**Awards**: 2 Heracles Keys + increments raid counter
 
 **Example**: `/heraclesadmin Notch raid 3`
+
+#### Max Out Heracles Emblem
+
+```
+/heraclesadmin <player> max
+```
+
+Sets all 3 components to complete, marks emblem as unlocked, and increments rank.
 
 #### Reset All Heracles Flags
 
 ```
 /heraclesadmin <player> reset
 ```
+
+---
+
+### Hephaestus Admin Commands
+
+#### Give Keys
+
+```
+/hephaestusadmin <player> keys <amount>
+```
+
+**Example**: `/hephaestusadmin Notch keys 10`
+
+#### Set Activity Counter
+
+```
+/hephaestusadmin <player> set <activity> <count>
+```
+
+**Valid Activities**: `iron`, `smelting`, `golems`
+
+**Example**: `/hephaestusadmin Notch set iron 5000`
+
+#### Toggle Component
+
+```
+/hephaestusadmin <player> component <iron|smelting|golem> <true|false>
+```
+
+**Example**: `/hephaestusadmin Notch component iron true`
+
+#### Max Out Hephaestus Emblem
+
+```
+/hephaestusadmin <player> max
+```
+
+Sets all 3 components to complete, marks emblem as unlocked, and increments rank.
+
+#### Reset All Hephaestus Flags
+
+```
+/hephaestusadmin <player> reset
+```
+
+---
+
+### Mars Admin Commands
+
+#### Give Mars Keys
+
+```
+/marsadmin <player> keys <amount>
+```
+
+**Example**: `/marsadmin Notch keys 5`
+
+#### Toggle Item Obtained
+
+```
+/marsadmin <player> item <item> <true|false>
+```
+
+**Valid Items**: `title`, `shulker`, `shield`, `head`
+
+**Examples**:
+```
+/marsadmin Notch item shield true
+/marsadmin Notch item head false
+```
+
+#### Reset All Mars Flags
+
+```
+/marsadmin <player> reset
+```
+
+**Warning**: Wipes ALL Mars item flags
+
+---
+
+### Vulcan Admin Commands
+
+#### Give Vulcan Keys
+
+```
+/vulcanadmin <player> keys <amount>
+```
+
+**Example**: `/vulcanadmin Notch keys 5`
+
+#### Toggle Item Obtained
+
+```
+/vulcanadmin <player> item <item> <true|false>
+```
+
+**Valid Items**: `pickaxe`, `title`, `shulker`, `head`
+
+**Examples**:
+```
+/vulcanadmin Notch item head true
+/vulcanadmin Notch item title false
+```
+
+#### Reset All Vulcan Flags
+
+```
+/vulcanadmin <player> reset
+```
+
+**Warning**: Wipes ALL Vulcan item flags
+
+---
+
+### Triton Admin Commands
+
+#### Give Keys
+
+```
+/tritonadmin <player> keys <amount>
+```
+
+**Example**: `/tritonadmin Notch keys 10`
+
+#### Set Activity Counter
+
+```
+/tritonadmin <player> set <activity> <count>
+```
+
+**Valid Activities**: `lanterns`, `guardians`, `conduits`
+
+**Examples**:
+```
+/tritonadmin Notch set lanterns 900
+/tritonadmin Notch set guardians 1400
+/tritonadmin Notch set conduits 20
+```
+
+**Note**: Does NOT auto-award keys or components. Use separate commands for those.
+
+#### Toggle Component
+
+```
+/tritonadmin <player> component <lanterns|guardians|conduits> <true|false>
+```
+
+**Example**: `/tritonadmin Notch component lanterns true`
+
+#### Max Out Triton Emblem
+
+```
+/tritonadmin <player> max
+```
+
+Sets all 3 components to complete, marks emblem as unlocked, and increments rank.
+
+#### Reset All Triton Flags
+
+```
+/tritonadmin <player> reset
+```
+
+**Warning**: Wipes ALL Triton progression (counters, components, emblem unlock, keys_awarded tracking)
+
+---
+
+### Neptune Admin Commands
+
+#### Give Neptune Keys
+
+```
+/neptuneadmin <player> keys <amount>
+```
+
+**Example**: `/neptuneadmin Notch keys 5`
+
+#### Give Specific Item
+
+```
+/neptuneadmin <player> give <head|shulker|blueprint|trident>
+```
+
+**Example**: `/neptuneadmin Notch give trident`
+
+#### Toggle Item Obtained
+
+```
+/neptuneadmin <player> item <item> <true|false>
+```
+
+**Valid Items**: `title`, `shulker`, `trident`, `head`
+
+**Examples**:
+```
+/neptuneadmin Notch item title true
+/neptuneadmin Notch item head false
+```
+
+#### Reset All Neptune Flags
+
+```
+/neptuneadmin <player> reset
+```
+
+**Warning**: Wipes ALL Neptune item flags
 
 ---
 
@@ -292,11 +554,11 @@ Visit Promachos to begin your journey!
 /ceresadmin <player> item <item> <true|false>
 ```
 
-**Valid Items**: `hoe`, `title`, `shulker`, `wand`
+**Valid Items**: `title`, `shulker`, `wand`, `head`
 
 **Examples**:
 ```
-/ceresadmin Notch item hoe true
+/ceresadmin Notch item head true
 /ceresadmin Notch item title false
 ```
 
@@ -312,25 +574,23 @@ Visit Promachos to begin your journey!
 
 ### Test Roll Commands
 
-#### Simulate Demeter Crate
-
 ```
-/testroll demeter
+/testroll <demeter|ceres|heracles|mars|hephaestus|vulcan|triton|neptune>
 ```
 
-**Purpose**: Simulate a Demeter crate roll for the executing player without consuming a key
+**Purpose**: Simulate a crate roll for the executing player without consuming a key
 
 **Output**: Tier rolled, loot awarded, messages/sounds as normal
 
-#### Simulate Ceres Crate
-
-```
-/testroll ceres
-```
-
-**Purpose**: Simulate a Ceres crate roll for the executing player without consuming a key
-
-**Output**: 50/50 roll result, god apple or unique item (if available)
+**Examples**:
+- `/testroll demeter` - Simulate Demeter crate
+- `/testroll ceres` - Simulate Ceres meta-crate (50/50 god apple or unique item)
+- `/testroll heracles` - Simulate Heracles crate
+- `/testroll mars` - Simulate Mars meta-crate
+- `/testroll hephaestus` - Simulate Hephaestus crate
+- `/testroll vulcan` - Simulate Vulcan meta-crate
+- `/testroll triton` - Simulate Triton crate
+- `/testroll neptune` - Simulate Neptune meta-crate
 
 ---
 
@@ -356,6 +616,10 @@ HERACLES:
   Pillagers: 1000 | Awarded: 40 | Should: 40 | Owed: 0
   Raids: 20 | Awarded: 40 | Should: 40 | Owed: 0
   Emeralds: 350 | Awarded: 3 | Should: 3 | Owed: 0
+TRITON:
+  Lanterns: 500 | Awarded: 50 | Should: 50 | Owed: 0
+  Guardians: 750 | Awarded: 50 | Should: 50 | Owed: 0
+  Conduits: 12 | Awarded: 48 | Should: 48 | Owed: 0
 ```
 
 ---
@@ -370,46 +634,46 @@ HERACLES:
 1. Create fresh player (or use `/demeteradmin <player> reset` + remove `met_promachos` flag)
 2. Right-click Promachos NPC
 3. Observe dialogue sequence (5 parts, 3s delays)
-4. Role selection GUI opens after dialogue
+4. Emblem selection GUI opens after dialogue
 
 **Expected**:
 - All 5 dialogue lines appear in chat
 - `met_promachos` flag set to true
-- GUI opens with 3 role options + cancel
+- GUI opens with 3 emblem options + cancel
 
 **Pass/Fail**: ___
 
 ---
 
-#### Test 1.2: Role Selection
+#### Test 1.2: Emblem Selection
 
 **Steps**:
-1. In role selection GUI, click Georgos (farming)
+1. In emblem selection GUI, click Emblem of Demeter
 2. Observe confirmation message
-3. Check `/profile` shows active role
+3. Check `/profile` shows active emblem
 
 **Expected**:
 - GUI closes
-- Message: "You have chosen the path of Georgos..."
+- Message: "You have chosen the Emblem of Demeter..."
 - Sound plays
-- `role.active` flag set to `FARMING`
+- `emblem.active` flag set to `DEMETER`
 
 **Pass/Fail**: ___
 
 ---
 
-#### Test 1.3: Role Switching
+#### Test 1.3: Emblem Switching
 
 **Steps**:
-1. Player with existing role right-clicks Promachos
-2. Click "Change Role"
-3. Select different role (e.g., Metallourgos)
+1. Player with existing emblem right-clicks Promachos
+2. Click "Change Emblem"
+3. Select different emblem (e.g., Hephaestus)
 4. Observe confirmation
 
 **Expected**:
 - Main menu opens (not dialogue)
-- Change role option visible
-- Role switches successfully
+- Change emblem option visible
+- Emblem switches successfully
 - Message confirms previous progress preserved
 
 **Pass/Fail**: ___
@@ -418,9 +682,9 @@ HERACLES:
 
 ### Phase 2: Demeter Activity Tracking
 
-#### Test 2.1: Wheat Harvesting (Active Role)
+#### Test 2.1: Wheat Harvesting (Active Emblem)
 
-**Setup**: Set role to FARMING
+**Setup**: Set emblem to DEMETER
 
 **Steps**:
 1. Plant wheat, wait for age=7
@@ -437,9 +701,9 @@ HERACLES:
 
 ---
 
-#### Test 2.2: Wheat Harvesting (Inactive Role)
+#### Test 2.2: Wheat Harvesting (Inactive Emblem)
 
-**Setup**: Set role to MINING or COMBAT
+**Setup**: Set emblem to HEPHAESTUS or HERACLES
 
 **Steps**:
 1. Harvest 50 wheat
@@ -459,7 +723,7 @@ HERACLES:
 **Setup**: Set counter to 14,950 via admin command
 
 **Steps**:
-1. Set role to FARMING
+1. Set emblem to DEMETER
 2. Harvest 50 wheat (reaches 15,000)
 3. Observe component award
 
@@ -493,7 +757,7 @@ HERACLES:
 
 #### Test 2.5: Cow Breeding
 
-**Setup**: Set role to FARMING
+**Setup**: Set emblem to DEMETER
 
 **Steps**:
 1. Breed 20 cows (wheat feeding)
@@ -527,7 +791,7 @@ HERACLES:
 
 #### Test 2.7: Cake Crafting
 
-**Setup**: Set role to FARMING
+**Setup**: Set emblem to DEMETER
 
 **Steps**:
 1. Craft 5 cakes
@@ -694,19 +958,19 @@ HERACLES:
 
 ---
 
-#### Test 4.3: All Activities Complete
+#### Test 4.3: All Activities Complete (Key Conversion)
 
 **Setup**:
 - All 3 components obtained
 
 **Steps**:
 1. Right-click Demeter Blessing
-2. Observe blocked use
 
 **Expected**:
-- Blessing NOT consumed
-- Message: "All Demeter activities already complete!"
-- Sound: villager_no
+- Blessing consumed
+- Player receives 10 Demeter Keys
+- Message: "All activities complete! Converted to 10 Demeter Keys."
+- Sound: block_enchantment_table_use
 
 **Pass/Fail**: ___
 
@@ -760,7 +1024,7 @@ HERACLES:
 
 **Expected**:
 - 50% chance for unique item
-- One of: Ceres Hoe, Title, Shulker, Wand
+- One of: Title, Shulker, Wand Blueprint, Head of Demeter
 - Item flag set to true
 - Message: "[CERES] <item name> UNIQUE ITEM!"
 - Server announcement
@@ -800,20 +1064,20 @@ HERACLES:
 
 ---
 
-#### Test 5.4: Ceres Hoe Auto-Replant
+#### Test 5.4: Ceres Wand Mythic Crafting
 
-**Setup**: Player has Ceres Hoe in hand
+**Setup**: Player has `ceres_wand_blueprint` + 4x `demeter_mythic_fragment` + 4x diamond blocks
 
 **Steps**:
-1. Plant wheat, wait for age=7
-2. Break wheat with Ceres Hoe
-3. Observe replanting
+1. Right-click blueprint or fragment to open Mythic Forge GUI
+2. Verify recipe layout shows correct ingredients
+3. Click result slot (slot 26) to craft
 
 **Expected**:
-- Wheat breaks, drops items (seeds + wheat)
-- 1 tick later, wheat replanted at same location (age=0)
-- Particle effect plays
-- Works with Demeter counter tracking
+- Ingredients consumed from inventory
+- Ceres Wand given to player
+- `ceres.item.wand` flag set
+- Server-wide announcement sent
 
 **Pass/Fail**: ___
 
@@ -872,6 +1136,89 @@ HERACLES:
 
 ---
 
+### Phase 5B: Mythic Crafting System
+
+#### Test 5B.1: Fragment Right-Click Opens Recipe
+
+**Steps**:
+1. Give player Demeter Mythic Fragment (`/ex give demeter_mythic_fragment`)
+2. Right-click in hand
+
+**Expected**:
+- Mythic Forge GUI opens
+- Shows Ceres Wand recipe: 4x Diamond Block + 4x Fragment + 1x Blueprint = Ceres Wand
+- Result slot shows "Click to craft!" in lore
+
+**Pass/Fail**: ___
+
+---
+
+#### Test 5B.2: Blueprint Right-Click Opens Recipe
+
+**Steps**:
+1. Give player Ceres Wand Blueprint (`/ex give ceres_wand_blueprint`)
+2. Right-click in hand
+
+**Expected**:
+- Same Mythic Forge GUI as fragment
+- Shows matching recipe
+
+**Pass/Fail**: ___
+
+---
+
+#### Test 5B.3: Craft With Missing Ingredients
+
+**Steps**:
+1. Open recipe GUI via fragment/blueprint
+2. Click result slot with no ingredients
+
+**Expected**:
+- Error message listing missing ingredients with counts
+- Items NOT consumed
+- GUI stays open
+
+**Pass/Fail**: ___
+
+---
+
+#### Test 5B.4: Successful Craft
+
+**Setup**: Give player 1x ceres_wand_blueprint, 4x demeter_mythic_fragment, 4x diamond_block
+
+**Steps**:
+1. Right-click fragment or blueprint
+2. Click result slot
+
+**Expected**:
+- All ingredients consumed (1 blueprint, 4 fragments, 4 diamond blocks)
+- Ceres Wand given to player
+- GUI closes
+- Title display: "ITEM FORGED" / "Ceres Wand"
+- Server announcement: "MYTHIC FORGE! PlayerName forged Ceres Wand!"
+- `ceres.item.wand` flag set to true
+
+**Pass/Fail**: ___
+
+---
+
+#### Test 5B.5: Duplicate Craft Prevention
+
+**Setup**: Player already has `ceres.item.wand` flag set
+
+**Steps**:
+1. Give ingredients and open recipe GUI
+2. Click result slot
+
+**Expected**:
+- Message: "You already own this item!"
+- Ingredients NOT consumed
+- Result slot shows "You already own this item!" in lore
+
+**Pass/Fail**: ___
+
+---
+
 ### Phase 6: Emblem Unlock
 
 #### Test 6.1: Emblem Ready (All Components)
@@ -908,9 +1255,9 @@ HERACLES:
 - Sound: `ui_toast_challenge_complete`
 - Flag `demeter.emblem.unlocked` set to true
 - Unlock date saved
+- `emblem.rank` incremented
 - Server announcement
 - Particle effects
-- Next emblem line unlocked (flag set)
 
 **Pass/Fail**: ___
 
@@ -935,16 +1282,16 @@ HERACLES:
 
 ### Phase 7: Profile GUI Integration
 
-#### Test 7.1: Active Role Display
+#### Test 7.1: Active Emblem Display
 
-**Setup**: Player has role set to FARMING
+**Setup**: Player has emblem set to DEMETER
 
 **Steps**:
 1. Run `/profile`
 2. Check GUI display
 
 **Expected**:
-- Shows "Active Role: Georgos"
+- Shows "Active Emblem: Demeter"
 - Color-coded or highlighted
 
 **Pass/Fail**: ___
@@ -1003,17 +1350,17 @@ HERACLES:
 
 ---
 
-#### Test 8.2: Role Switch Mid-Activity
+#### Test 8.2: Emblem Switch Mid-Activity
 
 **Steps**:
-1. Start harvesting wheat as FARMING role
-2. Switch to MINING mid-harvest
+1. Start harvesting wheat as DEMETER emblem
+2. Switch to HEPHAESTUS mid-harvest
 3. Continue harvesting
-4. Switch back to FARMING
+4. Switch back to DEMETER
 5. Harvest more
 
 **Expected**:
-- Counters only increment when role = FARMING
+- Counters only increment when emblem = DEMETER
 - No errors when switching
 - Progress resumes correctly
 
@@ -1031,7 +1378,7 @@ HERACLES:
 **Expected**:
 - All flags persist
 - Counters preserved
-- Role preserved
+- Emblem preserved
 - Components preserved
 
 **Pass/Fail**: ___
@@ -1041,7 +1388,7 @@ HERACLES:
 #### Test 8.4: Concurrent Activity Tracking
 
 **Steps**:
-1. As FARMING role, perform all 3 activities simultaneously:
+1. As DEMETER emblem, perform all 3 activities simultaneously:
    - Harvest wheat
    - Breed cow
    - Craft cake
@@ -1088,10 +1435,108 @@ HERACLES:
 
 ---
 
+### Phase 9: Migration Testing
+
+#### Test 9.1: Migration from Old Role System
+
+**Setup**: Player has old flags:
+- `role.active` = `FARMING`
+- `role.changed_before` = `true`
+
+**Steps**:
+1. Player joins server (triggers migration)
+2. Check new flags
+
+**Expected**:
+- `emblem.active` = `DEMETER`
+- `emblem.changed_before` = `true`
+- `emblem.migrated` = `true`
+- Old `role.active` and `role.changed_before` flags removed
+
+**Pass/Fail**: ___
+
+---
+
+#### Test 9.2: Migration Value Mapping
+
+**Setup**: Test each old value maps correctly
+
+**Expected Mappings**:
+- `FARMING` -> `DEMETER`
+- `MINING` -> `HEPHAESTUS`
+- `COMBAT` -> `HERACLES`
+
+**Pass/Fail**: ___
+
+---
+
+#### Test 9.3: Migration Idempotency
+
+**Setup**: Player already has `emblem.migrated` = `true`
+
+**Steps**:
+1. Player joins server again
+2. Check flags unchanged
+
+**Expected**:
+- Migration does NOT run again
+- No duplicate flag writes
+
+**Pass/Fail**: ___
+
+---
+
+#### Test 9.4: Migration for New Players
+
+**Setup**: Fresh player with no emblem flags
+
+**Steps**:
+1. Player joins server
+2. Check flags
+
+**Expected**:
+- No `emblem.active` set (player must visit Promachos)
+- `emblem.migrated` NOT set (nothing to migrate)
+- No errors
+
+**Pass/Fail**: ___
+
+---
+
+### Phase 10: Rank Admin Testing
+
+#### Test 10.1: Set Emblem Rank
+
+**Steps**:
+1. Run `/rankadmin Notch set 3`
+2. Check player's `emblem.rank` flag
+
+**Expected**:
+- `emblem.rank` = `3`
+- Confirmation message displayed
+
+**Pass/Fail**: ___
+
+---
+
+#### Test 10.2: Reset Emblem Rank
+
+**Steps**:
+1. Run `/rankadmin Notch reset`
+2. Check player's `emblem.rank` flag
+
+**Expected**:
+- `emblem.rank` removed/reset to 0
+- Confirmation message displayed
+
+**Pass/Fail**: ___
+
+---
+
 ## Regression Tests (After Updates)
 
 After any code changes, re-run:
-- Test 2.1, 2.2 (Role gating)
+- Test 2.1, 2.2 (Emblem gating)
 - Test 2.3, 2.4 (Component once-only)
 - Test 3.1 (Key usage)
 - Test 4.1 (Blessing boost)
@@ -1123,4 +1568,4 @@ Consider implementing automated tests for:
 - Counter increment logic (unit tests)
 - Tier probability distribution (100+ rolls)
 - Flag persistence across restarts
-- Role gating enforcement
+- Emblem gating enforcement

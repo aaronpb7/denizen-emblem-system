@@ -13,9 +13,12 @@ This document lists ALL flags used in the Emblem System V2. Flags are organized 
 | Flag | Type | Purpose | Example Value | Set When |
 |------|------|---------|---------------|----------|
 | `met_promachos` | Boolean | Player has met Promachos | `true` | First interaction complete |
-| `role.active` | String | Player's active role | `FARMING` | Role selected/changed |
+| `emblem.active` | String | Player's active emblem | `DEMETER` | Emblem selected/changed |
+| `emblem.changed_before` | Boolean | Player has changed emblem at least once | `true` | Emblem changed via Promachos |
+| `emblem.rank` | Integer | Player's progression rank (0=Uninitiated, 1=Neophyte, 2=Mystes, 3=Epoptes, 4=Aristos, 5=Heros, 6=Hemitheos) | `2` | Emblem ceremony completes |
+| `emblem.migrated` | Boolean | One-time migration flag from old role system | `true` | Migration task runs |
 
-**Valid `role.active` values**: `FARMING`, `MINING`, `COMBAT`
+**Valid `emblem.active` values**: `DEMETER`, `HEPHAESTUS`, `HERACLES`, `TRITON`
 
 ---
 
@@ -25,9 +28,9 @@ This document lists ALL flags used in the Emblem System V2. Flags are organized 
 
 | Flag | Type | Purpose | Example Value | Incremented When |
 |------|------|---------|---------------|------------------|
-| `demeter.wheat.count` | Integer | Total wheat harvested | `8432` | Wheat age=7 broken, role=FARMING |
-| `demeter.cows.count` | Integer | Total cows bred | `1205` | Cow breed event, role=FARMING |
-| `demeter.cakes.count` | Integer | Total cakes crafted | `95` | Cake craft event, role=FARMING |
+| `demeter.wheat.count` | Integer | Total wheat harvested | `8432` | Wheat age=7 broken, emblem=DEMETER |
+| `demeter.cows.count` | Integer | Total cows bred | `1205` | Cow breed event, emblem=DEMETER |
+| `demeter.cakes.count` | Integer | Total cakes crafted | `95` | Cake craft event, emblem=DEMETER |
 
 ### Key Award Tracking
 
@@ -75,10 +78,10 @@ This document lists ALL flags used in the Emblem System V2. Flags are organized 
 
 | Flag | Type | Purpose | Example Value | Set When |
 |------|------|---------|---------------|----------|
-| `ceres.item.hoe` | Boolean | Ceres Hoe obtained | `true` | Ceres crate rolls hoe |
 | `ceres.item.title` | Boolean | Ceres Title obtained | `true` | Ceres crate rolls title |
 | `ceres.item.shulker` | Boolean | Yellow Shulker obtained | `true` | Ceres crate rolls shulker |
 | `ceres.item.wand` | Boolean | Ceres Wand obtained | `true` | Ceres crate rolls wand |
+| `ceres.item.head` | Boolean | Head of Demeter obtained | `true` | Ceres crate rolls head |
 
 **Finite Progression**: Once all 4 flags are true, Ceres crate always awards god apple.
 
@@ -106,9 +109,9 @@ This document lists ALL flags used in the Emblem System V2. Flags are organized 
 
 | Flag | Type | Purpose | Example Value | Incremented When |
 |------|------|---------|---------------|------------------|
-| `hephaestus.iron.count` | Integer | Total iron ore mined | `3500` | Iron ore broken, role=MINING |
-| `hephaestus.smelting.count` | Integer | Total items smelted in blast furnace | `4200` | Item taken from blast furnace, role=MINING |
-| `hephaestus.golems.count` | Integer | Total iron golems created | `75` | Iron golem spawns near player, role=MINING |
+| `hephaestus.iron.count` | Integer | Total iron ore mined | `3500` | Iron ore broken, emblem=HEPHAESTUS |
+| `hephaestus.smelting.count` | Integer | Total items smelted in blast furnace | `4200` | Item taken from blast furnace, emblem=HEPHAESTUS |
+| `hephaestus.golems.count` | Integer | Total iron golems created | `75` | Iron golem spawns near player, emblem=HEPHAESTUS |
 
 ### Key Award Tracking
 
@@ -141,9 +144,9 @@ This document lists ALL flags used in the Emblem System V2. Flags are organized 
 
 | Flag | Type | Purpose | Example Value | Incremented When |
 |------|------|---------|---------------|------------------|
-| `heracles.pillagers.count` | Integer | Total pillagers killed | `1800` | Pillager killed, role=COMBAT |
-| `heracles.raids.count` | Integer | Total raids completed | `35` | Raid finished with player as hero, role=COMBAT |
-| `heracles.emeralds.count` | Integer | Total emeralds spent trading | `7500` | Emeralds used in villager trades, role=COMBAT |
+| `heracles.pillagers.count` | Integer | Total pillagers killed | `1800` | Pillager killed, emblem=HERACLES |
+| `heracles.raids.count` | Integer | Total raids completed | `35` | Raid finished with player as hero, emblem=HERACLES |
+| `heracles.emeralds.count` | Integer | Total emeralds spent trading | `7500` | Emeralds used in villager trades, emblem=HERACLES |
 
 ### Key Award Tracking
 
@@ -170,6 +173,75 @@ This document lists ALL flags used in the Emblem System V2. Flags are organized 
 
 ---
 
+## Triton Progression Flags
+
+### Activity Counters
+
+| Flag | Type | Purpose | Example Value | Incremented When |
+|------|------|---------|---------------|------------------|
+| `triton.lanterns.count` | Integer | Total sea lanterns turned in | `850` | Sea lanterns turned in to Triton NPC, emblem=TRITON |
+| `triton.guardians.count` | Integer | Total guardian kill points | `1200` | Guardian killed (+1) or Elder Guardian killed (+15), emblem=TRITON |
+| `triton.conduits.count` | Integer | Total conduits crafted | `18` | Conduit craft event, emblem=TRITON |
+
+### Key Award Tracking
+
+| Flag | Type | Purpose | Example Value |
+|------|------|---------|---------------|
+| `triton.lanterns.keys_awarded` | Integer | Keys awarded from lanterns | `85` |
+| `triton.guardians.keys_awarded` | Integer | Keys awarded from guardians | `80` |
+| `triton.conduits.keys_awarded` | Integer | Keys awarded from conduits | `72` |
+
+**Logic**: Lanterns: `floor(count / 10)`. Guardians: `floor(count / 15)`. Conduits: `count * 4`.
+
+### Component Flags
+
+| Flag | Type | Purpose | Set When |
+|------|------|---------|----------|
+| `triton.component.lanterns` | Boolean | Lantern component obtained | Counter reaches 1,000 |
+| `triton.component.guardians` | Boolean | Guardian component obtained | Counter reaches 1,500 |
+| `triton.component.conduits` | Boolean | Conduit component obtained | Counter reaches 25 |
+
+### Emblem Unlock
+
+| Flag | Type | Purpose |
+|------|------|---------|
+| `triton.emblem.unlocked` | Boolean | Triton emblem unlocked |
+| `triton.emblem.unlock_date` | Timestamp | When emblem unlocked |
+
+### Optional Statistics
+
+| Flag | Type | Purpose |
+|------|------|---------|
+| `triton.crates_opened` | Integer | Total Triton crates opened |
+| `triton.tier.mortal` | Integer | MORTAL rolls |
+| `triton.tier.heroic` | Integer | HEROIC rolls |
+| `triton.tier.legendary` | Integer | LEGENDARY rolls |
+| `triton.tier.mythic` | Integer | MYTHIC rolls |
+| `triton.tier.olympian` | Integer | OLYMPIAN rolls |
+
+---
+
+## Neptune Meta-Progression Flags
+
+### Item Obtained Flags
+
+| Flag | Type | Purpose | Set When |
+|------|------|---------|----------|
+| `neptune.item.title` | Boolean | Neptune Title obtained | Neptune crate rolls title |
+| `neptune.item.shulker` | Boolean | Cyan Shulker obtained | Neptune crate rolls shulker |
+| `neptune.item.trident` | Boolean | Neptune's Trident obtained | Mythic Forge craft |
+| `neptune.item.head` | Boolean | Head of Triton obtained | Neptune crate rolls head |
+
+### Optional Statistics
+
+| Flag | Type | Purpose |
+|------|------|---------|
+| `neptune.crates_opened` | Integer | Total Neptune crates opened |
+| `neptune.god_apples` | Integer | God apples from Neptune |
+| `neptune.unique_items` | Integer | Unique items from Neptune (0-4) |
+
+---
+
 ## Vulcan Meta-Progression Flags
 
 ### Item Obtained Flags
@@ -178,8 +250,8 @@ This document lists ALL flags used in the Emblem System V2. Flags are organized 
 |------|------|---------|----------|
 | `vulcan.item.pickaxe` | Boolean | Vulcan Pickaxe obtained | Vulcan crate rolls pickaxe |
 | `vulcan.item.title` | Boolean | Vulcan Title obtained | Vulcan crate rolls title |
-| `vulcan.item.charm` | Boolean | Vulcan Forge Charm obtained | Vulcan crate rolls charm |
 | `vulcan.item.shulker` | Boolean | Gray Shulker obtained | Vulcan crate rolls shulker |
+| `vulcan.item.head` | Boolean | Head of Hephaestus obtained | Vulcan crate rolls head |
 
 ### Cooldowns & Toggles
 
@@ -203,10 +275,10 @@ This document lists ALL flags used in the Emblem System V2. Flags are organized 
 
 | Flag | Type | Purpose | Set When |
 |------|------|---------|----------|
-| `mars.item.sword` | Boolean | Mars Sword obtained | Mars crate rolls sword |
 | `mars.item.title` | Boolean | Mars Title obtained | Mars crate rolls title |
 | `mars.item.shield` | Boolean | Mars Shield obtained | Mars crate rolls shield |
-| `mars.item.shulker` | Boolean | Gray Shulker obtained | Mars crate rolls shulker |
+| `mars.item.shulker` | Boolean | Red Shulker obtained | Mars crate rolls shulker |
+| `mars.item.head` | Boolean | Head of Heracles obtained | Mars crate rolls head |
 
 ### Cooldowns
 
@@ -224,22 +296,6 @@ This document lists ALL flags used in the Emblem System V2. Flags are organized 
 
 ---
 
-## Next Emblem Line Flags (Gating)
-
-### Purpose
-
-After unlocking Demeter, gate the next farming emblem (placeholder).
-
-| Flag | Type | Purpose | Example Value | Set When |
-|------|------|---------|---------------|----------|
-| `farming.next_emblem.unlocked` | Boolean | Next farming emblem line unlocked | `true` | Demeter emblem ceremony |
-| `mining.next_emblem.unlocked` | Boolean | Next mining emblem line unlocked | `true` | Hephaestus emblem ceremony |
-| `combat.next_emblem.unlocked` | Boolean | Next combat emblem line unlocked | `true` | Heracles emblem ceremony |
-
-**UI Display**: "Next Emblem: To be revealed..." or "LOCKED - Complete Demeter first"
-
----
-
 ## Temporary/Entity Flags
 
 ### Ceres Bees
@@ -254,9 +310,38 @@ After unlocking Demeter, gate the next farming emblem (placeholder).
 
 ---
 
+## Crafting System Flags
+
+### Temporary
+
+| Flag | Type | Purpose | Example Value | Set When |
+|------|------|---------|---------------|----------|
+| `crafting.viewing_recipe` | String | Recipe currently being viewed | `ceres_wand` | Mythic Forge GUI opened |
+
+**Cleared**: When player closes the Mythic Forge GUI.
+
+**Valid values**: `ceres_wand`, `mars_shield`, `vulcan_pickaxe`, `neptune_trident`
+
+---
+
 ## Deprecated Flags (legacy - Do Not Use)
 
-These flags were used in the old stage-based system and should NOT be referenced in V2 code. They are preserved for migration/rollback purposes only.
+These flags were used in older system versions and should NOT be referenced in current code. They are preserved for migration/rollback purposes only.
+
+### Old Role System Flags (V2)
+
+```
+role.active (replaced by emblem.active)
+role.changed_before (replaced by emblem.changed_before)
+farming.xp
+farming.rank
+mining.xp
+mining.rank
+heracles.xp
+farming.next_emblem.unlocked
+mining.next_emblem.unlocked
+combat.next_emblem.unlocked
+```
 
 ### Old Hephaestus Flags
 
@@ -343,7 +428,7 @@ Use dot notation for nested data:
 - define count <player.flag[demeter.wheat.count].if_null[0]>
 
 # String flag
-- define role <player.flag[role.active].if_null[NONE]>
+- define emblem <player.flag[emblem.active].if_null[NONE]>
 
 # Timestamp flag
 - define date <player.flag[demeter.emblem.unlock_date].as_time>
@@ -442,10 +527,14 @@ See `docs/testing.md` for complete command list. Key examples:
 /demeteradmin <player> component wheat true
 /demeteradmin <player> reset
 
-/ceresadmin <player> item hoe true
+/ceresadmin <player> item head true
 /ceresadmin <player> reset
 
-/roleadmin <player> FARMING
+/marsadmin <player> item shield true
+/marsadmin <player> reset
+
+/emblemadmin <player> DEMETER
+/rankadmin <player> set 3
 ```
 
 ---

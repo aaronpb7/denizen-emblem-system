@@ -13,7 +13,13 @@
       "Bash(move \"heracles_CONFIRMED.md\" \"archive\"\")",
       "WebFetch(domain:hub.spigotmc.org)",
       "Bash(git checkout:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(git mv:*)",
+      "WebFetch(domain:minesk.in)",
+      "WebFetch(domain:mineskin.org)",
+      "WebFetch(domain:api.mineskin.org)",
+      "WebFetch(domain:guide.denizenscript.com)",
+      "WebFetch(domain:github.com)"
     ]
   }
 }

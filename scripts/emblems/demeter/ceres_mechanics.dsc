@@ -211,5 +211,7 @@ title_chat_handler:
                 - announce "<&8>[Master Smith]<&r> <player.display_name><&7>: <context.message>"
             - case vulcan:
                 - announce "<&8>[Vulcan's Chosen]<&r> <player.display_name><&7>: <context.message>"
+            - case neptune:
+                - announce "<&3>[Neptune's Chosen]<&r> <player.display_name><&7>: <context.message>"
             - default:
                 - announce "<player.display_name><&7>: <context.message>"

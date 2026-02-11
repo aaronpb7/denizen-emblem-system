@@ -7,6 +7,7 @@
 # - Mars Title (flag-based chat prefix unlock)
 # - Red Shulker Box (standard utility)
 # - Mars Shield (active resistance buff)
+# - Head of Heracles (decorative god head, lightning on place)
 #
 
 # ============================================
@@ -88,6 +89,26 @@ mars_shield:
     - <empty>
     - <&b><&l><&k>|||<&r> <&b><&l>OLYMPIAN SHIELD<&r> <&b><&l><&k>|||
 
+# ============================================
+# MARS SHIELD BLUEPRINT
+# ============================================
+
+mars_shield_blueprint:
+    type: item
+    material: map
+    display name: <&b>Mars Shield Blueprint<&r>
+    enchantments:
+    - mending:1
+    mechanisms:
+        hides: ENCHANTS
+    lore:
+    - <&7>Battle plans detailing the
+    - <&7>forging of Mars' divine shield.
+    - <empty>
+    - <&e>Right-click to view recipe.
+    - <empty>
+    - <&b><&l><&k>|||<&r> <&b><&l>OLYMPIAN BLUEPRINT<&r> <&b><&l><&k>|||
+
 mars_shield_activate:
     type: world
     debug: false
@@ -120,3 +141,23 @@ mars_shield_cooldown_notify:
         - stop
     - actionbar "<&a>Mars Shield ready!" targets:<[player]>
     - playsound <[player]> sound:block_note_block_chime volume:0.5 pitch:1.5
+
+# ============================================
+# HEAD OF HERACLES (TROPHY)
+# ============================================
+
+heracles_head:
+    type: item
+    material: player_head
+    mechanisms:
+        skull_skin: dd684938-d05e-4dfc-8bb7-1d7f1ff35074|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTY2YWVlOWMyZWFiNzc3YzA3M2E5MjUwMDQxY2RiNjU5MDJlYWZhZGI5NDdiYTRkNTQxMzg1MTQwMmRiZjIyYyJ9fX0=
+    display name: <&b>Head of Heracles<&r>
+    lore:
+    - <&7>A divine effigy of Heracles,
+    - <&7>hero of strength and valor.
+    - <empty>
+    - <&e>Right-click to pick up.
+    - <empty>
+    - <&8>Unique - One per player
+    - <empty>
+    - <&b><&l><&k>|||<&r> <&b><&l>OLYMPIAN TROPHY<&r> <&b><&l><&k>|||

@@ -1,32 +1,32 @@
 # ============================================
-# VULCAN CRATE - Meta-Progression
+# MARS CRATE - Meta-Progression
 # ============================================
 #
-# Vulcan crate opening system:
+# Mars crate opening system:
 # - 50% chance: Enchanted Golden Apple
 # - 50% chance: Unique item from finite pool (4 items)
 # - Once all 4 items obtained → always god apple
 #
 
 # ============================================
-# KEY ITEM
+# MARS KEY
 # ============================================
 
-vulcan_key:
+mars_key:
     type: item
     material: nether_star
-    display name: <&b>Vulcan Key<&r>
+    display name: <&b>Mars Key<&r>
     enchantments:
     - mending:1
     mechanisms:
         hides: ENCHANTS
     lore:
-    - <&7>A key forged in the Roman vault,
-    - <&7>where Vulcan guards his most
-    - <&7>precious and finite treasures.
+    - <&7>A key forged in the Roman forge,
+    - <&7>where Mars guards his most
+    - <&7>deadly and finite treasures.
     - <empty>
     - <&e>Right-click to unlock
-    - <&e>a Vulcan Crate.
+    - <&e>a Mars Crate.
     - <empty>
     - <&8>50% God Apple / 50% Unique Item
     - <empty>
@@ -36,50 +36,51 @@ vulcan_key:
 # KEY USAGE EVENT
 # ============================================
 
-vulcan_key_usage:
+mars_key_usage:
     type: world
     debug: false
     events:
-        on player right clicks block with:vulcan_key:
+        on player right clicks block with:mars_key:
         - determine cancelled passively
 
         # Roll outcome BEFORE taking key (safer)
-        - define result <proc[roll_vulcan_outcome]>
+        - define result <proc[roll_mars_outcome]>
 
         # Take 1 key after successful roll
-        - take item:vulcan_key quantity:1
+        - take item:mars_key quantity:1
 
         # Start crate animation with pre-rolled result
-        - run vulcan_crate_animation def.result:<[result]> id:vulcan_crate_<player.uuid>
+        # Use player-specific queue ID so it can be stopped if they close early
+        - run mars_crate_animation def.result:<[result]> id:mars_crate_<player.uuid>
 
         # Track statistics
-        - flag player vulcan.crates_opened:++
+        - flag player mars.crates_opened:++
 
-vulcan_crate_animation:
+mars_crate_animation:
     type: task
     debug: false
     definitions: result
     script:
     # Store result as flag for early close detection
-    - flag player vulcan.crate.pending_result:<[result]>
-    - flag player vulcan.crate.animation_running:true
+    - flag player mars.crate.pending_result:<[result]>
+    - flag player mars.crate.animation_running:true
 
     # Narrate opening message
-    - narrate "<&7>You unlock the <&b>Vulcan Crucible<&7>..."
-    - playsound <player> sound:block_chest_open volume:1.0
+    - narrate "<&7>You unlock the <&4>Mars Arena<&7>..."
+    - playsound <player> sound:block_ender_chest_open volume:1.0
 
-    # Open GUI with gray border frame (mining theme)
-    - define filler <item[black_stained_glass_pane].with[display=<empty>]>
-    - define border <item[gray_stained_glass_pane].with[display=<empty>]>
+    # Open GUI with dark red border frame
+    - define filler <item[gray_stained_glass_pane].with[display=<&7>]>
+    - define border <item[red_stained_glass_pane].with[display=<&4>]>
     - define gui_items <list>
     - repeat 27:
         - define gui_items <[gui_items].include[<[filler]>]>
 
-    - inventory open d:vulcan_crate_gui
+    - inventory open d:mars_crate_gui
     - define crate_inv <player.open_inventory>
     - inventory set d:<[crate_inv]> o:<[gui_items]>
 
-    # Set gray border frame around entire GUI
+    # Set dark red border frame around entire GUI
     # Top row (1-9)
     - inventory set d:<[crate_inv]> o:<[border]> slot:1
     - inventory set d:<[crate_inv]> o:<[border]> slot:2
@@ -110,7 +111,7 @@ vulcan_crate_animation:
     # Middle row center slots: 12, 13, 14, 15, 16 (5 slots centered, scrolls right to left)
     # Alternates between god apple and mystery item
 
-    # Define preview pool as actual ItemTags instead of material names
+    # Define preview pool as actual ItemTags
     - define preview_pool <list>
     - define preview_pool <[preview_pool].include[<item[enchanted_golden_apple]>]>
     - define preview_pool <[preview_pool].include[<item[gray_dye]>]>
@@ -141,7 +142,7 @@ vulcan_crate_animation:
     # Phase 1: Fast scroll (20 cycles, 2t each = 2s)
     - repeat 20:
         # Check if player closed inventory early
-        - if !<player.has_flag[vulcan.crate.animation_running]>:
+        - if !<player.has_flag[mars.crate.animation_running]>:
             - stop
 
         # Shift items left and add new item on right
@@ -166,7 +167,7 @@ vulcan_crate_animation:
     # Phase 2: Medium scroll (10 cycles, 3t each = 1.5s)
     - repeat 10:
         # Check if player closed inventory early
-        - if !<player.has_flag[vulcan.crate.animation_running]>:
+        - if !<player.has_flag[mars.crate.animation_running]>:
             - stop
 
         # Shift items left and add new item on right
@@ -191,7 +192,7 @@ vulcan_crate_animation:
     # Phase 3: Slow scroll (5 cycles, 5t each = 1.25s)
     - repeat 5:
         # Check if player closed inventory early
-        - if !<player.has_flag[vulcan.crate.animation_running]>:
+        - if !<player.has_flag[mars.crate.animation_running]>:
             - stop
 
         # Shift items left and add new item on right
@@ -277,46 +278,46 @@ vulcan_crate_animation:
     - wait 16t
 
     # Check one final time before closing
-    - if !<player.has_flag[vulcan.crate.animation_running]>:
+    - if !<player.has_flag[mars.crate.animation_running]>:
         - stop
 
     # Clear animation flag BEFORE closing to prevent early close handler from triggering
-    - flag player vulcan.crate.animation_running:!
+    - flag player mars.crate.animation_running:!
 
     # Close GUI
     - inventory close
     - wait 5t
 
     # Award loot
-    - inject award_vulcan_loot
+    - inject award_mars_loot
 
     # Clear pending result flag after normal completion
-    - flag player vulcan.crate.pending_result:!
+    - flag player mars.crate.pending_result:!
 
-vulcan_crate_gui:
+mars_crate_gui:
     type: inventory
     inventory: chest
     gui: true
-    title: <&8>Vulcan Crucible - Opening...
+    title: <&8>Mars Arena - Opening...
     size: 27
 
 # ============================================
 # OUTCOME ROLLING
 # ============================================
 
-roll_vulcan_outcome:
+roll_mars_outcome:
     type: procedure
     debug: false
     script:
     # Check if all items obtained
     - define all_obtained true
-    - if !<player.has_flag[vulcan.item.pickaxe]>:
+    - if !<player.has_flag[mars.item.title]>:
         - define all_obtained false
-    - if !<player.has_flag[vulcan.item.title]>:
+    - if !<player.has_flag[mars.item.shulker]>:
         - define all_obtained false
-    - if !<player.has_flag[vulcan.item.shulker]>:
+    - if !<player.has_flag[mars.item.shield]>:
         - define all_obtained false
-    - if !<player.has_flag[vulcan.item.head]>:
+    - if !<player.has_flag[mars.item.head]>:
         - define all_obtained false
 
     # If all obtained, force god apple
@@ -335,13 +336,13 @@ roll_vulcan_outcome:
     # Path B: Unique Item (roll = 2)
     # Get unobtained items
     - define available <list>
-    - if !<player.has_flag[vulcan.item.pickaxe]>:
-        - define available <[available].include[pickaxe]>
-    - if !<player.has_flag[vulcan.item.title]>:
+    - if !<player.has_flag[mars.item.title]>:
         - define available <[available].include[title]>
-    - if !<player.has_flag[vulcan.item.shulker]>:
+    - if !<player.has_flag[mars.item.shulker]>:
         - define available <[available].include[shulker]>
-    - if !<player.has_flag[vulcan.item.head]>:
+    - if !<player.has_flag[mars.item.shield]>:
+        - define available <[available].include[shield]>
+    - if !<player.has_flag[mars.item.head]>:
         - define available <[available].include[head]>
 
     # Select random from available
@@ -349,14 +350,14 @@ roll_vulcan_outcome:
 
     # Build result map
     - choose <[chosen]>:
-        - case pickaxe:
-            - define result_map <map[type=UNIQUE;item_id=pickaxe;item=<item[vulcan_pickaxe_blueprint]>;display=Vulcan Pickaxe Blueprint]>
         - case title:
-            - define result_map <map[type=UNIQUE;item_id=title;item=<item[book].with[display=<&d><&l>VULCAN TITLE<&r>;lore=<&7>Cosmetic unlock:|<&8>[Vulcan's Chosen]<&7> title]>;display=Vulcan Title]>
+            - define result_map <map[type=UNIQUE;item_id=title;item=<item[book].with[display=<&4><&l>MARS TITLE<&r>;lore=<&7>Cosmetic unlock:|<&4>[Mars' Chosen]<&7> title]>;display=Mars Title]>
         - case shulker:
-            - define result_map <map[type=UNIQUE;item_id=shulker;item=<item[gray_shulker_box]>;display=Gray Shulker Box]>
+            - define result_map <map[type=UNIQUE;item_id=shulker;item=<item[red_shulker_box]>;display=Red Shulker Box]>
+        - case shield:
+            - define result_map <map[type=UNIQUE;item_id=shield;item=<item[mars_shield_blueprint]>;display=Mars Shield Blueprint]>
         - case head:
-            - define result_map <map[type=UNIQUE;item_id=head;item=<item[hephaestus_head]>;display=Head of Hephaestus]>
+            - define result_map <map[type=UNIQUE;item_id=head;item=<item[heracles_head]>;display=Head of Heracles]>
 
     - determine <[result_map]>
 
@@ -364,7 +365,7 @@ roll_vulcan_outcome:
 # LOOT AWARDING
 # ============================================
 
-award_vulcan_loot:
+award_mars_loot:
     type: task
     debug: false
     script:
@@ -374,9 +375,9 @@ award_vulcan_loot:
         - case GOD_APPLE:
             - give enchanted_golden_apple
             - playsound <player> sound:entity_player_levelup
-            - flag player vulcan.god_apples:++
+            - flag player mars.god_apples:++
             # Title feedback
-            - title "title:<&b><&l>VULCAN DROP" subtitle:<&f><[result].get[display]> fade_in:5t stay:40t fade_out:10t targets:<player>
+            - title "title:<&4><&l>MARS DROP" subtitle:<&f><[result].get[display]> fade_in:5t stay:40t fade_out:10t targets:<player>
 
         # Unique Item
         - case UNIQUE:
@@ -384,60 +385,61 @@ award_vulcan_loot:
 
             # Award item
             - choose <[item_id]>:
-                - case pickaxe:
-                    - give vulcan_pickaxe_blueprint
-                    - flag player vulcan.item.pickaxe:true
                 - case title:
-                    - flag player vulcan.item.title:true
+                    - flag player mars.item.title:true
                     # No physical item for title (just flag)
                 - case shulker:
-                    - give gray_shulker_box
-                    - flag player vulcan.item.shulker:true
+                    - give red_shulker_box
+                    - flag player mars.item.shulker:true
+                - case shield:
+                    - give mars_shield_blueprint
+                    - flag player mars.item.shield:true
                 - case head:
-                    - give hephaestus_head
-                    - flag player vulcan.item.head:true
+                    - give heracles_head
+                    - flag player mars.item.head:true
 
             # Sound feedback
             - playsound <player> sound:ui_toast_challenge_complete volume:1.0
-            - playsound <player> sound:block_beacon_activate volume:0.5
+            - playsound <player> sound:entity_wither_spawn volume:0.3 pitch:2.0
 
             # Title feedback
-            - title "title:<&b><&l>OLYMPIAN DROP" subtitle:<&d><[result].get[display]> fade_in:5t stay:40t fade_out:10t targets:<player>
+            - title "title:<&4><&l>OLYMPIAN DROP" subtitle:<&d><[result].get[display]> fade_in:5t stay:40t fade_out:10t targets:<player>
 
             # Server announcement
-            - announce "<&b><&l>OLYMPIAN DROP!<&r> <&f><player.name> <&7>obtained a unique Vulcan item<&co> <&d><[result].get[display]><&7>!"
+            - announce "<&4><&l>OLYMPIAN DROP!<&r> <&f><player.name> <&7>obtained a unique Mars item<&co> <&d><[result].get[display]><&7>!"
 
             # Track stats
-            - flag player vulcan.unique_items:++
+            - flag player mars.unique_items:++
 
             # Check if all unique items collected
-            - if <player.has_flag[vulcan.item.pickaxe]> && <player.has_flag[vulcan.item.title]> && <player.has_flag[vulcan.item.shulker]> && <player.has_flag[vulcan.item.head]>:
-                - announce "<&b><&l>COLLECTION COMPLETE!<&r> <&f><player.name> <&7>has collected every unique <&b>Vulcan<&7> item!"
+            - if <player.has_flag[mars.item.title]> && <player.has_flag[mars.item.shulker]> && <player.has_flag[mars.item.shield]> && <player.has_flag[mars.item.head]>:
+                - announce "<&4><&l>COLLECTION COMPLETE!<&r> <&f><player.name> <&7>has collected every unique <&4>Mars<&7> item!"
                 - playsound <player> sound:entity_ender_dragon_growl volume:0.5
 
 # ============================================
 # EARLY CLOSE HANDLER
 # ============================================
 
-vulcan_crate_early_close:
+mars_crate_early_close:
     type: world
     debug: false
     events:
-        on player closes vulcan_crate_gui:
+        on player closes mars_crate_gui:
         # Check if animation is still running
-        - if !<player.has_flag[vulcan.crate.animation_running]>:
+        - if !<player.has_flag[mars.crate.animation_running]>:
             - stop
 
         # Clear the animation running flag to signal the queue to stop naturally
-        - flag player vulcan.crate.animation_running:!
+        # Don't try to force-stop the queue - it may have already finished
+        - flag player mars.crate.animation_running:!
 
         # Wait a tick to ensure the queue sees the flag change
         - wait 1t
 
-        - define result <player.flag[vulcan.crate.pending_result]>
+        - define result <player.flag[mars.crate.pending_result]>
 
         # Award loot using same logic as normal completion
-        - inject award_vulcan_loot
+        - inject award_mars_loot
 
         # Clear pending result flag
-        - flag player vulcan.crate.pending_result:!
+        - flag player mars.crate.pending_result:!

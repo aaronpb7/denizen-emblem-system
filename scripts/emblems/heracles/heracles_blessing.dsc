@@ -2,10 +2,10 @@
 # HERACLES BLESSING
 # ============================================
 #
-# Consumable item that boosts all incomplete Heracles activities by +10%
-# - Pillagers: +250 (10% of 2,500)
-# - Raids: +5 (10% of 50)
-# - Emeralds: +1,000 (10% of 10,000)
+# Consumable item that boosts all incomplete Heracles activities by +5%
+# - Pillagers: +125 (5% of 2,500)
+# - Raids: +2 (5% of 50, rounded down)
+# - Emeralds: +500 (5% of 10,000)
 #
 # Only boosts incomplete activities (component not obtained)
 # Caps at requirement (cannot exceed milestone)
@@ -23,10 +23,14 @@ heracles_blessing_usage:
         on player right clicks block with:heracles_blessing:
         - determine cancelled passively
 
-        # Check if all components complete (block use if so)
+        # If all components complete, convert blessing to keys
         - if <player.has_flag[heracles.component.pillagers]> && <player.has_flag[heracles.component.raids]> && <player.has_flag[heracles.component.emeralds]>:
-            - narrate "<&c>All Heracles activities already complete!"
-            - playsound <player> sound:entity_villager_no
+            - take item:heracles_blessing quantity:1
+            - give heracles_key quantity:10
+            - narrate "<&d><&l>HERACLES BLESSING ACTIVATED!<&r>"
+            - narrate "  <&c>All activities complete! <&7>Converted to <&e>10 Heracles Keys<&7>."
+            - playsound <player> sound:block_enchantment_table_use
+            - playeffect effect:lava at:<player.location> quantity:30 offset:1.0
             - stop
 
         # Track boosts for feedback
@@ -35,7 +39,7 @@ heracles_blessing_usage:
         # ===== PILLAGERS BOOST =====
         - if !<player.has_flag[heracles.component.pillagers]>:
             - define current <player.flag[heracles.pillagers.count].if_null[0]>
-            - define boost 250
+            - define boost 125
             - define new_count <[current].add[<[boost]>].min[2500]>
             - define actual_boost <[new_count].sub[<[current]>]>
 
@@ -62,7 +66,7 @@ heracles_blessing_usage:
         # ===== RAIDS BOOST =====
         - if !<player.has_flag[heracles.component.raids]>:
             - define current <player.flag[heracles.raids.count].if_null[0]>
-            - define boost 5
+            - define boost 2
             - define new_count <[current].add[<[boost]>].min[50]>
             - define actual_boost <[new_count].sub[<[current]>]>
 
@@ -89,7 +93,7 @@ heracles_blessing_usage:
         # ===== EMERALDS BOOST =====
         - if !<player.has_flag[heracles.component.emeralds]>:
             - define current <player.flag[heracles.emeralds.count].if_null[0]>
-            - define boost 1000
+            - define boost 500
             - define new_count <[current].add[<[boost]>].min[10000]>
             - define actual_boost <[new_count].sub[<[current]>]>
 

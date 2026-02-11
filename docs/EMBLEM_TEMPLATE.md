@@ -5,23 +5,22 @@ Complete checklist for implementing a new emblem line (Greek god + Roman meta).
 **Replace placeholders:**
 - `<god>` = Greek god lowercase (e.g., `hephaestus`)
 - `<God>` = Greek god capitalized (e.g., `Hephaestus`)
+- `<GOD>` = Greek god uppercase (e.g., `HEPHAESTUS`)
 - `<meta_god>` = Roman god lowercase (e.g., `vulcan`)
 - `<Meta_God>` = Roman god capitalized (e.g., `Vulcan`)
-- `<role>` = Role lowercase (e.g., `mining`)
-- `<ROLE>` = Role uppercase (e.g., `MINING`)
-- `<Role>` = Role display name (e.g., `Metallourgos`)
-- `<&X>` = Role color code (e.g., `<&b>` for cyan)
+- `<Emblem>` = Emblem display name (e.g., `Hephaestus`)
+- `<&X>` = Emblem color code (e.g., `<&b>` for cyan)
 
 ---
 
 ## Phase 1: Design Decisions
 
 ### Core Identity
-- [ ] **Role**: FARMING / MINING / COMBAT
+- [ ] **Emblem**: DEMETER / HEPHAESTUS / HERACLES (or new god name)
 - [ ] **Greek God**: Name, title, theme
 - [ ] **Roman God**: Name (meta-progression)
 - [ ] **Color Code**: `<&X>` for all UI (pick one: `<&6>` gold, `<&c>` red, `<&b>` cyan, `<&a>` green)
-- [ ] **Role Icon Material**: For profile display (e.g., `diamond_pickaxe`)
+- [ ] **Emblem Icon Material**: For profile display (e.g., `diamond_pickaxe`)
 - [ ] **Crate Border Material**: `X_stained_glass_pane` (e.g., `cyan_stained_glass_pane`)
 
 ### Three Activities (keys + components)
@@ -31,23 +30,6 @@ Complete checklist for implementing a new emblem line (Greek god + Roman meta).
 | 1 | e.g., "Mine iron ore" | `player breaks iron_ore` | 100 | 10,000 |
 | 2 | e.g., "Smelt items" | `player takes from furnace` | 50 | 5,000 |
 | 3 | e.g., "Craft anvils" | `player crafts anvil` | 10 | 500 |
-
-### Five Ranks (XP-based)
-
-| Rank | Title | XP Required | Buff 1 | Buff 2 | Key Reward |
-|------|-------|-------------|--------|--------|------------|
-| 1 | Acolyte of X | 1,000 | +5% ... | None | 5 keys |
-| 2 | Disciple of X | 3,500 | +10% ... | Effect I | 5 keys |
-| 3 | Hero of X | 9,750 | +15% ... | Effect I | 5 keys |
-| 4 | Champion of X | 25,375 | +20% ... | Effect I | 5 keys |
-| 5 | Legend of X | 64,438 | +25% ... | Effect II | 10 keys |
-
-### XP Sources
-
-| Action | XP Amount |
-|--------|-----------|
-| ... | ... |
-| ... | ... |
 
 ### Crate Loot (5 tiers)
 
@@ -61,7 +43,7 @@ Complete checklist for implementing a new emblem line (Greek god + Roman meta).
 
 ### Special Crate Items
 - [ ] **Blessing**: Temporary boost to all 3 activities
-- [ ] **Tool**: Role-specific tool with special ability
+- [ ] **Tool**: Emblem-specific tool with special ability
 - [ ] **Title**: Chat prefix cosmetic
 
 ### Meta Items (4 unique from Roman crate)
@@ -83,10 +65,9 @@ Complete checklist for implementing a new emblem line (Greek god + Roman meta).
 
 - [ ] `<god>_activity1_handler` - Track activity 1
   - Event: `on player <event>:`
-  - Check role: `<player.flag[role.active]> == <ROLE>`
+  - Check emblem: `<player.flag[emblem.active]> == <GOD>`
   - Increment: `flag player <god>.activity1.count:++`
   - Check blessing boost
-  - Award XP via `run award_<role>_xp def:<amount>`
   - Check key threshold
   - Check component milestone
 
@@ -172,7 +153,7 @@ Complete checklist for implementing a new emblem line (Greek god + Roman meta).
 
 - [ ] `roll_<god>_loot` - Tier-based loot selection
   - Each tier has weighted loot table
-  - OLYMPIAN has 1% meta key drop
+  - OLYMPIAN has 1% meta key drop (2% with emblem unlocked)
 
 - [ ] `get_<god>_sample_item` - Random item for animation
 
@@ -246,64 +227,7 @@ Complete checklist for implementing a new emblem line (Greek god + Roman meta).
 
 ---
 
-### File 4: `scripts/emblems/<god>/<god>_ranks.dsc`
-
-**Data Script:**
-- [ ] `<god>_rank_data` - Thresholds and titles
-  ```yaml
-  <god>_rank_data:
-      type: data
-      ranks:
-          1:
-              name: Acolyte of X
-              xp: 1000
-              keys: 5
-          2:
-              name: Disciple of X
-              xp: 3500
-              keys: 5
-          # ... etc
-  ```
-
-**Tasks:**
-- [ ] `award_<role>_xp` - Add XP and check rank up
-  ```yaml
-  award_<role>_xp:
-      type: task
-      debug: false
-      definitions: amount
-      script:
-      - define current_xp <player.flag[<role>.xp].if_null[0]>
-      - define new_xp <[current_xp].add[<[amount]>]>
-      - flag player <role>.xp:<[new_xp]>
-      - run check_<role>_rank_up
-  ```
-
-- [ ] `check_<role>_rank_up` - Detect and handle rank ups
-  - Compare XP to thresholds
-  - Award keys, apply buffs, announce
-
-- [ ] `apply_<role>_buffs` - Apply rank-based effects
-  - Called on join, respawn, role change
-
-**Procedures:**
-- [ ] `get_<role>_rank` - Return rank number from XP
-- [ ] `get_<role>_rank_name` - Return rank title
-- [ ] `get_<role>_next_rank_xp` - XP needed for next rank
-
-**World Scripts:**
-- [ ] `<role>_buff_on_join` - Apply buffs on login
-- [ ] `<role>_buff_on_respawn` - Reapply after death
-
-**Flags:**
-```
-<role>.xp (integer)
-<role>.rank (integer 1-5)
-```
-
----
-
-### File 5: `scripts/emblems/<meta_god>/<meta_god>_crate.dsc`
+### File 4: `scripts/emblems/<meta_god>/<meta_god>_crate.dsc`
 
 **Items:**
 - [ ] `<meta_god>_key` - Meta key item (prismarine shard, colored)
@@ -347,7 +271,7 @@ Complete checklist for implementing a new emblem line (Greek god + Roman meta).
 
 ---
 
-### File 6: `scripts/emblems/<meta_god>/<meta_god>_items.dsc`
+### File 5: `scripts/emblems/<meta_god>/<meta_god>_items.dsc`
 
 **Items (4 unique):**
 - [ ] `<meta_god>_item1` - First unique item
@@ -378,31 +302,25 @@ Complete checklist for implementing a new emblem line (Greek god + Roman meta).
 
 ## Phase 3: Update Existing Files
 
-### File 7: `scripts/emblems/core/promachos.dsc`
+### File 6: `scripts/emblems/core/promachos.dsc`
 
 **System Info Items (update lore):**
 
-- [ ] `system_info_roles` - Add role description
+- [ ] `system_info_emblems_list` - Add emblem description
   ```yaml
-  - <&X><Role> <&7>(<ROLE>)<&co>
+  - <&X><Emblem> <&7>(<GOD>)<&co>
   - <&7>Activity1, activity2, activity3
-  ```
-
-- [ ] `system_info_ranks` - Add role ranks
-  ```yaml
-  - <&X><ROLE> Ranks<&co>
-  - <&7>Buff description
   ```
 
 - [ ] `system_info_emblems` - Add emblem info
   ```yaml
-  - <&X><God>'s Emblem <&7>(<ROLE>)<&co>
+  - <&X><God>'s Emblem <&7>(<GOD>)<&co>
   - <&7>Activity1, activity2, activity3 milestones
   ```
 
 - [ ] `system_info_crates` - Add crate info
   ```yaml
-  - <&X><God> Crates <&7>(<ROLE>)<&co>
+  - <&X><God> Crates <&7>(<GOD>)<&co>
   - <&7>Brief loot description
   ```
 
@@ -434,15 +352,15 @@ Complete checklist for implementing a new emblem line (Greek god + Roman meta).
 
 ---
 
-### File 8: `scripts/profile_gui.dsc`
+### File 7: `scripts/profile_gui.dsc`
 
 **This is the most detailed section - many procedures to update/create.**
 
-#### 8.1 Role Display Item
+#### 7.1 Emblem Display Item
 
-- [ ] `get_role_display_item` procedure - Add CASE block:
+- [ ] `get_emblem_display_item` procedure - Add CASE block:
   ```yaml
-  - case <ROLE>:
+  - case <GOD>:
       - define lore <[lore].include[<&e>Patron<&co> <&X><[god]><&7>, God of X]>
       - define lore "<[lore].include[<&sp>]>"
 
@@ -451,8 +369,6 @@ Complete checklist for implementing a new emblem line (Greek god + Roman meta).
       - define activity2 <player.flag[<god>.activity2.count].if_null[0]>
       - define activity3 <player.flag[<god>.activity3.count].if_null[0]>
       - define keys <player.flag[<god>.activity1.keys_awarded].if_null[0].add[...]>
-      - define xp <player.flag[<role>.xp].if_null[0]>
-      - define rank <player.flag[<role>.rank].if_null[0]>
 
       - define lore <[lore].include[<&X>Your Progress<&co>]>
       - define lore <[lore].include[<&7>• Activity1<&co> <&X><[activity1].format_number>]>
@@ -460,50 +376,15 @@ Complete checklist for implementing a new emblem line (Greek god + Roman meta).
       - define lore <[lore].include[<&7>• Activity3<&co> <&X><[activity3].format_number>]>
       - define lore "<[lore].include[<&sp>]>"
       - define lore <[lore].include[<&X>Keys earned<&co> <&X><[keys]> <&7><God> Keys]>
-      - define lore <[lore].include[<&X><ROLE> XP<&co> <&X><[xp].format_number> <&7>XP]>
-
-      # Show rank
-      - if <[rank]> > 0:
-          - define rank_name <proc[get_<role>_rank_name].context[<[rank]>]>
-          - define lore <[lore].include[<&X>Rank<&co> <&X><[rank_name]>]>
-      - else:
-          - define lore <[lore].include[<&X>Rank<&co> <&7>Unranked]>
   ```
 
-- [ ] `get_role_icon` procedure (in roles.dsc) - Add case:
+- [ ] `get_emblem_icon` procedure (in emblem_data.dsc) - Add case:
   ```yaml
-  - case <ROLE>:
+  - case <GOD>:
       - determine <material>  # e.g., diamond_pickaxe
   ```
 
-#### 8.2 Ranks Icon
-
-- [ ] `get_ranks_icon_item` procedure - Add ELSE IF block:
-  ```yaml
-  - else if <[active_role]> == <ROLE>:
-      - define xp <player.flag[<role>.xp].if_null[0]>
-      - define rank <proc[get_<role>_rank_from_xp].context[<[xp]>]>
-      - define rank_name <proc[get_<role>_rank_name].context[<[rank]>]>
-
-      - define lore <list>
-      - if <[rank]> == 0:
-          - define lore <[lore].include[<&7>No rank achieved yet]>
-          - define lore "<[lore].include[<&sp>]>"
-          - define lore <[lore].include[<&e>Start <role>ing to gain XP!]>
-      - else:
-          - define lore <[lore].include[<&X>Current Rank<&co> <&X><[rank_name]>]>
-          - define lore "<[lore].include[<&sp>]>"
-          - define lore <[lore].include[<&7>Total XP<&co> <&X><[xp].format_number>]>
-      - define lore "<[lore].include[<&sp>]>"
-      - define lore <[lore].include[<&e>Click to view ranks]>
-
-      - if <[rank]> > 0:
-          - determine <item[experience_bottle].with[display=<&X><&l><ROLE> Ranks;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
-      - else:
-          - determine <item[experience_bottle].with[display=<&X><&l><ROLE> Ranks;lore=<[lore]>]>
-  ```
-
-#### 8.3 Progress GUI (Activity Details)
+#### 7.2 Progress GUI (Activity Details)
 
 - [ ] Create `<god>_progress_gui` inventory:
   ```yaml
@@ -540,48 +421,9 @@ Complete checklist for implementing a new emblem line (Greek god + Roman meta).
 
 - [ ] Create `<god>_progress_back_button` item
 
-- [ ] Add click handler to open from role item click
+- [ ] Add click handler to open from emblem item click
 
-#### 8.4 Ranks GUI (5-rank display)
-
-- [ ] Create `<role>_ranks_gui` inventory:
-  ```yaml
-  <role>_ranks_gui:
-      type: inventory
-      inventory: chest
-      gui: true
-      debug: false
-      title: <&8><ROLE> Skill Ranks
-      size: 54
-      procedural items:
-      - determine <proc[get_<role>_ranks_items]>
-  ```
-
-- [ ] Create `get_<role>_ranks_items` procedure:
-  - Row 2: 5 rank items (slots 11-15 or spread)
-  - Row 4: Current rank info, XP progress bar
-  - Slot 46: Back button
-  - Show locked/unlocked state per rank
-  - Show buffs for each rank
-
-- [ ] Create `get_<role>_rank_item` procedure:
-  ```yaml
-  definitions: rank_num
-  - define player_rank <player.flag[<role>.rank].if_null[0]>
-  - define rank_data <script[<god>_rank_data].data_key[ranks.<[rank_num]>]>
-  - define is_unlocked <[player_rank].is_more_than_or_equal_to[<[rank_num]>]>
-
-  - if <[is_unlocked]>:
-      # Gold/colored glass, show buffs
-  - else:
-      # Gray glass, show requirements
-  ```
-
-- [ ] Create `<role>_ranks_back_button` item
-
-- [ ] Add click handler in ranks icon click
-
-#### 8.5 Cosmetics Integration
+#### 7.3 Cosmetics Integration
 
 - [ ] `get_cosmetics_icon_item` procedure - Add title count check:
   ```yaml
@@ -624,61 +466,51 @@ Complete checklist for implementing a new emblem line (Greek god + Roman meta).
       # Check which title, toggle cosmetic.title.active flag
   ```
 
-#### 8.6 Click Handlers
+#### 7.4 Click Handlers
 
 - [ ] `profile_gui_click_handler` - Add handlers:
   ```yaml
-  # Role item click -> open progress GUI
-  after player clicks <role_material> in profile_inventory:
-      - if <player.flag[role.active].if_null[NONE]> == <ROLE>:
+  # Emblem item click -> open progress GUI
+  after player clicks <emblem_material> in profile_inventory:
+      - if <player.flag[emblem.active].if_null[NONE]> == <GOD>:
           - inventory open d:<god>_progress_gui
-
-  # Ranks icon click -> open ranks GUI
-  after player clicks experience_bottle in profile_inventory:
-      - define role <player.flag[role.active].if_null[NONE]>
-      - if <[role]> == <ROLE>:
-          - inventory open d:<role>_ranks_gui
 
   # Progress GUI back button
   after player clicks <god>_progress_back_button in <god>_progress_gui:
-      - run open_profile_gui
-
-  # Ranks GUI back button
-  after player clicks <role>_ranks_back_button in <role>_ranks_gui:
       - run open_profile_gui
   ```
 
 ---
 
-### File 9: `scripts/emblems/core/roles.dsc`
+### File 8: `scripts/emblems/core/emblem_data.dsc`
 
-- [ ] `is_valid_role` - Should already include all roles
-- [ ] `get_role_display_name` - Add case:
+- [ ] `is_valid_emblem` - Should already include all emblems
+- [ ] `get_emblem_display_name` - Add case:
   ```yaml
-  - case <ROLE>:
-      - determine <Role>  # e.g., Metallourgos
+  - case <GOD>:
+      - determine <Emblem>  # e.g., Hephaestus
   ```
-- [ ] `get_god_for_role` - Add case:
+- [ ] `get_emblem_god` - Add case:
   ```yaml
-  - case <ROLE>:
+  - case <GOD>:
       - determine <God>  # e.g., Hephaestus
   ```
-- [ ] `get_meta_god_for_role` - Add case:
+- [ ] `get_emblem_meta_god` - Add case:
   ```yaml
-  - case <ROLE>:
+  - case <GOD>:
       - determine <Meta_God>  # e.g., Vulcan
   ```
-- [ ] `get_role_icon` - Add case:
+- [ ] `get_emblem_icon` - Add case:
   ```yaml
-  - case <ROLE>:
+  - case <GOD>:
       - determine <material>  # e.g., diamond_pickaxe
   ```
 
 ---
 
-### File 10: `scripts/emblems/admin/admin_commands.dsc`
+### File 9: `scripts/emblems/admin/admin_commands.dsc`
 
-#### 10.1 Create `<god>admin` command:
+#### 9.1 Create `<god>admin` command:
 ```yaml
 <god>admin_command:
     type: command
@@ -698,7 +530,7 @@ Complete checklist for implementing a new emblem line (Greek god + Roman meta).
     # reset
 ```
 
-#### 10.2 Create `<meta_god>admin` command:
+#### 9.2 Create `<meta_god>admin` command:
 ```yaml
 # Subcommands:
 # item <name> <true/false>
@@ -706,16 +538,7 @@ Complete checklist for implementing a new emblem line (Greek god + Roman meta).
 # reset
 ```
 
-#### 10.3 Create `<role>admin` command (if separate from existing):
-```yaml
-# Subcommands:
-# xp <amount>
-# setxp <amount>
-# rank <1-5>
-# reset
-```
-
-#### 10.4 Update existing commands:
+#### 9.3 Update existing commands:
 - [ ] `checkkeys` - Add new key display
 - [ ] `emblemreset` - Add new flags to clear
 
@@ -723,46 +546,42 @@ Complete checklist for implementing a new emblem line (Greek god + Roman meta).
 
 ## Phase 4: Documentation
 
-### File 11: Create `docs/<god>.md`
+### File 10: Create `docs/<god>.md`
 - [ ] Overview and theme
 - [ ] Activities table (thresholds, milestones)
 - [ ] Key earning explanation
 - [ ] Component milestones
 - [ ] Crate loot tables (all 5 tiers)
 - [ ] Special items (Blessing, Tool, Title)
-- [ ] Ranks table (XP, buffs)
-- [ ] XP sources table
 
-### File 12: Create `docs/<meta_god>.md`
+### File 11: Create `docs/<meta_god>.md`
 - [ ] Overview
 - [ ] How to unlock (from Olympian crates)
 - [ ] Four unique items with descriptions
 - [ ] God apple fallback
 
-### File 13: Update `docs/flags.md`
+### File 12: Update `docs/flags.md`
 - [ ] Activity counter flags
 - [ ] Keys awarded flags
 - [ ] Component flags
 - [ ] Emblem unlock flags
 - [ ] Meta item flags
-- [ ] XP/rank flags
 - [ ] Cooldown flags (if any)
 
-### File 14: Update `docs/testing.md`
+### File 13: Update `docs/testing.md`
 - [ ] `<god>admin` command reference
 - [ ] `<meta_god>admin` command reference
-- [ ] `<role>admin` command reference
 - [ ] Test scenarios for all features
 
-### File 15: Update `CLAUDE.md`
+### File 14: Update `CLAUDE.md`
 - [ ] Script structure tree
 - [ ] Admin commands list
-- [ ] Role status (planned → complete)
+- [ ] Emblem status (planned -> complete)
 
-### File 16: Update `docs/README.md`
+### File 15: Update `docs/README.md`
 - [ ] God documentation link
 - [ ] Meta god documentation link
-- [ ] Role status
+- [ ] Emblem status
 
 ---
 
@@ -772,7 +591,7 @@ Complete checklist for implementing a new emblem line (Greek god + Roman meta).
 - [ ] Activity 1 increments correctly
 - [ ] Activity 2 increments correctly
 - [ ] Activity 3 increments correctly
-- [ ] Only tracks when role active
+- [ ] Only tracks when emblem active
 - [ ] Blessing boost works (+X per action)
 
 ### Key Awards
@@ -804,14 +623,6 @@ Complete checklist for implementing a new emblem line (Greek god + Roman meta).
 - [ ] Meta key drops (1% Olympian)
 - [ ] GUI closes cleanly
 
-### Rank System
-- [ ] XP awards from all sources
-- [ ] Rank ups at thresholds
-- [ ] Keys awarded on rank up
-- [ ] Buffs apply immediately
-- [ ] Buffs persist on rejoin
-- [ ] Buffs apply on role switch
-
 ### Meta Crate
 - [ ] Meta key consumed
 - [ ] Unique items until all collected
@@ -830,14 +641,11 @@ Complete checklist for implementing a new emblem line (Greek god + Roman meta).
 - [ ] Permission checks
 
 ### Profile GUI
-- [ ] Role icon correct material
-- [ ] Role icon shows all stats
-- [ ] Ranks icon shows current rank
+- [ ] Emblem icon correct material
+- [ ] Emblem icon shows all stats
 - [ ] Click opens correct progress GUI
 - [ ] Progress GUI shows all activities
 - [ ] Progress GUI percentages correct
-- [ ] Ranks GUI shows all 5 ranks
-- [ ] Ranks GUI locked/unlocked states
 - [ ] Back buttons all work
 - [ ] Cosmetics shows new titles
 - [ ] Titles equip/unequip
@@ -852,7 +660,7 @@ Complete checklist for implementing a new emblem line (Greek god + Roman meta).
 ## Phase 6: Final Steps
 
 - [ ] Full playtest (zero to emblem)
-- [ ] Test role switching
+- [ ] Test emblem switching
 - [ ] Test edge cases (max values, rapid clicks)
 - [ ] Verify `debug: false` on ALL scripts
 - [ ] Remove test narrates
@@ -864,13 +672,12 @@ Complete checklist for implementing a new emblem line (Greek god + Roman meta).
 
 ## Quick File Reference
 
-### New Files (8)
+### New Files (7)
 ```
 scripts/emblems/<god>/
 ├── <god>_events.dsc
 ├── <god>_crate.dsc
-├── <god>_blessing.dsc
-└── <god>_ranks.dsc
+└── <god>_blessing.dsc
 
 scripts/emblems/<meta_god>/
 ├── <meta_god>_crate.dsc
@@ -888,7 +695,7 @@ scripts/
 └── emblems/
     ├── core/
     │   ├── promachos.dsc   # Emblem check, system info
-    │   └── roles.dsc       # Role procedures
+    │   └── emblem_data.dsc # Emblem procedures
     └── admin/
         └── admin_commands.dsc
 

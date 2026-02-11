@@ -101,7 +101,6 @@ demeter_crate_animation:
     - define preview_pool <[preview_pool].include[<item[emerald]>]>
     - define preview_pool <[preview_pool].include[<item[golden_carrot]>]>
     - define preview_pool <[preview_pool].include[<item[golden_apple]>]>
-    - define preview_pool <[preview_pool].include[<item[enchanted_golden_apple]>]>
     - define preview_pool <[preview_pool].include[<item[hay_block]>]>
     - define preview_pool <[preview_pool].include[<item[bone_meal]>]>
 
@@ -302,23 +301,22 @@ roll_demeter_tier:
     script:
     - define roll <util.random.int[1].to[100]>
 
-    # MORTAL: 1-56 (56%)
-    - if <[roll]> <= 56:
+    # Emblem unlocked: OLYMPIAN 2% (MORTAL loses 1%)
+    # Default:  56/26/12/5/1
+    # Unlocked: 55/26/12/5/2
+    - if <player.has_flag[demeter.emblem.unlocked]>:
+        - define caps <list[55|81|93|98]>
+    - else:
+        - define caps <list[56|82|94|99]>
+
+    - if <[roll]> <= <[caps].get[1]>:
         - determine <list[MORTAL|<&f>]>
-
-    # HEROIC: 57-82 (26%)
-    - else if <[roll]> <= 82:
+    - else if <[roll]> <= <[caps].get[2]>:
         - determine <list[HEROIC|<&e>]>
-
-    # LEGENDARY: 83-94 (12%)
-    - else if <[roll]> <= 94:
+    - else if <[roll]> <= <[caps].get[3]>:
         - determine <list[LEGENDARY|<&6>]>
-
-    # MYTHIC: 95-99 (5%)
-    - else if <[roll]> <= 99:
+    - else if <[roll]> <= <[caps].get[4]>:
         - determine <list[MYTHIC|<&d>]>
-
-    # OLYMPIAN: 100 (1%)
     - else:
         - determine <list[OLYMPIAN|<&b>]>
 
@@ -405,21 +403,18 @@ roll_demeter_loot:
 
         - case MYTHIC:
             - define pool <list>
-            - define pool <[pool].include[enchanted_golden_apple:1]>
-            - define pool <[pool].include[demeter_hoe:1]>
             - define pool <[pool].include[demeter_blessing:1]>
-            - define pool <[pool].include[demeter_title:1]>
+            - define pool <[pool].include[demeter_mythic_fragment:1]>
             - define pool <[pool].include[gold_block:16]>
             - define pool <[pool].include[emerald_block:16]>
             - define choice <[pool].random>
             - define parts <[choice].split[<&co>]>
             - define material <[parts].get[1]>
             - define qty <[parts].get[2]>
-            - if <[material]> == demeter_hoe || <[material]> == demeter_blessing:
-                - define display_name <[material].to_titlecase.replace[_].with[ ]>
-                - define loot_map <map[type=CUSTOM;script=<[material]>;quantity=<[qty]>;display=<[display_name]> x<[qty]>]>
-            - else if <[material]> == demeter_title:
-                - define loot_map <map[type=TITLE;flag=demeter.item.title;display=Demeter Title]>
+            - if <[material]> == demeter_blessing:
+                - define loot_map <map[type=CUSTOM;script=demeter_blessing;quantity=<[qty]>;display=Demeter Blessing x<[qty]>]>
+            - else if <[material]> == demeter_mythic_fragment:
+                - define loot_map <map[type=CUSTOM;script=demeter_mythic_fragment;quantity=<[qty]>;display=Demeter Mythic Fragment x<[qty]>]>
             - else:
                 - define display_name <[material].to_titlecase.replace[_].with[ ]>
                 - define loot_map <map[type=ITEM;material=<[material]>;quantity=<[qty]>;display=<[display_name]> x<[qty]>]>

@@ -4,11 +4,11 @@
 
 **Ceres** is the Roman goddess of agriculture, equivalent to Greek Demeter. In the emblem system, Ceres represents **meta-progression**—a premium layer accessible only through rare Demeter Crate rolls.
 
-**Access**: Obtain Ceres Keys (1% drop from Demeter Crate OLYMPIAN tier)
+**Access**: Obtain Ceres Keys (1% drop from Demeter Crate OLYMPIAN tier, 2% with Demeter emblem unlocked)
 
 **Mechanics**: 50/50 chance between god apple and finite unique items
 
-**Goal**: Collect all 4 Ceres items (one-time unlocks per player)
+**Goal**: Collect all 4 Ceres items: Title, Shulker, Wand (via Blueprint + Crafting), Head of Demeter
 
 ---
 
@@ -62,7 +62,7 @@
 
 ## GUI Animation
 
-**Title**: `Ceres Vault - Opening...`
+**Title**: `Ceres Grove - Opening...`
 
 **Duration**: 2 seconds
 
@@ -72,7 +72,7 @@
 
 **Phase 1: Opening (0.0s - 0.5s)**
 - All slots filled with cyan/light blue stained glass panes
-- Title: `Ceres Vault - Opening...`
+- Title: `Ceres Grove - Opening...`
 
 **Phase 2: Cycling (0.5s - 1.5s)**
 - Center slot (13) alternates between enchanted golden apple and "?" icon
@@ -82,7 +82,7 @@
 **Phase 3: Outcome Reveal (1.5s - 2.0s)**
 - Stop cycling
 - Replace center with actual loot item
-- Update title: `Ceres Vault - <outcome>!`
+- Update title: `Ceres Grove - <outcome>!`
 
 **Phase 4: Loot Award (2.0s)**
 - Give item to player
@@ -114,10 +114,10 @@
 
 ### Finite Item Pool (4 items total)
 
-1. **Ceres Hoe** (Netherite hoe, auto-replant mechanic)
+1. **Head of Demeter** (Player head collectible)
 2. **Ceres Title** (Cosmetic chat title unlock)
 3. **Yellow Shulker Box** (Standard shulker box item)
-4. **Ceres Wand** (Bee summoning staff)
+4. **Ceres Wand** (Bee summoning staff) — obtained via **Blueprint + Mythic Crafting**, NOT direct drop
 
 ### Progression Rules
 
@@ -155,7 +155,8 @@
    - Get list of unobtained items (filter by flags)
    - Randomly select one from list
    - Award item (see item definitions below)
-   - Flag as obtained (e.g., ceres.item.hoe = true)
+   - If wand rolled: give ceres_wand_blueprint, set ceres.item.wand flag
+   - Flag as obtained (e.g., ceres.item.head = true)
    - Narrate: "<&b>[CERES]<&r> <&d><item_name><&r> <&e>UNIQUE ITEM!"
    - Sound: ui_toast_challenge_complete + block_beacon_activate
    - Optional: Server announcement
@@ -169,8 +170,8 @@ ceres_crate_roll:
     script:
     # Check completion
     - define obtained <list>
-    - if <player.has_flag[ceres.item.hoe]>:
-        - define obtained <[obtained].include[hoe]>
+    - if <player.has_flag[ceres.item.head]>:
+        - define obtained <[obtained].include[head]>
     - if <player.has_flag[ceres.item.title]>:
         - define obtained <[obtained].include[title]>
     - if <player.has_flag[ceres.item.shulker]>:
@@ -196,15 +197,15 @@ ceres_crate_roll:
         - stop
 
     # Path B: Unique Item
-    - define available <list[hoe|title|shulker|wand].exclude[<[obtained]>]>
+    - define available <list[head|title|shulker|wand].exclude[<[obtained]>]>
     - define chosen <[available].random>
 
     # Award item
     - choose <[chosen]>:
-        - case hoe:
-            - give ceres_hoe
-            - flag player ceres.item.hoe:true
-            - narrate "<&b>[CERES]<&r> <&d>Ceres Hoe<&r> <&e>UNIQUE ITEM!"
+        - case head:
+            - give ceres_head_of_demeter
+            - flag player ceres.item.head:true
+            - narrate "<&b>[CERES]<&r> <&d>Head of Demeter<&r> <&e>UNIQUE ITEM!"
         - case title:
             - flag player ceres.item.title:true
             - narrate "<&b>[CERES]<&r> <&d>Ceres Title<&r> <&e>UNIQUE ITEM!"
@@ -213,9 +214,9 @@ ceres_crate_roll:
             - flag player ceres.item.shulker:true
             - narrate "<&b>[CERES]<&r> <&d>Yellow Shulker Box<&r> <&e>UNIQUE ITEM!"
         - case wand:
-            - give ceres_wand
+            - give ceres_wand_blueprint
             - flag player ceres.item.wand:true
-            - narrate "<&b>[CERES]<&r> <&d>Ceres Wand<&r> <&e>UNIQUE ITEM!"
+            - narrate "<&b>[CERES]<&r> <&d>Ceres Wand Blueprint<&r> <&e>UNIQUE ITEM!"
 
     - playsound <player> sound:ui_toast_challenge_complete
     - playsound <player> sound:block_beacon_activate volume:0.5
@@ -226,31 +227,24 @@ ceres_crate_roll:
 
 ## Ceres Items
 
-### 1. Ceres Hoe (MYTHIC)
+### 1. Head of Demeter (COLLECTIBLE)
 
-**Material**: `NETHERITE_HOE`
+**Material**: Player Head (custom texture)
 
-**Display Name**: `<&d><&l>CERES HOE<&r>`
+**Display Name**: `<&b>Head of Demeter<&r>`
 
 **Lore**:
 ```
-<&d>MYTHIC
+<&7>A divine effigy of Demeter,
+<&7>goddess of the harvest.
 
-<&7>A netherite hoe blessed by
-<&7>Ceres, unbreakable and eternal.
-
-<&e>Automatically replants crops
-<&e>when harvested.
-
-<&8>Unbreakable
+<&8>Decorative collectible
 <&8>Unique - One per player
 ```
 
-**NBT**:
-- Unbreakable: true
-- Enchantment: `mending:1` (hidden, for glint)
+**Flag**: `ceres.item.head`
 
-**Mechanics**: See "Ceres Hoe Auto-Replant" section below
+**Purpose**: Rare collectible/decorative item
 
 ---
 
@@ -293,7 +287,7 @@ ceres_crate_roll:
 **Lore**:
 ```
 <&7>A rare shulker box from
-<&7>the Ceres Vault.
+<&7>the Ceres Grove.
 
 <&8>Standard shulker box
 <&8>Unique - One per player
@@ -332,88 +326,6 @@ ceres_crate_roll:
 - Unbreakable: true (does not consume durability)
 
 **Mechanics**: See "Ceres Wand Bee Summon" section below
-
----
-
-## Ceres Hoe Auto-Replant
-
-### Mechanic
-
-When player breaks a fully-grown crop while holding Ceres Hoe, the crop is **automatically replanted** at the same location.
-
-**Supported Crops**:
-- Wheat
-- Carrots
-- Potatoes
-- Beetroots
-- Nether Wart
-
-**IMPORTANT - Seed Cost:**
-- Replanting **consumes 1 seed from the player's inventory**
-- Wheat requires wheat_seeds
-- Carrots/potatoes use the vegetable itself as seed
-- Beetroots require beetroot_seeds
-- Nether wart uses nether_wart item
-- If player has no seeds, replanting does NOT occur (crop breaks normally)
-
-### Implementation
-
-**Event**: `after player breaks <crop>` with `hand:<context.item>` check
-
-**Logic**:
-```yaml
-ceres_hoe_replant:
-    type: world
-    events:
-        after player breaks wheat|carrots|potatoes|beetroots|nether_wart:
-        # Check if holding Ceres Hoe
-        - if <context.item.script.name.if_null[null]> != ceres_hoe:
-            - stop
-
-        # Check if fully grown (age 7 for wheat/carrots/potatoes/beetroots, age 3 for nether wart)
-        - define material <context.location.material.name>
-        - define age <context.location.material.age>
-
-        - if <[material]> == nether_wart:
-            - if <[age]> != 3:
-                - stop
-        - else:
-            - if <[age]> != 7:
-                - stop
-
-        # Check if player has seeds (NEW)
-        - choose <[material]>:
-            - case wheat:
-                - define seed_item wheat_seeds
-            - case carrots:
-                - define seed_item carrot
-            - case potatoes:
-                - define seed_item potato
-            - case beetroots:
-                - define seed_item beetroot_seeds
-            - case nether_wart:
-                - define seed_item nether_wart
-
-        - if !<player.inventory.contains_item[<[seed_item]>]>:
-            - stop
-
-        # Take 1 seed from inventory (NEW)
-        - take <[seed_item]> qty:1
-
-        # Replant
-        - wait 1t
-        - modifyblock <context.location> <[material]>[age=0]
-
-        # Optional: Particle effect
-        - playeffect effect:villager_happy at:<context.location> quantity:5 offset:0.3
-```
-
-**Notes**:
-- `wait 1t` ensures block break completes before replanting
-- Does NOT replant if crop not fully grown (allows early harvest without waste)
-- Does NOT replant if player has no seeds (silent fail, no error message)
-- Works with Demeter activity tracking (break event fires normally, then replant occurs)
-- **Seed consumption means Ceres Hoe is a convenience tool, not infinite farming**
 
 ---
 
@@ -630,22 +542,48 @@ ceres_title_chat:
 
 ---
 
+## Mythic Crafting Integration
+
+The **Ceres Wand** is not a direct crate drop. Instead, the crate drops a **Ceres Wand Blueprint**, and the player must craft the final item using the Mythic Forge.
+
+### Recipe: Ceres Wand
+
+| Ingredient | Source | Quantity |
+|---|---|---|
+| Ceres Wand Blueprint | Ceres Crate (unique item roll) | 1 |
+| Demeter Mythic Fragment | Demeter Base Crate (MYTHIC tier) | 4 |
+| Diamond Block | Survival | 4 |
+
+### How to Craft
+
+1. Right-click the Blueprint or any Demeter Mythic Fragment to open the **Mythic Forge** GUI
+2. The GUI shows the 3x3 recipe layout (display only, not a real crafting table)
+3. Click the result item in slot 26 to craft
+4. System validates all ingredients are in inventory
+5. On success: ingredients consumed, Ceres Wand given, `ceres.item.wand` flag set, server-wide announcement
+
+### Implementation
+
+All Mythic Crafting logic lives in `scripts/emblems/core/crafting.dsc`.
+
+---
+
 ## Progress Display (Profile GUI)
 
 ### Ceres Section
 
 Show Ceres item checklist in `/profile` GUI:
 
-**Title**: `Ceres - Roman Vault`
+**Title**: `Ceres - Roman Grove`
 
 **Unlock Requirement**: Must have obtained at least 1 Ceres Key (or opened 1 Ceres Crate)
 
 **Checklist**:
 ```
-Ceres Hoe:         [✓] Obtained  /  [✗] Locked
+Head of Demeter:   [✓] Obtained  /  [✗] Locked
 Ceres Title:       [✓] Obtained  /  [✗] Locked
 Yellow Shulker:    [✓] Obtained  /  [✗] Locked
-Ceres Wand:        [✓] Obtained  /  [✗] Locked
+Ceres Wand:        [✓] Obtained  /  [✗] Locked (via Blueprint + Crafting)
 
 Progress: 2 / 4 items
 ```
@@ -667,7 +605,7 @@ See `docs/testing.md` for full list. Key commands:
 
 ### Toggle Item Obtained
 ```
-/ceresadmin <player> item hoe <true|false>
+/ceresadmin <player> item head <true|false>
 /ceresadmin <player> item title <true|false>
 /ceresadmin <player> item shulker <true|false>
 /ceresadmin <player> item wand <true|false>
@@ -695,13 +633,13 @@ Simulates a Ceres crate roll for the executing player (does not consume key).
 2. Right-click key
 3. Roll: 50/50 → Path B (Unique Item)
 4. Player has 0 items → All 4 available
-5. Random selection: Ceres Hoe
-6. Player receives hoe + flag set
-7. Message: "<&b>[CERES]<&r> <&d>Ceres Hoe<&r> <&e>UNIQUE ITEM!"
+5. Random selection: Head of Demeter
+6. Player receives head + flag set
+7. Message: "<&b>[CERES]<&r> <&d>Head of Demeter<&r> <&e>UNIQUE ITEM!"
 
 ### Test 2: Second Key (God Apple)
 
-1. Player has 1 item (hoe)
+1. Player has 1 item (head)
 2. Use second Ceres Key
 3. Roll: Path A → God Apple
 4. Player receives enchanted golden apple
@@ -715,13 +653,13 @@ Simulates a Ceres crate roll for the executing player (does not consume key).
 4. Player receives god apple
 5. Message: "<&b>[CERES]<&r> Enchanted Golden Apple <&7>(All items obtained)"
 
-### Test 4: Hoe Auto-Replant
+### Test 4: Mythic Crafting (Ceres Wand)
 
-1. Player holds Ceres Hoe
-2. Break fully-grown wheat
-3. Wheat drops items (seeds + wheat)
-4. 1 tick later, wheat replanted at same location (age 0)
-5. Particle effect plays
+1. Player has `ceres_wand_blueprint` + 4x `demeter_mythic_fragment` + 4x diamond blocks
+2. Right-click blueprint or fragment to open Mythic Forge GUI
+3. Click result slot (slot 26) to craft
+4. Ingredients consumed, Ceres Wand given, flag set
+5. Announcement: server-wide crafting message
 
 ### Test 5: Wand Bee Summon
 
@@ -743,7 +681,7 @@ Simulates a Ceres crate roll for the executing player (does not consume key).
 
 ### Ceres Key Rarity
 
-**Drop Rate**: 1% from Demeter Crates (OLYMPIAN tier)
+**Drop Rate**: 1% from Demeter Crates (OLYMPIAN tier), 2% with Demeter emblem unlocked
 
 **Expected Keys**:
 - 100 Demeter Keys opened → ~1 Ceres Key
@@ -755,10 +693,10 @@ Simulates a Ceres crate roll for the executing player (does not consume key).
 
 ### Item Power Levels
 
-- **Hoe**: QoL (quality of life), saves replanting time but doesn't break balance
+- **Head of Demeter**: Pure collectible, no gameplay impact
 - **Title**: Pure cosmetic, no gameplay impact
 - **Shulker**: Utility, standard item
-- **Wand**: Moderate combat utility, 30s cooldown prevents spam
+- **Wand**: Moderate combat utility, 30s cooldown prevents spam (requires Mythic Crafting)
 
 **Verdict**: Ceres items are **prestige/cosmetic** more than power upgrades
 

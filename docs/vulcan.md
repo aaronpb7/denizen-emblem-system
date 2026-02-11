@@ -4,11 +4,11 @@
 
 **Vulcan** is the Roman god of fire and the forge, representing **meta-progression**—a premium layer accessible only through rare Hephaestus Crate rolls.
 
-**Access**: Obtain Vulcan Keys (1% drop from Hephaestus Crate OLYMPIAN tier)
+**Access**: Obtain Vulcan Keys (1% drop from Hephaestus Crate OLYMPIAN tier, 2% with Hephaestus emblem unlocked)
 
 **Mechanics**: 50/50 chance between god apple and finite unique items
 
-**Goal**: Collect all 4 Vulcan items (one-time unlocks per player)
+**Goal**: Collect all 4 Vulcan items: Title, Shulker, Pickaxe (via Blueprint + Crafting), Head of Hephaestus
 
 **Relationship**: Vulcan is to Hephaestus as Ceres is to Demeter (mining vs farming)
 
@@ -118,9 +118,9 @@
 
 ### Finite Item Pool (4 items total)
 
-1. **Vulcan Pickaxe** (Netherite pickaxe, auto-smelt toggle)
+1. **Vulcan Pickaxe** (Netherite pickaxe, auto-smelt toggle) — obtained via **Blueprint + Mythic Crafting**, not a direct drop
 2. **Vulcan Title** (Cosmetic chat title unlock)
-3. **Vulcan Forge Charm** (Fire resistance passive)
+3. **Head of Hephaestus** (Player head collectible)
 4. **Gray Shulker Box** (Standard shulker box item)
 
 ### Progression Rules
@@ -143,6 +143,8 @@
 **Material**: `NETHERITE_PICKAXE`
 
 **Display Name**: `<&8><&l>VULCAN PICKAXE<&r>`
+
+**Obtained via**: Mythic Crafting (Blueprint from Vulcan Crate + 4x Hephaestus Mythic Fragment + 4x Diamond Block)
 
 **Lore**:
 ```
@@ -245,57 +247,24 @@ vulcan_title_chat:
 
 ---
 
-### 3. Vulcan Forge Charm (LEGENDARY)
+### 3. Head of Hephaestus (COLLECTIBLE)
 
-**Material**: `MAGMA_CREAM` (or `BLAZE_POWDER`)
+**Material**: Player Head (custom texture)
 
-**Display Name**: `<&8><&l>VULCAN FORGE CHARM<&r>`
+**Display Name**: `<&8>Head of Hephaestus<&r>`
 
 **Lore**:
 ```
-<&d>MYTHIC
+<&7>A divine effigy of Hephaestus,
+<&7>god of the forge.
 
-<&7>A charm imbued with Vulcan's
-<&7>eternal flames.
-
-<&e>Hold in offhand for permanent
-<&e>Fire Resistance
-
+<&8>Decorative collectible
 <&8>Unique - One per player
 ```
 
-**NBT**:
-- Enchantment: `mending:1` (hidden, for glint)
+**Flag**: `vulcan.item.head`
 
-**Mechanics**: Passive fire resistance when held in offhand
-- Continuously grants Fire Resistance effect
-- No cooldown (always active while held)
-- Optional: Light particles around player
-
-**Implementation**:
-```yaml
-vulcan_charm_effect:
-    type: world
-    debug: false
-    events:
-        on player holds vulcan_forge_charm:
-        - cast fire_resistance duration:infinite <player> no_icon no_ambient
-
-        on player stops holding vulcan_forge_charm:
-        - cast fire_resistance remove <player>
-
-vulcan_charm_tick:
-    type: world
-    debug: false
-    events:
-        on system time secondly every:5:
-        - foreach <server.online_players> as:p:
-            - if <[p].offhand_item.script.name.if_null[null]> == vulcan_forge_charm:
-                - if !<[p].has_effect[fire_resistance]>:
-                    - cast fire_resistance duration:infinite <[p]> no_icon no_ambient
-```
-
-**Flag**: `vulcan.item.charm`
+**Purpose**: Rare collectible/decorative item
 
 ---
 
@@ -308,7 +277,7 @@ vulcan_charm_tick:
 **Lore**:
 ```
 <&7>A rare shulker box from
-<&7>Vulcan's personal vault.
+<&7>Vulcan's personal crucible.
 
 <&8>Standard shulker box
 <&8>Unique - One per player
@@ -319,6 +288,32 @@ vulcan_charm_tick:
 **Purpose**: Rare/cosmetic utility item (unique color)
 
 **Flag**: `vulcan.item.shulker`
+
+---
+
+## Mythic Crafting Integration
+
+The **Vulcan Pickaxe** is not a direct crate drop. Instead, the crate drops a **Vulcan Pickaxe Blueprint**, and the player must craft the final item using the Mythic Forge.
+
+### Recipe: Vulcan Pickaxe
+
+| Ingredient | Source | Quantity |
+|---|---|---|
+| Vulcan Pickaxe Blueprint | Vulcan Crate (unique item roll) | 1 |
+| Hephaestus Mythic Fragment | Hephaestus Base Crate (MYTHIC tier) | 4 |
+| Diamond Block | Survival | 4 |
+
+### How to Craft
+
+1. Right-click the Blueprint or any Hephaestus Mythic Fragment to open the **Mythic Forge** GUI
+2. The GUI shows the 3x3 recipe layout (display only, not a real crafting table)
+3. Click the result item in slot 26 to craft
+4. System validates all ingredients are in inventory
+5. On success: ingredients consumed, Vulcan Pickaxe given, `vulcan.item.pickaxe` flag set, server-wide announcement
+
+### Implementation
+
+All Mythic Crafting logic lives in `scripts/emblems/core/crafting.dsc`.
 
 ---
 
@@ -334,9 +329,9 @@ Show Vulcan item checklist in `/profile` GUI:
 
 **Checklist**:
 ```
-Vulcan Pickaxe:      [✓] Obtained  /  [✗] Locked
+Vulcan Pickaxe:      [✓] Obtained  /  [✗] Locked (via Blueprint + Crafting)
 Vulcan Title:        [✓] Obtained  /  [✗] Locked
-Vulcan Forge Charm:  [✓] Obtained  /  [✗] Locked
+Head of Hephaestus:  [✓] Obtained  /  [✗] Locked
 Gray Shulker Box:    [✓] Obtained  /  [✗] Locked
 
 Progress: 2 / 4 items
@@ -359,7 +354,7 @@ Progress: 2 / 4 items
 ```
 /vulcanadmin <player> item pickaxe <true|false>
 /vulcanadmin <player> item title <true|false>
-/vulcanadmin <player> item charm <true|false>
+/vulcanadmin <player> item head <true|false>
 /vulcanadmin <player> item shulker <true|false>
 ```
 
@@ -412,12 +407,12 @@ Simulates a Vulcan crate roll for the executing player (does not consume key).
 3. Mine iron ore → Drops iron ingot instead of raw iron
 4. Flame particles appear at break location
 
-### Test 5: Forge Charm Fire Resistance
+### Test 5: Mythic Crafting (Vulcan Pickaxe)
 
-1. Player holds Vulcan Forge Charm in offhand
-2. Fire Resistance effect applied
-3. Player takes no fire/lava damage
-4. Effect removed when charm moved out of offhand
+1. Player has `vulcan_pickaxe_blueprint` + 4x `hephaestus_mythic_fragment` + 4x diamond blocks
+2. Right-click blueprint or fragment to open Mythic Forge GUI
+3. Click result slot (slot 26) to craft
+4. Ingredients consumed, Vulcan Pickaxe given, flag set
 
 ### Test 6: Title Display
 
@@ -431,7 +426,7 @@ Simulates a Vulcan crate roll for the executing player (does not consume key).
 
 ### Vulcan Key Rarity
 
-**Drop Rate**: 1% from Hephaestus Crates (OLYMPIAN tier)
+**Drop Rate**: 1% from Hephaestus Crates (OLYMPIAN tier), 2% with Hephaestus emblem unlocked
 
 **Expected Keys**:
 - 100 Hephaestus Keys opened → ~1 Vulcan Key
@@ -443,9 +438,9 @@ Simulates a Vulcan crate roll for the executing player (does not consume key).
 
 ### Item Power Levels
 
-- **Vulcan Pickaxe**: Moderate mining utility (auto-smelt is convenient but not overpowered)
+- **Vulcan Pickaxe**: Moderate mining utility, auto-smelt (requires Mythic Crafting)
 - **Vulcan Title**: Pure cosmetic, no gameplay impact
-- **Vulcan Forge Charm**: Strong utility (permanent fire resistance in offhand slot)
+- **Head of Hephaestus**: Pure collectible, no gameplay impact
 - **Gray Shulker**: Utility, standard item
 
 **Verdict**: Vulcan items are **prestige/utility** more than raw power upgrades
@@ -454,15 +449,15 @@ Simulates a Vulcan crate roll for the executing player (does not consume key).
 
 ## Comparison: Ceres vs Vulcan vs Mars
 
-| Aspect | Ceres (Farming) | Vulcan (Mining) | Mars (Combat) |
+| Aspect | Ceres | Vulcan | Mars |
 |--------|----------------|-----------------|---------------|
-| **Source** | Demeter OLYMPIAN (1%) | Hephaestus OLYMPIAN (1%) | Heracles OLYMPIAN (1%) |
+| **Source** | Demeter OLYMPIAN (1-2%) | Hephaestus OLYMPIAN (1-2%) | Heracles OLYMPIAN (1-2%) |
 | **System** | 50/50 (god apple / unique) | 50/50 (god apple / unique) | 50/50 (god apple / unique) |
 | **Pool Size** | 4 items | 4 items | 4 items |
-| **Tool** | Ceres Hoe (auto-replant) | Vulcan Pickaxe (auto-smelt) | Mars Sword (lifesteal) |
+| **Head** | Head of Demeter (collectible) | Head of Hephaestus (collectible) | Head of Heracles (collectible) |
 | **Title** | [Ceres' Chosen] (gold) | [Vulcan's Chosen] (gray) | [Mars' Chosen] (dark red) |
-| **Shulker** | Yellow | Gray | Gray |
-| **Special** | Ceres Wand (bee summon) | Forge Charm (fire resist) | Mars Shield (resistance buff) |
+| **Shulker** | Yellow | Gray | Red |
+| **Crafted** | Ceres Wand (bee summon, via Blueprint) | Vulcan Pickaxe (auto-smelt, via Blueprint) | Mars Shield (resistance buff, via Blueprint) |
 | **Theme** | Agriculture, growth | Fire, metalworking | War, protection |
 | **Border Color** | Cyan | Gray | Crimson/Dark Red |
 
@@ -477,7 +472,7 @@ vulcan.crates_opened              # Total crates opened
 # Unique Items (Finite Pool)
 vulcan.item.pickaxe               # Boolean: Has Vulcan Pickaxe
 vulcan.item.title                 # Boolean: Has Vulcan Title
-vulcan.item.charm                 # Boolean: Has Vulcan Forge Charm
+vulcan.item.head                  # Boolean: Has Head of Hephaestus
 vulcan.item.shulker               # Boolean: Has Gray Shulker
 
 # Meta Stats
@@ -496,10 +491,10 @@ The Vulcan Meta-Progression adds **meaningful endgame rewards** for dedicated mi
 
 Key design principles:
 - **Mirrors Ceres/Mars structure**: Same 50/50 system, 4 finite items
-- **Mining-themed**: Auto-smelt pickaxe, fire resistance charm, forge titles
+- **Forge-themed**: Auto-smelt pickaxe (via Mythic Crafting), head collectible, forge titles
 - **Ultra-rare**: ~800 Hephaestus Keys needed on average to complete
 - **Quality-of-life**: Items provide utility, not raw power
 - **Cosmetic prestige**: Vulcan's Chosen title marks elite players
 - **Parallel to Hephaestus**: Both systems coexist without interfering
 
-This system transforms MINING from a role into a **complete progression path** with aspirational meta-rewards.
+This system provides a **complete progression path** with aspirational meta-rewards for the Hephaestus emblem.

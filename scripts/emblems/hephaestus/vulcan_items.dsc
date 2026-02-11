@@ -7,6 +7,7 @@
 # - Vulcan Forge Charm (offhand fire resistance + particles)
 # - Gray Shulker Box (rare utility)
 # - Vulcan Title (flag-based chat prefix)
+# - Head of Hephaestus (decorative god head, lightning on place)
 #
 
 # ============================================
@@ -30,6 +31,26 @@ vulcan_pickaxe:
     - <&8>Unique - One per player
     - <empty>
     - <&b><&l><&k>|||<&r> <&b><&l>OLYMPIAN PICKAXE<&r> <&b><&l><&k>|||
+
+# ============================================
+# VULCAN PICKAXE BLUEPRINT
+# ============================================
+
+vulcan_pickaxe_blueprint:
+    type: item
+    material: map
+    display name: <&b>Vulcan Pickaxe Blueprint<&r>
+    enchantments:
+    - mending:1
+    mechanisms:
+        hides: ENCHANTS
+    lore:
+    - <&7>Forge diagrams detailing the
+    - <&7>creation of Vulcan's Pickaxe.
+    - <empty>
+    - <&e>Right-click to view recipe.
+    - <empty>
+    - <&b><&l><&k>|||<&r> <&b><&l>OLYMPIAN BLUEPRINT<&r> <&b><&l><&k>|||
 
 # Auto-smelt toggle
 vulcan_pickaxe_toggle:
@@ -142,3 +163,23 @@ vulcan_forge_charm_effect:
 # Awarded directly from crate (TITLE type in loot table)
 # Chat integration handled in cosmetics system (ceres_mechanics.dsc)
 #
+
+# ============================================
+# HEAD OF HEPHAESTUS (TROPHY)
+# ============================================
+
+hephaestus_head:
+    type: item
+    material: player_head
+    mechanisms:
+        skull_skin: b8d496e9-3eb3-494e-8ada-4fb9ce7bcd85|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWVkMTQ2Zjk1ZTEzMmZhNjM5NTNjNTI4ZjZhMWIzNDk5ZTg3MGM0NmEyZTIyODk5YjVmMzAwODQ0ZDgyZDJlNyJ9fX0=
+    display name: <&b>Head of Hephaestus<&r>
+    lore:
+    - <&7>A divine effigy of Hephaestus,
+    - <&7>god of the forge and flame.
+    - <empty>
+    - <&e>Right-click to pick up.
+    - <empty>
+    - <&8>Unique - One per player
+    - <empty>
+    - <&b><&l><&k>|||<&r> <&b><&l>OLYMPIAN TROPHY<&r> <&b><&l><&k>|||

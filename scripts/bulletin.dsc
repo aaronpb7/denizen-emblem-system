@@ -9,25 +9,6 @@ bulletin_data:
     type: data
     version: 5
 
-# ==================== JOIN EVENT ====================
-
-bulletin_join_handler:
-    type: world
-    debug: false
-    events:
-        on player joins:
-        - define current_version <script[bulletin_data].data_key[version]>
-        - define seen_version <player.flag[bulletin.seen_version].if_null[0]>
-        # Check if player hasn't seen latest bulletin
-        - if <[seen_version]> < <[current_version]>:
-            - wait 40t
-            - title "title:<&e><&l>New Updates!" "subtitle:<&7>Check <&f>/profile <&7>for the bulletin" fade_in:10t stay:70t fade_out:20t
-            - playsound <player> sound:block_note_block_chime pitch:1.2
-            - narrate " "
-            - narrate "<&e><&l>NEW UPDATES AVAILABLE!"
-            - narrate "<&7>Type <&f>/profile <&7>and click the <&e>Bulletin <&7>to see what's new."
-            - narrate " "
-
 # ==================== BULLETIN GUI ====================
 
 bulletin_inventory:
@@ -38,7 +19,7 @@ bulletin_inventory:
     size: 45
     slots:
     - [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler]
-    - [bulletin_filler] [bulletin_filler] [bulletin_mining_new] [bulletin_combat_new] [bulletin_promachos_new] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler]
+    - [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_promachos_new] [bulletin_combat_new] [bulletin_mining_new] [bulletin_filler] [bulletin_filler] [bulletin_filler]
     - [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler]
     - [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler]
     - [bulletin_back_button] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler] [bulletin_filler]
@@ -64,75 +45,66 @@ bulletin_promachos_new:
     - <empty>
     - <&6><&l>NEW PROGRESSION SYSTEM
     - <&7>A complete overhaul to server progression!
-    - <&7>Choose a sacred role and unlock divine rewards.
+    - <&7>Choose an emblem and complete sacred tasks.
     - <empty>
-    - <&e><&l>FARMING ROLE - AVAILABLE NOW!
+    - <&e><&l>EMBLEM OF DEMETER
     - <&6>Demeter<&7>, Goddess of Harvest
     - <&7>• Harvest wheat, breed cows, craft cakes
     - <&7>• Earn <&6>Demeter Keys <&7>from activities
     - <&7>• Open crates for rewards and upgrades
-    - <&7>• Gain <&e>Farming XP <&7>for permanent buffs
-    - <&7>• Unlock <&d>Ceres Vault <&7>meta-progression
+    - <&7>• Unlock <&d>Ceres Grove <&7>meta-progression
     - <empty>
-    - <&6>What You Get<&co>
-    - <&7>• Farming Speed (Haste I/II)
-    - <&7>• Extra Crop Drops (+5% to +25%)
+    - <&6>Rewards<&co>
     - <&7>• Mythic tools and consumables
     - <&7>• Exclusive cosmetic titles
     - <empty>
-    - <&c>Combat <&7>and <&8>Mining <&7>roles now available!
+    - <&c>Heracles <&7>and <&8>Hephaestus <&7>emblems also available!
     - <empty>
-    - <&e>Type /profile to get started!
+    - <&e>Talk to Promachos to choose your emblem!
 
 bulletin_combat_new:
     type: item
-    material: enchanted_book
-    display name: <&c><&l>29/01 - Combat Role Now Available!
+    material: writable_book
+    display name: <&c><&l>29/01 - Emblem of Heracles!
     lore:
     - <&7><&o>"The hero's path calls to the brave..."
     - <empty>
-    - <&4><&l>COMBAT ROLE - LIVE NOW!
+    - <&4><&l>EMBLEM OF HERACLES
     - <&c>Heracles<&7>, Greatest of Greek Heroes
     - <&7>• Slay pillagers, defend villages, trade emeralds
     - <&7>• Earn <&c>Heracles Keys <&7>from combat deeds
     - <&7>• Open crates for weapons and upgrades
-    - <&7>• Gain <&e>Combat XP <&7>for permanent buffs
     - <&7>• Unlock <&d>Mars Arena <&7>meta-progression
     - <empty>
-    - <&c>What You Get<&co>
-    - <&7>• Low Health Regeneration (auto-trigger)
-    - <&7>• Vanilla XP Bonus (+5% to +25%)
+    - <&c>Rewards<&co>
     - <&7>• Mythic weapons and gear
     - <&7>• Exclusive combat titles
     - <empty>
-    - <&6>Farming <&7>and <&7>Mining <&7>roles also available!
+    - <&6>Demeter <&7>and <&8>Hephaestus <&7>emblems also available!
     - <empty>
-    - <&e>Talk to Promachos to choose your path!
+    - <&e>Talk to Promachos to choose your emblem!
 
 bulletin_mining_new:
     type: item
     material: enchanted_book
-    display name: <&8><&l>31/01 - Mining Role Now Available!
+    display name: <&8><&l>31/01 - Emblem of Hephaestus!
     lore:
     - <&8><&o>"The forge awaits those who shape the earth..."
     - <empty>
-    - <&8><&l>MINING ROLE - LIVE NOW!
+    - <&8><&l>EMBLEM OF HEPHAESTUS
     - <&8>Hephaestus<&7>, God of the Forge
     - <&7>• Mine iron ore, smelt in blast furnace, craft golems
     - <&7>• Earn <&8>Hephaestus Keys <&7>from forge work
     - <&7>• Open crates for tools and upgrades
-    - <&7>• Gain <&8>Mining XP <&7>for permanent buffs
-    - <&7>• Unlock <&d>Vulcan Vault <&7>meta-progression
+    - <&7>• Unlock <&d>Vulcan Crucible <&7>meta-progression
     - <empty>
-    - <&8>What You Get<&co>
-    - <&7>• Mining Speed (Haste I/II)
-    - <&7>• Ore XP Bonus (+5% to +25%)
+    - <&8>Rewards<&co>
     - <&7>• Mythic pickaxes and consumables
     - <&7>• Exclusive forge titles
     - <empty>
-    - <&6>Farming <&7>and <&c>Combat <&7>roles also available!
+    - <&6>Demeter <&7>and <&c>Heracles <&7>emblems also available!
     - <empty>
-    - <&e>Talk to Promachos to choose your path!
+    - <&e>Talk to Promachos to choose your emblem!
 
 # ==================== PROFILE ICON ====================
 

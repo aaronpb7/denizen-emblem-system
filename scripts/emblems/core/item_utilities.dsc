@@ -22,3 +22,24 @@ give_item:
     definitions: item|quantity
     script:
     - give <[item]> quantity:<[quantity]>
+
+# ============================================
+# GOD HEAD LIGHTNING - Placement Effect
+# ============================================
+
+god_head_placement:
+    type: world
+    debug: false
+    events:
+        after player places demeter_head|heracles_head|hephaestus_head:
+        - flag <context.location> god_head:<context.item_in_hand.script.name>
+        - strike <context.location>
+
+        on player right clicks player_head:
+        - if !<context.location.has_flag[god_head]>:
+            - stop
+        - define head_type <context.location.flag[god_head]>
+        - flag <context.location> god_head:!
+        - modifyblock <context.location> air
+        - give <item[<[head_type]>]>
+        - playsound <player> sound:entity_item_pickup volume:0.5

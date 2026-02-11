@@ -6,6 +6,7 @@
 # - Ceres Key (opens Ceres crate, 50/50 god apple vs unique item)
 # - Ceres Hoe (netherite, unbreakable, auto-replant)
 # - Ceres Wand (bee summoner staff)
+# - Head of Demeter (decorative god head, lightning on place)
 # - Yellow Shulker Box (rare utility)
 #
 
@@ -79,3 +80,43 @@ ceres_wand:
     - <&8>Unique - One per player
     - <empty>
     - <&b><&l><&k>|||<&r> <&b><&l>OLYMPIAN WAND<&r> <&b><&l><&k>|||
+
+# ============================================
+# CERES WAND BLUEPRINT
+# ============================================
+
+ceres_wand_blueprint:
+    type: item
+    material: map
+    display name: <&b>Ceres Wand Blueprint<&r>
+    enchantments:
+    - mending:1
+    mechanisms:
+        hides: ENCHANTS
+    lore:
+    - <&7>Ancient schematics detailing
+    - <&7>the construction of Ceres' Wand.
+    - <empty>
+    - <&e>Right-click to view recipe.
+    - <empty>
+    - <&b><&l><&k>|||<&r> <&b><&l>OLYMPIAN BLUEPRINT<&r> <&b><&l><&k>|||
+
+# ============================================
+# HEAD OF DEMETER (TROPHY)
+# ============================================
+
+demeter_head:
+    type: item
+    material: player_head
+    mechanisms:
+        skull_skin: 7fef7fb4-e604-4b09-8eb1-d29ad0c0ed10|eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzQyMmE3NTU4NmZlOTUxMDgwNjMzMGE3YWUxYWY5Nzg0NjhjNjZkMmJkODExMWI4Njc1OWQxYzY2ZWI3N2M1OSJ9fX0=
+    display name: <&b>Head of Demeter<&r>
+    lore:
+    - <&7>A divine effigy of Demeter,
+    - <&7>goddess of the harvest.
+    - <empty>
+    - <&e>Right-click to pick up.
+    - <empty>
+    - <&8>Unique - One per player
+    - <empty>
+    - <&b><&l><&k>|||<&r> <&b><&l>OLYMPIAN TROPHY<&r> <&b><&l><&k>|||

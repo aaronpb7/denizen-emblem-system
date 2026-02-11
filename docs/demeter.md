@@ -4,7 +4,7 @@
 
 **Demeter** (Δημήτηρ) is the goddess of harvest, agriculture, and fertility.
 
-Players with active role **Georgos (FARMING)** earn progress toward Demeter's emblem through three agricultural activities:
+Players with the **DEMETER** emblem active earn progress toward Demeter's emblem through three agricultural activities:
 1. Harvesting wheat
 2. Breeding cows
 3. Crafting cakes
@@ -15,14 +15,14 @@ Each activity has:
 
 ---
 
-## Role Requirement
+## Emblem Requirement
 
 **CRITICAL**: All Demeter tracking ONLY occurs when:
 ```
-<player.flag[role.active]> == FARMING
+<player.flag[emblem.active]> == DEMETER
 ```
 
-If player has any other role, NO counters increment, NO keys drop, NO components awarded.
+If player has any other emblem, NO counters increment, NO keys drop, NO components awarded.
 
 Players may still:
 - Use Demeter Keys (open crates)
@@ -40,7 +40,7 @@ Players may still:
 **Tracking**:
 - Event: `after player breaks wheat`
 - Condition: `<context.location.material.age> == 7` (fully grown only)
-- Role gate: `<player.flag[role.active]> == FARMING`
+- Emblem gate: `<player.flag[emblem.active]> == DEMETER`
 
 **Counter Flag**: `demeter.wheat.count`
 
@@ -93,7 +93,7 @@ Players may still:
 **Tracking**:
 - Event: `after cow breeds`
 - Context extraction: `<context.breeder>` (must be player)
-- Role gate: `<player.flag[role.active]> == FARMING`
+- Emblem gate: `<player.flag[emblem.active]> == DEMETER`
 
 **Counter Flag**: `demeter.cows.count`
 
@@ -131,7 +131,7 @@ Players may still:
 
 **Tracking**:
 - Event: `after player crafts cake`
-- Role gate: `<player.flag[role.active]> == FARMING`
+- Emblem gate: `<player.flag[emblem.active]> == DEMETER`
 
 **Counter Flag**: `demeter.cakes.count`
 
@@ -258,11 +258,11 @@ Components may be implemented as **physical items** or **flags only**. Recommend
 
 ### Demeter Section
 
-Show in `/profile` GUI when role = FARMING (or always, grayed out if inactive):
+Show in `/profile` GUI when emblem = DEMETER (or always, grayed out if inactive):
 
 **Title**: `Demeter - Goddess of Harvest`
 
-**Active Role Indicator**:
+**Active Emblem Indicator**:
 - If active: `<&a>● ACTIVE`
 - If inactive: `<&8>○ Inactive`
 
@@ -286,44 +286,6 @@ Cakes: [███░░░░░░░] 95 / 500  (19%)
 - If all components: `<&e>⚠ READY TO UNLOCK!` (clickable → Promachos)
 - If incomplete: `<&7>In Progress (1/3 components)`
 - If unlocked: `<&a>✓ UNLOCKED`
-
----
-
-## Rank System
-
-In addition to component milestones, Demeter has a **separate XP-based rank progression system** that provides **permanent passive buffs** while the FARMING role is active.
-
-### Rank Tiers
-
-| Rank | XP Required | Crop Bonus | Speed Bonus | Key Reward |
-|------|-------------|------------|-------------|------------|
-| Acolyte of the Farm | 1,000 | +5% | None | 5 keys |
-| Disciple of the Farm | 3,500 | +10% | Speed I | 5 keys |
-| Hero of the Farm | 9,750 | +15% | Speed I | 5 keys |
-| Champion of the Farm | 25,375 | +20% | Speed I | 5 keys |
-| Legend of the Farm | 64,438 | +25% | Speed II | 10 keys |
-
-### XP Sources
-
-**Crop Harvesting (fully grown only):**
-- Wheat, Carrots, Potatoes, Beetroots: 2 XP
-- Pumpkin, Melon: 5 XP
-- Nether Wart: 3 XP
-- Cocoa, Sugar Cane, Cactus, Kelp, Bamboo: 1 XP
-
-**Animal Breeding:**
-- Horse: 30 XP | Turtle: 20 XP | Llama/Hoglin: 12 XP
-- Cow/Sheep/Pig: 10 XP | Rabbit/Bee: 8 XP | Chicken: 6 XP
-
-**Food Crafting:**
-- Rabbit Stew: 15 XP | Cake: 12 XP | Pumpkin Pie: 10 XP
-- Suspicious Stew: 8 XP | Beetroot Soup: 6 XP | Mushroom Stew: 4 XP
-
-### Relationship to Components
-
-- Ranks and components are **parallel systems**
-- You can achieve ranks without components, and vice versa
-- Ranks provide gameplay benefits; components unlock emblems
 
 ---
 
@@ -378,7 +340,7 @@ demeter_wheat_tracking:
     type: world
     events:
         after player breaks wheat:
-        - if <player.flag[role.active]> != FARMING:
+        - if <player.flag[emblem.active]> != DEMETER:
             - stop
         - if <context.location.material.age> != 7:
             - stop
@@ -415,7 +377,7 @@ demeter_cow_tracking:
         - define breeder <context.breeder>
         - if <[breeder]> == null || !<[breeder].is_player>:
             - stop
-        - if <[breeder].flag[role.active]> != FARMING:
+        - if <[breeder].flag[emblem.active]> != DEMETER:
             - stop
 
         # Increment counter
@@ -447,7 +409,7 @@ demeter_cake_tracking:
     type: world
     events:
         after player crafts cake:
-        - if <player.flag[role.active]> != FARMING:
+        - if <player.flag[emblem.active]> != DEMETER:
             - stop
 
         # Increment counter (context.amount handles shift-click)
@@ -479,7 +441,7 @@ demeter_cake_tracking:
 
 ### Scenario 1: Fresh Player
 
-1. Player selects Georgos role
+1. Player selects Demeter emblem
 2. Harvest 150 wheat → Receives 1 key
 3. Harvest 150 more → Receives 1 key (total 2 keys, 300 wheat)
 4. Continue to 15,000 → Receives Wheat Component + 100 keys total
@@ -489,12 +451,12 @@ demeter_cake_tracking:
 8. Continue to 500 → Receives Cake Component + 100 keys total
 9. Visit Promachos → Unlock Demeter emblem
 
-### Scenario 2: Role Switching
+### Scenario 2: Emblem Switching
 
-1. Player has 500 wheat as Georgos (3 keys earned)
-2. Switch to Metallourgos
+1. Player has 500 wheat with Demeter emblem (3 keys earned)
+2. Switch to Hephaestus emblem
 3. Harvest 500 more wheat → NO keys, counter stays 500
-4. Switch back to Georgos
+4. Switch back to Demeter emblem
 5. Harvest 1 wheat → Counter now 501, no new key (next key at 600)
 
 ### Scenario 3: Component Once-Only
@@ -513,10 +475,16 @@ demeter_cake_tracking:
 
 ## Performance Considerations
 
-- **Early exit**: Role gate checks first (cheapest operation)
+- **Early exit**: Emblem gate checks first (cheapest operation)
 - **No loops**: Single event, single increment, bounded math
 - **Flag reads**: Use `.if_null[0]` to avoid errors on first access
 - **Announcement spam**: Only on milestones (not every key)
+
+---
+
+## MYTHIC Pool Addition: Demeter Mythic Fragment
+
+The Demeter base crate MYTHIC tier can also drop a **Demeter Mythic Fragment** — a crafting ingredient used in the Mythic Forge system. Players combine 4 fragments with a Ceres Wand Blueprint and 4 Diamond Blocks to forge a Ceres Wand.
 
 ---
 

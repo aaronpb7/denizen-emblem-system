@@ -77,20 +77,25 @@ This project uses Denizen, a scripting language for Minecraft servers.
 ## Emblem Progression System
 
 **Quick Reference:**
-- 3 roles: FARMING (Demeter), MINING (Hephaestus), COMBAT (Heracles)
-- Role-based activity tracking with key rewards
+- 4 emblems: DEMETER, HEPHAESTUS, HERACLES, TRITON
+- Emblem-based activity tracking with key rewards
 - Crate system with 5 tiers (MORTAL → OLYMPIAN)
-- Component milestones and rank progression
-- Meta-progression via Roman god crates (Ceres, Vulcan, Mars)
+- Component milestones (3 per emblem → emblem unlock)
+- Player progression: 7 ranks (Uninitiated → Hemitheos), 1 rank per emblem earned
+- Meta-progression via Roman god crates (Ceres, Vulcan, Mars, Neptune)
 
 **Documentation:**
 - `docs/SYSTEM_OVERVIEW.md` - Complete system reference
 - `docs/STYLE.md` - Colors, sounds, message patterns, UI conventions
 - `docs/EMBLEM_TEMPLATE.md` - Implementation checklist for new emblems
-- `docs/demeter.md` - Farming role (activities, ranks, crates)
-- `docs/ceres.md` - Farming meta-progression
-- `docs/heracles.md` - Combat role details
-- `docs/mars.md` - Combat meta-progression
+- `docs/demeter.md` - Demeter emblem (activities, crates)
+- `docs/ceres.md` - Ceres meta-progression
+- `docs/heracles.md` - Heracles emblem details
+- `docs/mars.md` - Mars meta-progression
+- `docs/hephaestus.md` - Hephaestus emblem details
+- `docs/vulcan.md` - Vulcan meta-progression
+- `docs/triton.md` - Triton emblem (Tier 2, activities, crates)
+- `docs/neptune.md` - Neptune meta-progression
 - `docs/promachos.md` - NPC interactions
 - `docs/flags.md` - Flag reference
 - `docs/testing.md` - Testing procedures and admin commands
@@ -100,45 +105,65 @@ This project uses Denizen, a scripting language for Minecraft servers.
 scripts/
 ├── profile_gui.dsc         # Player profile command and GUI
 ├── bulletin.dsc            # Server news/updates system
+├── server_events.dsc       # Join handlers, daily restart
 ├── server_restrictions.dsc # Server rules/restrictions
 └── emblems/
     ├── core/
-    │   ├── roles.dsc           # Role definitions
+    │   ├── roles.dsc           # Emblem definitions
     │   ├── promachos.dsc       # NPC interactions
+    │   ├── crafting.dsc        # Mythic Forge crafting system
     │   └── item_utilities.dsc  # Shared item helpers
-    ├── demeter/            # FARMING role
+    ├── demeter/            # DEMETER emblem + Ceres meta
     │   ├── demeter_events.dsc
     │   ├── demeter_items.dsc
     │   ├── demeter_crate.dsc
     │   ├── demeter_blessing.dsc
-    │   └── demeter_ranks.dsc
-    ├── ceres/              # FARMING meta
     │   ├── ceres_items.dsc
     │   ├── ceres_crate.dsc
     │   └── ceres_mechanics.dsc
-    ├── heracles/           # COMBAT role
+    ├── heracles/           # HERACLES emblem + Mars meta
     │   ├── heracles_events.dsc
     │   ├── heracles_items.dsc
     │   ├── heracles_crate.dsc
     │   ├── heracles_blessing.dsc
-    │   └── heracles_ranks.dsc
-    ├── mars/               # COMBAT meta
     │   ├── mars_items.dsc
     │   └── mars_crate.dsc
-    ├── hephaestus/         # MINING role (placeholder)
+    ├── hephaestus/         # HEPHAESTUS emblem + Vulcan meta
+    │   ├── hephaestus_events.dsc
+    │   ├── hephaestus_items.dsc
+    │   ├── hephaestus_crate.dsc
+    │   ├── hephaestus_blessing.dsc
+    │   ├── vulcan_items.dsc
+    │   └── vulcan_crate.dsc
+    ├── triton/             # TRITON emblem (Tier 2) + Neptune meta
+    │   ├── triton_npc.dsc
+    │   ├── triton_events.dsc
+    │   ├── triton_items.dsc
+    │   ├── triton_crate.dsc
+    │   ├── triton_blessing.dsc
+    │   ├── neptune_items.dsc
+    │   └── neptune_crate.dsc
     └── admin/
-        └── admin_commands.dsc
+        ├── admin_commands.dsc
+        └── migration.dsc
 ```
 
 **Admin Commands:**
-- `/roleadmin` - Set player role
+- `/emblemadmin` - Set player emblem
 - `/demeteradmin` - Demeter progression
 - `/heraclesadmin` - Heracles progression
-- `/farmingadmin` - Farming XP/ranks
+- `/hephaestusadmin` - Hephaestus progression
+- `/rankadmin` - View/set emblem rank
 - `/ceresadmin` - Ceres items
+- `/marsadmin` - Mars items
+- `/vulcanadmin` - Vulcan items
+- `/tritonadmin` - Triton progression
+- `/neptuneadmin` - Neptune items
 - `/checkkeys` - View key tracking
 - `/testroll` - Simulate crate rolls
 - `/emblemreset` - Full player reset
+- `/invsee` - View player inventory (offline support)
+- `/endersee` - View player ender chest (offline support)
 
 See `docs/testing.md` for full command reference.
 
@@ -161,4 +186,11 @@ Server news and updates shown via `/profile`.
 ### Flag Pattern
 ```
 bulletin.seen_version (int) - last bulletin version player viewed
+```
+
+### Emblem Flags
+```
+emblem.active (string)   - active emblem: "DEMETER", "HEPHAESTUS", "HERACLES", or "TRITON"
+emblem.rank (int)        - increments each time an emblem is unlocked
+emblem.migrated (bool)   - whether player has been migrated from old role.active system
 ```

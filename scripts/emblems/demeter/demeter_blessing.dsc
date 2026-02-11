@@ -2,10 +2,10 @@
 # DEMETER BLESSING
 # ============================================
 #
-# Consumable item that boosts all incomplete Demeter activities by +10%
-# - Wheat: +1,500 (10% of 15,000)
-# - Cows: +200 (10% of 2,000)
-# - Cakes: +50 (10% of 500)
+# Consumable item that boosts all incomplete Demeter activities by +5%
+# - Wheat: +750 (5% of 15,000)
+# - Cows: +100 (5% of 2,000)
+# - Cakes: +25 (5% of 500)
 #
 # Only boosts incomplete activities (component not obtained)
 # Caps at requirement (cannot exceed milestone)
@@ -23,10 +23,14 @@ demeter_blessing_usage:
         on player right clicks block with:demeter_blessing:
         - determine cancelled passively
 
-        # Check if all components complete (block use if so)
+        # If all components complete, convert blessing to keys
         - if <player.has_flag[demeter.component.wheat]> && <player.has_flag[demeter.component.cow]> && <player.has_flag[demeter.component.cake]>:
-            - narrate "<&e>All Demeter activities already complete!"
-            - playsound <player> sound:entity_villager_no
+            - take item:demeter_blessing quantity:1
+            - give demeter_key quantity:10
+            - narrate "<&d><&l>DEMETER BLESSING ACTIVATED!<&r>"
+            - narrate "  <&6>All activities complete! <&7>Converted to <&e>10 Demeter Keys<&7>."
+            - playsound <player> sound:block_enchantment_table_use
+            - playeffect effect:villager_happy at:<player.location> quantity:30 offset:1.0
             - stop
 
         # Track boosts for feedback
@@ -35,7 +39,7 @@ demeter_blessing_usage:
         # ===== WHEAT BOOST =====
         - if !<player.has_flag[demeter.component.wheat]>:
             - define current <player.flag[demeter.wheat.count].if_null[0]>
-            - define boost 1500
+            - define boost 750
             - define new_count <[current].add[<[boost]>].min[15000]>
             - define actual_boost <[new_count].sub[<[current]>]>
 
@@ -62,7 +66,7 @@ demeter_blessing_usage:
         # ===== COW BOOST =====
         - if !<player.has_flag[demeter.component.cow]>:
             - define current <player.flag[demeter.cows.count].if_null[0]>
-            - define boost 200
+            - define boost 100
             - define new_count <[current].add[<[boost]>].min[2000]>
             - define actual_boost <[new_count].sub[<[current]>]>
 
@@ -89,7 +93,7 @@ demeter_blessing_usage:
         # ===== CAKE BOOST =====
         - if !<player.has_flag[demeter.component.cake]>:
             - define current <player.flag[demeter.cakes.count].if_null[0]>
-            - define boost 50
+            - define boost 25
             - define new_count <[current].add[<[boost]>].min[500]>
             - define actual_boost <[new_count].sub[<[current]>]>
 

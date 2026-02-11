@@ -4,13 +4,13 @@
 
 **Mars** is the Roman god of war, representing **meta-progression**—a premium layer accessible only through rare Heracles Crate rolls.
 
-**Access**: Obtain Mars Keys (1% drop from Heracles Crate OLYMPIAN tier)
+**Access**: Obtain Mars Keys (1% drop from Heracles Crate OLYMPIAN tier, 2% with Heracles emblem unlocked)
 
 **Mechanics**: 50/50 chance between god apple and finite unique items
 
-**Goal**: Collect all 4 Mars items (one-time unlocks per player)
+**Goal**: Collect all 4 Mars items: Title, Shulker, Shield (via Blueprint + Crafting), Head of Heracles
 
-**Relationship**: Mars is to Heracles as Ceres is to Demeter (combat vs farming)
+**Relationship**: Mars is the Roman counterpart to Heracles, as Ceres is to Demeter
 
 ---
 
@@ -118,10 +118,10 @@
 
 ### Finite Item Pool (4 items total)
 
-1. **Mars Sword** (Netherite sword, lifesteal mechanic)
+1. **Head of Heracles** (Player head collectible)
 2. **Mars Title** (Cosmetic chat title unlock)
-3. **Gray Shulker Box** (Standard shulker box item)
-4. **Mars Shield** (Shield with active resistance buff)
+3. **Red Shulker Box** (Standard shulker box item)
+4. **Mars Shield** (Obtained via Blueprint + Mythic Crafting)
 
 ### Progression Rules
 
@@ -159,7 +159,7 @@
    - Get list of unobtained items (filter by flags)
    - Randomly select one from list
    - Award item (see item definitions below)
-   - Flag as obtained (e.g., mars.item.sword = true)
+   - Flag as obtained (e.g., mars.item.head = true)
    - Narrate: "<&4>[MARS]<&r> <&d><item_name><&r> <&e>UNIQUE ITEM!"
    - Sound: ui_toast_challenge_complete + entity_wither_spawn
    - Server announcement
@@ -174,7 +174,7 @@ roll_mars_outcome:
     script:
     # Check if all items obtained
     - define all_obtained true
-    - if !<player.has_flag[mars.item.sword]>:
+    - if !<player.has_flag[mars.item.head]>:
         - define all_obtained false
     - if !<player.has_flag[mars.item.title]>:
         - define all_obtained false
@@ -199,8 +199,8 @@ roll_mars_outcome:
     # Path B: Unique Item (roll = 2)
     # Get unobtained items
     - define available <list>
-    - if !<player.has_flag[mars.item.sword]>:
-        - define available <[available].include[sword]>
+    - if !<player.has_flag[mars.item.head]>:
+        - define available <[available].include[head]>
     - if !<player.has_flag[mars.item.title]>:
         - define available <[available].include[title]>
     - if !<player.has_flag[mars.item.shulker]>:
@@ -213,14 +213,14 @@ roll_mars_outcome:
 
     # Build result map
     - choose <[chosen]>:
-        - case sword:
-            - define result_map <map[type=UNIQUE;item_id=sword;item=<item[mars_sword]>;display=Mars Sword]>
+        - case head:
+            - define result_map <map[type=UNIQUE;item_id=head;item=<item[mars_head_of_heracles]>;display=Head of Heracles]>
         - case title:
             - define result_map <map[type=UNIQUE;item_id=title;item=<item[book].with[display=<&4><&l>MARS TITLE<&r>;lore=<&7>Cosmetic unlock:|<&4>[Mars' Chosen]<&7> title]>;display=Mars Title]>
         - case shulker:
-            - define result_map <map[type=UNIQUE;item_id=shulker;item=<item[gray_shulker_box]>;display=Gray Shulker Box]>
+            - define result_map <map[type=UNIQUE;item_id=shulker;item=<item[red_shulker_box]>;display=Red Shulker Box]>
         - case shield:
-            - define result_map <map[type=UNIQUE;item_id=shield;item=<item[mars_shield]>;display=Mars Shield]>
+            - define result_map <map[type=UNIQUE;item_id=shield;item=<item[mars_shield_blueprint]>;display=Mars Shield Blueprint]>
 
     - determine <[result_map]>
 ```
@@ -229,53 +229,24 @@ roll_mars_outcome:
 
 ## Mars Items
 
-### 1. Mars Sword (MYTHIC)
+### 1. Head of Heracles (COLLECTIBLE)
 
-**Material**: `NETHERITE_SWORD`
+**Material**: Player Head (custom texture)
 
-**Display Name**: `<&4><&l>MARS SWORD<&r>`
+**Display Name**: `<&c>Head of Heracles<&r>`
 
 **Lore**:
 ```
-<&4>MYTHIC
+<&7>A divine effigy of Heracles,
+<&7>god of strength and heroes.
 
-<&7>A netherite blade blessed by
-<&7>Mars, unbreakable and vampiric.
-
-<&e>Heals 10% of damage dealt
-
-<&8>Unbreakable
+<&8>Decorative collectible
 <&8>Unique - One per player
 ```
 
-**NBT**:
-- Unbreakable: true
-- Enchantment: `mending:1` (hidden, for glint)
+**Flag**: `mars.item.head`
 
-**Mechanics**: Lifesteal - player heals for 10% of damage dealt
-
-**Implementation**:
-```yaml
-mars_sword_lifesteal:
-    type: world
-    debug: false
-    events:
-        after player damages entity with:mars_sword:
-        # Calculate heal amount (10% of damage)
-        - define heal <context.damage.mul[0.10]>
-
-        # Heal player
-        - heal <player> <[heal]>
-
-        # Visual feedback
-        - playeffect effect:heart at:<player.eye_location> quantity:3 offset:0.5
-```
-
-**Notes**:
-- Works with any entity (mobs, players if PvP enabled, etc.)
-- Healing is instant
-- No cooldown (triggers on every hit)
-- Stacks with rank buffs and other damage bonuses
+**Purpose**: Rare collectible/decorative item
 
 ---
 
@@ -320,11 +291,11 @@ mars_title_chat:
 
 ---
 
-### 3. Gray Shulker Box (UTILITY)
+### 3. Red Shulker Box (UTILITY)
 
 **Material**: `GRAY_SHULKER_BOX`
 
-**Display Name**: `<&8>Gray Shulker Box<&r>`
+**Display Name**: `<&8>Red Shulker Box<&r>`
 
 **Lore**:
 ```
@@ -345,11 +316,13 @@ mars_title_chat:
 
 ---
 
-### 4. Mars Shield (LEGENDARY)
+### 4. Mars Shield (MYTHIC — via Crafting)
 
 **Material**: `SHIELD`
 
 **Display Name**: `<&4><&l>MARS SHIELD<&r>`
+
+**Obtained via**: Mythic Crafting (Blueprint from Mars Crate + 4x Heracles Mythic Fragment + 4x Diamond Block)
 
 **Lore**:
 ```
@@ -417,6 +390,32 @@ mars_shield_activate:
 
 ---
 
+## Mythic Crafting Integration
+
+The **Mars Shield** is not a direct crate drop. Instead, the crate drops a **Mars Shield Blueprint**, and the player must craft the final item using the Mythic Forge.
+
+### Recipe: Mars Shield
+
+| Ingredient | Source | Quantity |
+|---|---|---|
+| Mars Shield Blueprint | Mars Crate (unique item roll) | 1 |
+| Heracles Mythic Fragment | Heracles Base Crate (MYTHIC tier) | 4 |
+| Diamond Block | Survival | 4 |
+
+### How to Craft
+
+1. Right-click the Blueprint or any Heracles Mythic Fragment to open the **Mythic Forge** GUI
+2. The GUI shows the 3x3 recipe layout (display only, not a real crafting table)
+3. Click the result item in slot 26 to craft
+4. System validates all ingredients are in inventory
+5. On success: ingredients consumed, Mars Shield given, `mars.item.shield` flag set, server-wide announcement
+
+### Implementation
+
+All Mythic Crafting logic lives in `scripts/emblems/core/crafting.dsc`.
+
+---
+
 ## Progress Display (Profile GUI)
 
 ### Mars Section
@@ -429,10 +428,10 @@ Show Mars item checklist in `/profile` GUI:
 
 **Checklist**:
 ```
-Mars Sword:         [✓] Obtained  /  [✗] Locked
+Head of Heracles:   [✓] Obtained  /  [✗] Locked
 Mars Title:         [✓] Obtained  /  [✗] Locked
-Gray Shulker Box:   [✓] Obtained  /  [✗] Locked
-Mars Shield:        [✓] Obtained  /  [✗] Locked
+Red Shulker Box:   [✓] Obtained  /  [✗] Locked
+Mars Shield:        [✓] Obtained  /  [✗] Locked (via Blueprint + Crafting)
 
 Progress: 2 / 4 items
 ```
@@ -454,7 +453,7 @@ See `docs/testing.md` for full list. Key commands:
 
 ### Toggle Item Obtained
 ```
-/marsadmin <player> item sword <true|false>
+/marsadmin <player> item head <true|false>
 /marsadmin <player> item title <true|false>
 /marsadmin <player> item shulker <true|false>
 /marsadmin <player> item shield <true|false>
@@ -482,13 +481,13 @@ Simulates a Mars crate roll for the executing player (does not consume key).
 2. Right-click key
 3. Roll: 50/50 → Path B (Unique Item)
 4. Player has 0 items → All 4 available
-5. Random selection: Mars Sword
-6. Player receives sword + flag set
-7. Message: "<&4>[MARS]<&r> <&d>Mars Sword<&r> <&e>UNIQUE ITEM!"
+5. Random selection: Head of Heracles
+6. Player receives head + flag set
+7. Message: "<&4>[MARS]<&r> <&d>Head of Heracles<&r> <&e>UNIQUE ITEM!"
 
 ### Test 2: Second Key (God Apple)
 
-1. Player has 1 item (sword)
+1. Player has 1 item (head)
 2. Use second Mars Key
 3. Roll: Path A → God Apple
 4. Player receives enchanted golden apple
@@ -502,12 +501,13 @@ Simulates a Mars crate roll for the executing player (does not consume key).
 4. Player receives god apple
 5. Message: "<&4>[MARS]<&r> Enchanted Golden Apple <&7>(All items obtained)"
 
-### Test 4: Sword Lifesteal
+### Test 4: Mythic Crafting (Mars Shield)
 
-1. Player holds Mars Sword
-2. Attacks zombie dealing 10 damage
-3. Player heals 1 HP (10% of 10)
-4. Heart particles appear at player location
+1. Player has `mars_shield_blueprint` + 4x `heracles_mythic_fragment` + 4x diamond blocks
+2. Right-click blueprint or fragment to open Mythic Forge GUI
+3. Click result slot (slot 26) to craft
+4. Ingredients consumed, Mars Shield given, flag set
+5. Announcement: server-wide crafting message
 
 ### Test 5: Shield Activation
 
@@ -529,7 +529,7 @@ Simulates a Mars crate roll for the executing player (does not consume key).
 
 ### Mars Key Rarity
 
-**Drop Rate**: 1% from Heracles Crates (OLYMPIAN tier)
+**Drop Rate**: 1% from Heracles Crates (OLYMPIAN tier), 2% with Heracles emblem unlocked
 
 **Expected Keys**:
 - 100 Heracles Keys opened → ~1 Mars Key
@@ -540,24 +540,24 @@ Simulates a Mars crate roll for the executing player (does not consume key).
 **Conclusion**: Mars items are **very rare**, suitable for long-term/endgame players
 
 **Comparison to Ceres**:
-- Same drop rate (1% OLYMPIAN)
+- Same drop rate (1% OLYMPIAN, 2% with emblem)
 - Same 50/50 system
 - Same 4-item pool
 - Same rarity tier
 
 ### Item Power Levels
 
-- **Mars Sword**: Moderate combat utility (10% lifesteal is noticeable but not overpowered)
+- **Head of Heracles**: Pure collectible, no gameplay impact
 - **Mars Title**: Pure cosmetic, no gameplay impact
-- **Gray Shulker**: Utility, standard item
-- **Mars Shield**: Strong defensive utility (3min cooldown prevents spam)
+- **Red Shulker**: Utility, standard item
+- **Mars Shield**: Strong defensive utility, 3min cooldown (requires Mythic Crafting)
 
 **Verdict**: Mars items are **prestige/utility** more than raw power upgrades
 
 **Comparison to Ceres**:
-- Ceres: Farming convenience (auto-replant, bee summon)
-- Mars: Combat survival (lifesteal, resistance buff)
-- Both provide quality-of-life improvements within their role themes
+- Ceres: Convenience utilities (head collectible, bee summon wand via crafting)
+- Mars: Survival utilities (head collectible, resistance shield via crafting)
+- Both provide quality-of-life improvements within their emblem themes
 
 ---
 
@@ -573,15 +573,15 @@ Simulates a Mars crate roll for the executing player (does not consume key).
 
 ## Comparison: Ceres vs Mars
 
-| Aspect | Ceres (Farming) | Mars (Combat) |
+| Aspect | Ceres | Mars |
 |--------|----------------|---------------|
-| **Source** | Demeter OLYMPIAN (1%) | Heracles OLYMPIAN (1%) |
+| **Source** | Demeter OLYMPIAN (1-2%) | Heracles OLYMPIAN (1-2%) |
 | **System** | 50/50 (god apple / unique) | 50/50 (god apple / unique) |
 | **Pool Size** | 4 items | 4 items |
-| **Weapon** | Ceres Hoe (auto-replant) | Mars Sword (lifesteal) |
+| **Head** | Head of Demeter (collectible) | Head of Heracles (collectible) |
 | **Title** | [Ceres' Chosen] (gold) | [Mars' Chosen] (dark red) |
 | **Shulker** | Yellow | Gray |
-| **Special** | Ceres Wand (bee summon) | Mars Shield (resistance buff) |
+| **Crafted** | Ceres Wand (bee summon, via Blueprint) | Mars Shield (resistance buff, via Blueprint) |
 | **Theme** | Agriculture, growth | War, protection |
 | **Border Color** | Cyan | Crimson/Dark Red |
 
@@ -594,9 +594,9 @@ Simulates a Mars crate roll for the executing player (does not consume key).
 mars.crates_opened              # Total crates opened
 
 # Unique Items (Finite Pool)
-mars.item.sword                 # Boolean: Has Mars Sword
+mars.item.head                  # Boolean: Has Head of Heracles
 mars.item.title                 # Boolean: Has Mars Title
-mars.item.shulker               # Boolean: Has Gray Shulker
+mars.item.shulker               # Boolean: Has Red Shulker
 mars.item.shield                # Boolean: Has Mars Shield
 
 # Meta Stats
@@ -612,10 +612,9 @@ mars.shield_cooldown            # Expires after 180s
 ## Implementation Files Structure
 
 ```
-scripts/emblems/mars/
+scripts/emblems/heracles/
 ├── mars_crate.dsc              # 50/50 crate logic, GUI animation
-├── mars_items.dsc              # Mars Sword, Shield, Title item definitions
-└── mars_mechanics.dsc          # Lifesteal, shield activation, title chat
+└── mars_items.dsc              # Mars Shield, Head, Title, Blueprint item definitions
 ```
 
 ---
@@ -626,7 +625,7 @@ The Mars Meta-Progression adds **meaningful endgame rewards** for dedicated comb
 
 Key design principles:
 - **Mirrors Ceres structure**: Same 50/50 system, 4 finite items
-- **Combat-themed**: Lifesteal sword, resistance shield, war titles
+- **Combat-themed**: Resistance shield (via Mythic Crafting), head collectible, war titles
 - **Ultra-rare**: ~800 Heracles Keys needed on average to complete
 - **Quality-of-life**: Items provide utility, not raw power
 - **Cosmetic prestige**: Mars' Chosen title marks elite players

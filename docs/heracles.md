@@ -4,7 +4,7 @@
 
 **Heracles** (Ἡρακλῆς) is the greatest of Greek heroes, known for strength, courage, and combat prowess.
 
-Players with active role **Hoplites (COMBAT)** earn progress toward Heracles' emblem through three village-defense activities:
+Players with the **HERACLES** emblem active earn progress toward Heracles' emblem through three village-defense activities:
 1. Killing pillagers
 2. Completing raids
 3. Trading emeralds with villagers
@@ -15,14 +15,14 @@ Each activity has:
 
 ---
 
-## Role Requirement
+## Emblem Requirement
 
 **CRITICAL**: All Heracles tracking ONLY occurs when:
 ```
-<player.flag[role.active]> == COMBAT
+<player.flag[emblem.active]> == HERACLES
 ```
 
-If player has any other role, NO counters increment, NO keys drop, NO components awarded.
+If player has any other emblem active, NO counters increment, NO keys drop, NO components awarded.
 
 Players may still:
 - Use Heracles Keys (open crates)
@@ -39,7 +39,7 @@ Players may still:
 
 **Tracking**:
 - Event: `after player kills pillager`
-- Role gate: `<player.flag[role.active]> == COMBAT`
+- Emblem gate: `<player.flag[emblem.active]> == HERACLES`
 
 **Counter Flag**: `heracles.pillagers.count`
 
@@ -91,7 +91,7 @@ Players may still:
 **Tracking**:
 - Event: `on raid finishes`
 - Condition: `<context.raid.heroes.contains[<player>]>` (player participated)
-- Role gate: `<player.flag[role.active]> == COMBAT`
+- Emblem gate: `<player.flag[emblem.active]> == HERACLES`
 
 **Counter Flag**: `heracles.raids.count`
 
@@ -133,7 +133,7 @@ Players may still:
 **Tracking**:
 - Event: `after player trades`
 - Extraction: Count emeralds in `<context.recipe.inputs>` or track pre/post emerald count
-- Role gate: `<player.flag[role.active]> == COMBAT`
+- Emblem gate: `<player.flag[emblem.active]> == HERACLES`
 
 **Counter Flag**: `heracles.emeralds.count`
 
@@ -250,11 +250,11 @@ Components implemented as **flags only** (no physical items). Display in profile
 
 ### Heracles Section
 
-Show in `/profile` GUI when role = COMBAT (or always, grayed out if inactive):
+Show in `/profile` GUI when emblem = HERACLES (or always, grayed out if inactive):
 
 **Title**: `Heracles - Hero of Olympus`
 
-**Active Role Indicator**:
+**Active Emblem Indicator**:
 - If active: `<&a>● ACTIVE`
 - If inactive: `<&8>○ Inactive`
 
@@ -281,42 +281,19 @@ Emeralds: [███░░░░░░░] 3,420 / 10,000  (34%)
 
 ---
 
-## Combat Skill Ranks
-
-In addition to component milestones, Heracles has a **separate rank progression system** that provides **permanent passive buffs** while the COMBAT role is active.
-
-**Ranks:**
-- **Acolyte of War** (1,000 XP)
-- **Disciple of War** (3,500 XP)
-- **Hero of War** (9,750 XP)
-- **Champion of War** (25,375 XP)
-- **Legend of War** (64,438 XP)
-
-**Buffs Include:**
-- Low Health Regeneration (triggers at <6 HP)
-- Vanilla XP Bonus (+5% to +25% experience orbs)
-
-**Relationship to Components:**
-- Ranks and components are **parallel systems**
-- You can achieve ranks without components, and vice versa
-- Ranks provide gameplay benefits; components unlock emblems
-- Ranks are **generic to COMBAT role** (not Heracles-specific)
-
-**See:** `docs/heracles_ranks.md` for complete rank specification (TBD)
-
----
-
 ## Heracles Crate System
 
 ### Tier Structure (Standard Crates)
 
 | Tier | Probability | Color | Rewards |
 |------|------------|-------|---------|
-| MORTAL | 56% | <&f>White | Basic combat supplies |
+| MORTAL | 56% (55%*) | <&f>White | Basic combat supplies |
 | HEROIC | 26% | <&e>Yellow | Mid-tier combat items |
 | LEGENDARY | 12% | <&6>Gold | High-tier items, rare materials |
 | MYTHIC | 5% | <&d>Magenta | Unique items, titles |
-| OLYMPIAN | 1% | <&b>Cyan | Meta-progression keys (Mars) |
+| OLYMPIAN | 1% (2%*) | <&b>Cyan | Meta-progression keys (Mars) |
+
+*With Heracles emblem unlocked, OLYMPIAN increases to 2% (MORTAL loses 1%).
 
 ### Heracles Crate
 
@@ -341,7 +318,7 @@ In addition to component milestones, Heracles has a **separate rank progression 
 
 ## Loot Tables
 
-### MORTAL Tier (56% total)
+### MORTAL Tier (56% / 55% with emblem)
 
 Equally weighted within tier (7 entries):
 
@@ -404,9 +381,13 @@ Equally weighted within tier (6 entries):
 - **Heracles Blessing**: Consumable item (see below)
 - **Heracles Title**: Unlocks `<&4>[Hero of Olympus]<&r>` chat prefix
 
+### MYTHIC Pool Addition: Heracles Mythic Fragment
+
+The Heracles base crate MYTHIC tier can also drop a **Heracles Mythic Fragment** — a crafting ingredient used in the Mythic Forge system. Players combine 4 fragments with a Mars Shield Blueprint and 4 Diamond Blocks to forge a Mars Shield.
+
 ---
 
-### OLYMPIAN Tier (1% total)
+### OLYMPIAN Tier (1% / 2% with emblem)
 
 Only one entry:
 
@@ -554,7 +535,7 @@ heracles_title_chat:
 
 **Use**: Right-click to open Mars Crate (50/50 logic, finite items)
 
-**Source**: 1% drop from Heracles Crate (OLYMPIAN tier only)
+**Source**: 1% drop from Heracles Crate (OLYMPIAN tier only, 2% with emblem unlocked)
 
 ---
 
@@ -564,16 +545,16 @@ heracles_title_chat:
 
 **Finite Item Pool (4 items)**:
 
-1. **Mars Sword** (Netherite sword, lifesteal mechanic)
+1. **Head of Heracles** (Player head collectible)
 2. **Mars Title** (Cosmetic chat title unlock: `<&4>[Mars' Chosen]`)
 3. **Gray Shulker Box** (Standard shulker box item)
-4. **Mars Shield** (Shield with active resistance buff)
+4. **Mars Shield** (Shield with active resistance buff, via Blueprint + Mythic Crafting)
 
 **Mechanics**:
 - 50% chance: High-tier combat reward (Enchanted Golden Apple)
 - 50% chance: Unique item from pool (if not all obtained)
 - Once all 4 items obtained → always god apple
-- Tracks obtained items with flags: `mars.item.sword`, `mars.item.title`, etc.
+- Tracks obtained items with flags: `mars.item.head`, `mars.item.title`, etc.
 
 **Dark red/crimson border theme** (matches combat aesthetic)
 
@@ -581,39 +562,24 @@ heracles_title_chat:
 
 ## Mars Items
 
-### 1. Mars Sword (MYTHIC)
+### 1. Head of Heracles (COLLECTIBLE)
 
-**Material**: `NETHERITE_SWORD`
+**Material**: Player Head (custom texture)
 
-**Display Name**: `<&4><&l>MARS SWORD<&r>`
+**Display Name**: `<&c>Head of Heracles<&r>`
 
 **Lore**:
 ```
-<&4>MYTHIC
+<&7>A divine effigy of Heracles,
+<&7>god of strength and heroes.
 
-<&7>A netherite blade blessed by
-<&7>Mars, unbreakable and vampiric.
-
-<&e>Heals 10% of damage dealt
-
-<&8>Unbreakable
+<&8>Decorative collectible
 <&8>Unique - One per player
 ```
 
-**NBT**:
-- Unbreakable: true
-- Enchantment: `mending:1` (hidden, for glint)
+**Flag**: `mars.item.head`
 
-**Mechanics**:
-```yaml
-mars_sword_lifesteal:
-    type: world
-    events:
-        after player damages entity with:mars_sword:
-        - define heal <context.damage.mul[0.10]>
-        - heal <player> <[heal]>
-        - playeffect effect:heart at:<player.eye_location> quantity:3 offset:0.5
-```
+**Purpose**: Rare collectible/decorative item
 
 ---
 
@@ -762,7 +728,7 @@ heracles_pillager_tracking:
     type: world
     events:
         after player kills pillager:
-        - if <player.flag[role.active]> != COMBAT:
+        - if <player.flag[emblem.active]> != HERACLES:
             - stop
 
         # Increment counter
@@ -798,7 +764,7 @@ heracles_raid_tracking:
         - foreach <context.raid.heroes> as:hero:
             - if !<[hero].is_player>:
                 - foreach next
-            - if <[hero].flag[role.active]> != COMBAT:
+            - if <[hero].flag[emblem.active]> != HERACLES:
                 - foreach next
 
             # Increment counter
@@ -826,7 +792,7 @@ heracles_emerald_tracking:
     type: world
     events:
         after player trades:
-        - if <player.flag[role.active]> != COMBAT:
+        - if <player.flag[emblem.active]> != HERACLES:
             - stop
 
         # Count emeralds in trade inputs
@@ -867,7 +833,7 @@ heracles_emerald_tracking:
 
 ### Scenario 1: Fresh Player
 
-1. Player selects Hoplites role
+1. Player selects Heracles emblem
 2. Kill 100 pillagers → Receives 1 key
 3. Kill 100 more → Receives 1 key (total 2 keys, 200 pillagers)
 4. Continue to 2,500 → Receives Pillager Slayer Component + 25 keys total
@@ -877,12 +843,12 @@ heracles_emerald_tracking:
 8. Continue to 10,000 → Receives Trade Master Component + 100 keys total
 9. Visit Promachos → Unlock Heracles emblem
 
-### Scenario 2: Role Switching
+### Scenario 2: Emblem Switching
 
-1. Player has 500 pillagers as Hoplites (5 keys earned)
-2. Switch to Georgos
+1. Player has 500 pillagers with Heracles emblem (5 keys earned)
+2. Switch to Demeter emblem
 3. Kill 500 more pillagers → NO keys, counter stays 500
-4. Switch back to Hoplites
+4. Switch back to Heracles emblem
 5. Kill 1 pillager → Counter now 501, no new key (next key at 600)
 
 ### Scenario 3: Component Once-Only
@@ -895,14 +861,14 @@ heracles_emerald_tracking:
 
 1. 3 players defend village together
 2. Raid finishes successfully
-3. All 3 players with COMBAT role receive +2 keys and +1 raid count
-4. Players with other roles receive nothing
+3. All 3 players with HERACLES emblem receive +2 keys and +1 raid count
+4. Players with other emblems receive nothing
 
 ---
 
 ## Performance Considerations
 
-- **Early exit**: Role gate checks first (cheapest operation)
+- **Early exit**: Emblem gate checks first (cheapest operation)
 - **No loops**: Single event, single increment, bounded math
 - **Flag reads**: Use `.if_null[0]` to avoid errors on first access
 - **Announcement spam**: Only on milestones (not every key)

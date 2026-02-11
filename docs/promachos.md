@@ -1,16 +1,16 @@
 # Promachos NPC - Complete Specification
 
-## Role & Purpose
+## Purpose
 
 **Promachos** (Προμαχός) means "champion" or "defender who fights in the front line."
 
 In V2, Promachos is the **system anchor** and **ceremony master**:
 - Introduces the emblem system on first meeting
-- Forces role selection (cannot proceed without choosing)
-- Allows role switching at any time
+- Forces emblem selection (cannot proceed without choosing)
+- Allows emblem switching at any time
 - Checks component completion and unlocks emblems
 - Congratulates players on emblem unlocks
-- Gates the next emblem line in each role path
+- Gates the next emblem line in each emblem path
 
 **No longer a trader.** All trading removed in V2.
 
@@ -44,24 +44,24 @@ In V2, Promachos is the **system anchor** and **ceremony master**:
    <&e><&l>Promachos<&r><&7>: The Olympians watch your deeds. Through your labors, you may earn their favor—and their gifts.
    ```
 
-3. **Roles Explained**
+3. **Emblems Explained**
    ```
-   <&e><&l>Promachos<&r><&7>: You must choose a path: <&6>Georgos<&7> (farmer), <&6>Metallourgos<&7> (miner), or <&6>Hoplites<&7> (warrior). Only one path may be walked at a time.
+   <&e><&l>Promachos<&r><&7>: You must choose an emblem to pursue: <&6>Demeter<&7> (farming), <&6>Hephaestus<&7> (mining), or <&6>Heracles<&7> (combat). Only one emblem may be pursued at a time.
    ```
 
-4. **Emblems Explained**
+4. **Components Explained**
    ```
-   <&e><&l>Promachos<&r><&7>: Each path leads to divine emblems—symbols of mastery. Collect components through your labors, and I shall unlock the emblem when you are ready.
+   <&e><&l>Promachos<&r><&7>: Each emblem requires divine components—symbols of mastery. Collect components through your labors, and I shall unlock the emblem when you are ready.
    ```
 
 5. **Call to Action**
    ```
-   <&e><&l>Promachos<&r><&7>: Choose wisely. Your path begins now.
+   <&e><&l>Promachos<&r><&7>: Choose wisely. Your journey begins now.
    ```
 
 **After dialogue**:
 - Flag `met_promachos: true`
-- Open role selection GUI (see below)
+- Open emblem selection GUI (see below)
 
 ---
 
@@ -76,26 +76,26 @@ In V2, Promachos is the **system anchor** and **ceremony master**:
 ║   Promachos - Herald Menu     ║
 ╠═══════════════════════════════╣
 ║                               ║
-║   [Role]  [Emblems]  [Info]   ║
+║  [Emblem]  [Progress]  [Info] ║
 ║                               ║
 ╚═══════════════════════════════╝
 ```
 
 **Slots** (27-slot inventory):
-- Slot 11: **Change Role** (compass icon)
-- Slot 13: **Check Emblems** (nether star icon)
+- Slot 11: **Change Emblem** (compass icon)
+- Slot 13: **Check Progress** (nether star icon)
 - Slot 15: **System Info** (book icon)
 
 **Click Handlers**:
-- **Change Role**: Opens role selection GUI
-- **Check Emblems**: Opens emblem status GUI (shows all gods, progress, completion)
+- **Change Emblem**: Opens emblem selection GUI
+- **Check Progress**: Opens emblem status GUI (shows all gods, progress, completion)
 - **System Info**: Message explaining the system + closes GUI
 
 ---
 
-## Role Selection GUI
+## Emblem Selection GUI
 
-**Title**: `Promachos - Choose Your Path`
+**Title**: `Promachos - Choose Your Emblem`
 
 **Size**: 27 slots (3 rows)
 
@@ -103,45 +103,28 @@ In V2, Promachos is the **system anchor** and **ceremony master**:
 ```
 ╔═══════════════════════════════╗
 ║                               ║
-║   [Georgos] [Metallourgos]    ║
-║             [Hoplites]        ║
+║  [Demeter] [Hephaestus]       ║
+║           [Heracles]          ║
 ║                               ║
 ║           [Cancel]            ║
 ╚═══════════════════════════════╝
 ```
 
 **Items**:
-- **Slot 11: Georgos (Farming)**
-  - Material: Golden Hoe (or Wheat)
-  - Display: `<&6><&l>Georgos<&r> <&7>(Farmer)`
-  - Lore:
-    ```
-    <&7>Path of agriculture and abundance.
-    <&7>Serve <&e>Demeter<&7>, goddess of harvest.
+- **Slot 12: Demeter**
+  - Material: Wheat (procedural - shows progress status)
+  - Display: `<&6><&l>Demeter's Emblem`
+  - Activities: Wheat, Cows, Cakes
 
-    <&8>Activities: Wheat, Cows, Cakes
-    ```
+- **Slot 14: Hephaestus**
+  - Material: Iron Pickaxe (procedural - shows progress status)
+  - Display: `<&8><&l>Hephaestus' Emblem`
+  - Activities: Iron Ore, Smelting, Golems
 
-- **Slot 13: Metallourgos (Mining)**
-  - Material: Diamond Pickaxe (or Iron Ore)
-  - Display: `<&6><&l>Metallourgos<&r> <&7>(Miner)`
-  - Lore:
-    ```
-    <&7>Path of stone and metal.
-    <&7>Serve <&e>Hephaestus<&7>, god of the forge.
-
-    <&8>Activities: <&8><&o>To be revealed...
-    ```
-
-- **Slot 15: Hoplites (Combat)**
-  - Material: Diamond Sword (or Shield)
-  - Display: `<&6><&l>Hoplites<&r> <&7>(Warrior)`
-  - Lore:
-    ```
-    <&7>Path of strength and valor.
-    <&7>Serve <&e>Heracles<&7>, hero of might.
-
-    <&8>Activities: <&8><&o>To be revealed...
+- **Slot 16: Heracles**
+  - Material: Diamond Sword (procedural - shows progress status)
+  - Display: `<&c><&l>Heracles' Emblem`
+  - Activities: Pillagers, Raids, Emeralds
     ```
 
 - **Slot 22: Cancel**
@@ -150,14 +133,14 @@ In V2, Promachos is the **system anchor** and **ceremony master**:
   - Lore: `<&7>Close this menu.`
 
 **Click Handlers**:
-- **Georgos**: Set `role.active: FARMING`, narrate confirmation, close GUI
-- **Metallourgos**: Set `role.active: MINING`, narrate confirmation, close GUI
-- **Hoplites**: Set `role.active: COMBAT`, narrate confirmation, close GUI
+- **Demeter**: Set `emblem.active: DEMETER`, narrate confirmation, close GUI
+- **Hephaestus**: Set `emblem.active: HEPHAESTUS`, narrate confirmation, close GUI
+- **Heracles**: Set `emblem.active: HERACLES`, narrate confirmation, close GUI
 - **Cancel**: Close GUI
 
 **Confirmation Messages**:
 ```
-<&e><&l>Promachos<&r><&7>: You have chosen the path of <&6>Georgos<&7>. May Demeter bless your fields.
+<&e><&l>Promachos<&r><&7>: You have chosen to pursue the emblem of <&6>Demeter<&7>. May the goddess bless your fields.
 ```
 
 ---
@@ -232,12 +215,12 @@ In V2, Promachos is the **system anchor** and **ceremony master**:
     <&c>✗ Cake Component <&7>(<player.flag[demeter.cakes.count]>/300)
     ```
 
-- If **locked** (role never selected or no progress):
+- If **locked** (emblem never selected or no progress):
   - Material: Gray Dye
   - Display: `<&8>???`
   - Lore:
     ```
-    <&8><&o>Select the Georgos role to begin.
+    <&8><&o>Select the Demeter emblem to begin.
     ```
 
 **Component Status Item**:
@@ -283,7 +266,6 @@ In V2, Promachos is the **system anchor** and **ceremony master**:
 6. **Optional: Grant rewards**:
    - Title: `title:<player> title:<&6><&l>EMBLEM UNLOCKED! subtitle:<&e>Demeter's Blessing times:10,40,10 fade_in:10 stay:40 fade_out:10`
    - Particles: `playeffect effect:totem at:<player.location> quantity:50 offset:1.5`
-   - XP: 1000 levels (or experience points)
 
 7. **Announce to server**:
    ```
@@ -292,10 +274,11 @@ In V2, Promachos is the **system anchor** and **ceremony master**:
    - Sound: All online players hear `ui_toast_challenge_complete`
 
 8. **Unlock next emblem line**:
-   - Flag: `farming.next_emblem.unlocked: true`
+   - Increment: `emblem.rank` flag
+   - Check tier progression for next emblem
    - Message:
      ```
-     <&e><&l>Promachos<&r><&7>: A new path has been revealed to you, Georgos. Return when you are ready to pursue the next emblem.
+     <&e><&l>Promachos<&r><&7>: A new path has been revealed to you. Return when you are ready to pursue the next emblem.
      ```
 
 9. **Re-open emblem check GUI** (now showing Demeter as unlocked)
@@ -307,7 +290,7 @@ In V2, Promachos is the **system anchor** and **ceremony master**:
 
 ---
 
-## Role Switching Logic
+## Emblem Switching Logic
 
 **Rules**:
 - Players may switch at any time
@@ -316,25 +299,26 @@ In V2, Promachos is the **system anchor** and **ceremony master**:
 - No data loss
 
 **Process**:
-1. Player clicks "Change Role" in Promachos main menu
-2. Opens role selection GUI (same as first-time)
-3. Player clicks new role
-4. Script checks if `role.active` is already set to that role:
-   - If same: Message `<&7>You are already a <&6>Georgos<&7>.`, close GUI
+1. Player clicks "Change Emblem" in Promachos main menu
+2. Opens emblem selection GUI (same as first-time)
+3. Player clicks new emblem
+4. Script checks if `emblem.active` is already set to that emblem:
+   - If same: Message `<&7>You are already pursuing <&6>Demeter<&7>.`, close GUI
    - If different:
-     - Set `role.active: <new_role>`
+     - Set `emblem.active: <new_emblem>`
+     - Set `emblem.changed_before: true`
      - Narrate:
        ```
-       <&e><&l>Promachos<&r><&7>: You have changed your path to <&6>Metallourgos<&7>. Your previous progress as <&6>Georgos<&7> is preserved.
+       <&e><&l>Promachos<&r><&7>: You have changed your emblem to <&6>Hephaestus<&7>. Your previous progress with <&6>Demeter<&7> is preserved.
        ```
      - Sound: `block_enchantment_table_use`
      - Close GUI
 
-**Effects of Role Switch**:
-- Immediately stops tracking for old role
-- Immediately starts tracking for new role
+**Effects of Emblem Switch**:
+- Immediately stops tracking for old emblem
+- Immediately starts tracking for new emblem
 - All counters, keys, components preserved (no reset)
-- Keys can still be used regardless of role
+- Keys can still be used regardless of active emblem
 
 ---
 
@@ -347,17 +331,17 @@ In V2, Promachos is the **system anchor** and **ceremony master**:
 <&7><&m>                                        <&r>
 <&e><&l>Emblem System Overview<&r>
 
-<&6>Roles:<&7> Choose one path to pursue at a time.
-<&7>Only your active role earns progress and keys.
+<&6>Emblems:<&7> Choose one emblem to pursue at a time.
+<&7>Only your active emblem earns progress and keys.
 
-<&6>Activities:<&7> Perform tasks related to your role.
+<&6>Activities:<&7> Perform tasks related to your emblem.
 <&7>Earn keys frequently, unlock components at milestones.
 
-<&6>Emblems:<&7> Collect all components, then return to me.
+<&6>Components:<&7> Collect all components, then return to me.
 <&7>I will unlock the emblem and reveal the next path.
 
 <&6>Keys:<&7> Use keys anytime to open crates.
-<&7>Keys can be traded or saved regardless of your role.
+<&7>Keys can be traded or saved regardless of your emblem.
 
 <&8>Type <&e>/profile<&8> to view your progress.
 <&7><&m>                                        <&r>
@@ -369,12 +353,12 @@ In V2, Promachos is the **system anchor** and **ceremony master**:
 
 ## Procedures (For Script Implementation)
 
-### `get_role_display_name`
-- Input: `<[role]>` (e.g., `FARMING`)
-- Output: Greek name (e.g., `Georgos`)
+### `get_emblem_display_name`
+- Input: `<[emblem]>` (e.g., `DEMETER`)
+- Output: Display name (e.g., `Demeter`)
 
-### `get_god_for_role`
-- Input: `<[role]>` (e.g., `FARMING`)
+### `get_god_for_emblem`
+- Input: `<[emblem]>` (e.g., `DEMETER`)
 - Output: God name (e.g., `Demeter`)
 
 ### `check_demeter_components_complete`
@@ -395,10 +379,10 @@ In V2, Promachos is the **system anchor** and **ceremony master**:
 - If true: Open main menu
 
 ### `on player clicks in promachos_main_menu`
-- Route to role selection, emblem check, or info
+- Route to emblem selection, emblem check, or info
 
-### `on player clicks in role_selection_gui`
-- Set role flag, narrate confirmation, close
+### `on player clicks in emblem_selection_gui`
+- Set emblem flag, narrate confirmation, close
 
 ### `on player clicks in emblem_check_gui`
 - If "READY!" emblem clicked: Run unlock ceremony
@@ -410,7 +394,7 @@ In V2, Promachos is the **system anchor** and **ceremony master**:
 
 - **Formal but warm**: Promachos is a herald, not a friend, but respects the player
 - **Encouraging**: Congratulates milestones, uses positive language
-- **Mythologically consistent**: References gods by role, uses "path" metaphor
+- **Mythologically consistent**: References gods by name, uses "path" metaphor
 - **Clear instructions**: No ambiguity in what to do next
 - **Celebratory**: Emblem unlocks feel epic and rewarding
 
@@ -419,7 +403,7 @@ In V2, Promachos is the **system anchor** and **ceremony master**:
 ## Implementation Notes
 
 - Use `wait 3s` between dialogue lines (readable pace)
-- All GUIs close on role/emblem action (no lingering menus)
+- All GUIs close on emblem action (no lingering menus)
 - Sounds reinforce feedback (success/error)
 - Server announcements for emblem unlocks (social validation)
 - Procedures keep code DRY (reusable status checks)

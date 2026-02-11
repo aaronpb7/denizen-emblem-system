@@ -1,14 +1,13 @@
 # ============================================
-# HEPHAESTUS EVENTS - Activity Tracking & XP
+# HEPHAESTUS EVENTS - Activity Tracking
 # ============================================
 #
-# XP-based progression with activity counters for components
-# 1. Iron ore mining → 3 XP, component at 5,000
-# 2. Blast furnace smelting → 1 XP, component at 5,000
-# 3. Iron golem creation → 25 XP, component at 100
+# Activity tracking for component milestones
+# 1. Iron ore mining → component at 5,000
+# 2. Blast furnace smelting → component at 5,000
+# 3. Iron golem creation → component at 100
 #
-# All ores also award XP (see mining_xp_rates)
-# Only tracks when player role = MINING
+# Only tracks when player emblem = HEPHAESTUS
 #
 
 # ============================================
@@ -20,18 +19,13 @@ mining_ore_break:
     debug: false
     events:
         after player breaks coal_ore|deepslate_coal_ore|copper_ore|deepslate_copper_ore|iron_ore|deepslate_iron_ore|gold_ore|deepslate_gold_ore|nether_gold_ore|lapis_ore|deepslate_lapis_ore|redstone_ore|deepslate_redstone_ore|diamond_ore|deepslate_diamond_ore|emerald_ore|deepslate_emerald_ore|nether_quartz_ore|ancient_debris:
-        # Role gate - only MINING role counts
-        - if <player.flag[role.active].if_null[NONE]> != MINING:
+        # Emblem gate - only HEPHAESTUS emblem counts
+        - if <player.flag[emblem.active].if_null[NONE]> != HEPHAESTUS:
             - stop
 
         # Get ore type (normalize deepslate variants)
         - define ore <context.material.name>
         - define ore_base <[ore].replace[deepslate_].with[]>
-
-        # Award XP based on ore type
-        - define xp_amount <script[mining_xp_rates].data_key[ores.<[ore_base]>].if_null[0]>
-        - if <[xp_amount]> > 0:
-            - run award_mining_xp def.player:<player> def.amount:<[xp_amount]> def.source:<[ore_base]>
 
         # Track iron ore specifically for component milestone
         - if <[ore_base]> == iron_ore:
@@ -69,15 +63,12 @@ mining_blast_furnace_smelt:
         - if <context.location.material.name> != blast_furnace:
             - stop
 
-        # Role gate - only MINING role counts
-        - if <player.flag[role.active].if_null[NONE]> != MINING:
+        # Emblem gate - only HEPHAESTUS emblem counts
+        - if <player.flag[emblem.active].if_null[NONE]> != HEPHAESTUS:
             - stop
 
         # Get amount taken
         - define amount <context.item.quantity>
-
-        # Award XP (1 per item smelted)
-        - run award_mining_xp def.player:<player> def.amount:<[amount]> def.source:blast_furnace
 
         # Track smelts for component milestone
         - flag player hephaestus.smelting.count:+:<[amount]>
@@ -115,12 +106,9 @@ mining_golem_creation:
         - if <[builder]> == null:
             - stop
 
-        # Role gate - only MINING role counts
-        - if <[builder].flag[role.active].if_null[NONE]> != MINING:
+        # Emblem gate - only HEPHAESTUS emblem counts
+        - if <[builder].flag[emblem.active].if_null[NONE]> != HEPHAESTUS:
             - stop
-
-        # Award XP (25 for golem creation)
-        - run award_mining_xp def.player:<[builder]> def.amount:25 def.source:iron_golem
 
         # Track golems for component milestone
         - flag <[builder]> hephaestus.golems.count:++
@@ -142,24 +130,3 @@ mining_golem_creation:
             - playsound <[builder]> sound:ui_toast_challenge_complete
             - announce "<&e>[Promachos]<&r> <&f><[builder].name> <&8>has obtained the <&7>Golem Component<&8>!"
 
-# ============================================
-# XP RATES DATA
-# ============================================
-
-mining_xp_rates:
-    type: data
-    ores:
-        coal_ore: 2
-        copper_ore: 2
-        nether_quartz_ore: 2
-        iron_ore: 3
-        nether_gold_ore: 3
-        lapis_ore: 4
-        redstone_ore: 4
-        gold_ore: 5
-        diamond_ore: 10
-        emerald_ore: 10
-        ancient_debris: 20
-    other:
-        blast_furnace: 1
-        iron_golem: 25

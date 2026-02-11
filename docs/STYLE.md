@@ -6,12 +6,13 @@ Reference for colors, sounds, message patterns, and UI conventions used througho
 
 ## Color Codes
 
-### Role Colors
-| Role | Primary | Light | Usage |
-|------|---------|-------|-------|
-| FARMING | `<&6>` gold | `<&e>` yellow | Demeter, Ceres |
-| MINING | `<&c>` red | `<&c>` red | Hephaestus, Vulcan |
-| COMBAT | `<&4>` dark red | `<&c>` red | Heracles, Mars |
+### Emblem Colors
+| Emblem | Primary | Light | Usage |
+|--------|---------|-------|-------|
+| DEMETER | `<&6>` gold | `<&e>` yellow | Demeter, Ceres |
+| HEPHAESTUS | `<&c>` red | `<&c>` red | Hephaestus, Vulcan |
+| HERACLES | `<&4>` dark red | `<&c>` red | Heracles, Mars |
+| TRITON | `<&3>` dark aqua | `<&b>` aqua | Triton, Neptune |
 
 ### Tier Colors (Crates)
 | Tier | Color | Code |
@@ -39,6 +40,8 @@ Reference for colors, sounds, message patterns, and UI conventions used througho
 | Heracles | `red_stained_glass_pane` |
 | Ceres | `cyan_stained_glass_pane` |
 | Mars | `red_stained_glass_pane` |
+| Triton | `cyan_stained_glass_pane` |
+| Neptune | `dark_prismarine` |
 
 ---
 
@@ -49,7 +52,6 @@ Reference for colors, sounds, message patterns, and UI conventions used througho
 |-------|-------|-------|
 | Key awarded | `entity_experience_orb_pickup` | Single key drop |
 | Component/milestone | `ui_toast_challenge_complete` | Major achievement |
-| Rank up | `ui_toast_challenge_complete` | + totem effect |
 
 ### Crate System
 | Event | Sound | Notes |
@@ -82,7 +84,7 @@ Reference for colors, sounds, message patterns, and UI conventions used througho
 
 ### Key Award
 ```
-<&ROLE_COLOR><&l>GOD KEY!<&r> <&7>Activity: <&a>count<&7>/goal
+<&EMBLEM_COLOR><&l>GOD KEY!<&r> <&7>Activity: <&a>count<&7>/goal
 ```
 Examples:
 - `<&e><&l>DEMETER KEY!<&r> <&7>Wheat: <&a>1,500<&7>/15,000`
@@ -90,7 +92,7 @@ Examples:
 
 ### Milestone/Component
 ```
-<&ROLE_DARK><&l>MILESTONE!<&r> <&ROLE_LIGHT>Component Name obtained! <&7>(requirement)
+<&EMBLEM_DARK><&l>MILESTONE!<&r> <&EMBLEM_LIGHT>Component Name obtained! <&7>(requirement)
 ```
 Examples:
 - `<&6><&l>MILESTONE!<&r> <&e>Wheat Component obtained! <&7>(15,000 wheat)`
@@ -98,7 +100,7 @@ Examples:
 
 ### Bonus Keys (Blessing)
 ```
-<&ROLE_COLOR><&l>BONUS KEYS!<&r> <&7>+count God Keys (Activity)
+<&EMBLEM_COLOR><&l>BONUS KEYS!<&r> <&7>+count God Keys (Activity)
 ```
 Examples:
 - `<&e><&l>BONUS KEYS!<&r> <&7>+10 Demeter Keys (Wheat)`
@@ -107,12 +109,12 @@ Examples:
 ### Blessing Activated
 ```
 <&d><&l>GOD BLESSING ACTIVATED!<&r>
-  <&ROLE_COLOR>Activity<&7>: +amount (old → new)
+  <&EMBLEM_COLOR>Activity<&7>: +amount (old → new)
 ```
 
 ### All Activities Complete
 ```
-<&ROLE_COLOR>All God activities already complete!
+<&EMBLEM_COLOR>All God activities already complete!
 ```
 
 ---
@@ -121,22 +123,17 @@ Examples:
 
 ### Component Obtained
 ```
-<&ROLE_COLOR>[Promachos]<&r> <&f>PlayerName <&7>has obtained the <&ROLE_COLOR>Component Name<&7>!
-```
-
-### Rank Achieved
-```
-<&ROLE_COLOR>[Promachos]<&r> <&f>PlayerName <&7>has achieved <&ROLE_COLOR>Rank Name<&7>!
+<&EMBLEM_COLOR>[Promachos]<&r> <&f>PlayerName <&7>has obtained the <&EMBLEM_COLOR>Component Name<&7>!
 ```
 
 ### Emblem Unlocked (Bold prefix)
 ```
-<&ROLE_COLOR><&l>[Promachos]<&r> <&f>PlayerName <&7>has unlocked the <&ROLE_COLOR><&l>Emblem of God<&7>!
+<&EMBLEM_COLOR><&l>[Promachos]<&r> <&f>PlayerName <&7>has unlocked the <&EMBLEM_COLOR><&l>Emblem of God<&7>!
 ```
 
 ### Olympian Drop
 ```
-<&ROLE_COLOR><&l>OLYMPIAN DROP!<&r> <&f>PlayerName <&7>obtained a unique God item<&co> <&d>ItemName<&7>!
+<&EMBLEM_COLOR><&l>OLYMPIAN DROP!<&r> <&f>PlayerName <&7>obtained a unique God item<&co> <&d>ItemName<&7>!
 ```
 
 ---
@@ -171,38 +168,11 @@ title:<&TIER_COLOR><&l>TIER DROP
 subtitle:<&f>Item Name
 ```
 
-### Rank Up
-```
-title:<&ROLE_COLOR><&l>ROLE RANK UP!
-subtitle:<&ROLE_LIGHT>Rank Name
-```
-
 ### Emblem Unlock
 ```
-title:<&ROLE_COLOR><&l>EMBLEM UNLOCKED!
-subtitle:<&ROLE_LIGHT>God's Blessing/Favor
+title:<&EMBLEM_COLOR><&l>EMBLEM UNLOCKED!
+subtitle:<&EMBLEM_LIGHT>God's Blessing/Favor
 ```
-
----
-
-## Ceremony Chat Box
-
-### Rank Up Ceremony
-```
-<&ROLE_COLOR>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-<&ROLE_LIGHT><&l>SYMBOL ROLE RANK ACHIEVED SYMBOL
-<&7>You have become<&co> <&ROLE_COLOR>Rank Name
-
-<&b>Rewards Unlocked:
-<&7>• <&f>Buff Name: <&e>Value
-<&7>• <&f>Rank Reward: <&e>X Keys
-<&ROLE_COLOR>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
-
-Symbols by role:
-- FARMING: `⚜` (fleur-de-lis)
-- COMBAT: `⚔` (crossed swords)
-- MINING: `⛏` (pickaxe) - suggested
 
 ---
 
@@ -238,7 +208,7 @@ lore:
 
 ### Ability Activated
 ```
-<&ROLE_COLOR>ABILITY NAME <&7>- <&e>Effect description
+<&EMBLEM_COLOR>ABILITY NAME <&7>- <&e>Effect description
 ```
 Examples:
 - `<&4>MARS' PROTECTION <&7>- <&c>Resistance I for 15s`
@@ -247,11 +217,6 @@ Examples:
 ### Cooldown Ready
 ```
 <&a>Item Name ready!
-```
-
-### XP Gained (Farming)
-```
-<&6>+amount Farming XP <&8>| <&7>Source
 ```
 
 ---
@@ -270,7 +235,7 @@ Examples:
 
 ### Filler Items
 - Empty slots: `gray_stained_glass_pane` with `display=<&7>`
-- Border slots: Role-colored glass pane
+- Border slots: Emblem-colored glass pane
 
 ---
 
@@ -292,7 +257,7 @@ god_purpose
 Examples:
 - `demeter_events`
 - `heracles_crate_animation`
-- `mars_sword_lifesteal`
+- `mars_shield_activate`
 
 ### Item Scripts
 ```
@@ -307,12 +272,11 @@ Examples:
 
 ## Adding New Content
 
-### New Role Checklist
+### New Emblem Checklist
 1. Define colors in this guide
 2. Create border material choice
-3. Choose rank ceremony symbol
-4. Follow flag naming: `god.category.subcategory`
-5. Mirror existing role message patterns
+3. Follow flag naming: `god.category.subcategory`
+4. Mirror existing emblem message patterns
 
 ### New Ability Checklist
 1. Action bar on activation (not narrate)

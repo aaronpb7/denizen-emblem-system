@@ -120,7 +120,6 @@ hephaestus_crate_animation:
     - define preview_pool <[preview_pool].include[<item[raw_iron]>]>
     - define preview_pool <[preview_pool].include[<item[emerald]>]>
     - define preview_pool <[preview_pool].include[<item[golden_apple]>]>
-    - define preview_pool <[preview_pool].include[<item[enchanted_golden_apple]>]>
     - define preview_pool <[preview_pool].include[<item[diamond]>]>
     - define preview_pool <[preview_pool].include[<item[gold_ingot]>]>
     - define preview_pool <[preview_pool].include[<item[iron_ingot]>]>
@@ -323,23 +322,22 @@ roll_hephaestus_tier:
     script:
     - define roll <util.random.int[1].to[100]>
 
-    # MORTAL: 1-56 (56%)
-    - if <[roll]> <= 56:
+    # Emblem unlocked: OLYMPIAN 2% (MORTAL loses 1%)
+    # Default:  56/26/12/5/1
+    # Unlocked: 55/26/12/5/2
+    - if <player.has_flag[hephaestus.emblem.unlocked]>:
+        - define caps <list[55|81|93|98]>
+    - else:
+        - define caps <list[56|82|94|99]>
+
+    - if <[roll]> <= <[caps].get[1]>:
         - determine <list[MORTAL|<&f>]>
-
-    # HEROIC: 57-82 (26%)
-    - else if <[roll]> <= 82:
+    - else if <[roll]> <= <[caps].get[2]>:
         - determine <list[HEROIC|<&e>]>
-
-    # LEGENDARY: 83-94 (12%)
-    - else if <[roll]> <= 94:
+    - else if <[roll]> <= <[caps].get[3]>:
         - determine <list[LEGENDARY|<&6>]>
-
-    # MYTHIC: 95-99 (5%)
-    - else if <[roll]> <= 99:
+    - else if <[roll]> <= <[caps].get[4]>:
         - determine <list[MYTHIC|<&d>]>
-
-    # OLYMPIAN: 100 (1%)
     - else:
         - determine <list[OLYMPIAN|<&b>]>
 
@@ -409,21 +407,18 @@ roll_hephaestus_loot:
 
         - case MYTHIC:
             - define pool <list>
-            - define pool <[pool].include[enchanted_golden_apple:1]>
-            - define pool <[pool].include[hephaestus_pickaxe:1]>
             - define pool <[pool].include[hephaestus_blessing:1]>
-            - define pool <[pool].include[hephaestus_title:1]>
+            - define pool <[pool].include[hephaestus_mythic_fragment:1]>
             - define pool <[pool].include[gold_block:16]>
             - define pool <[pool].include[emerald_block:16]>
             - define choice <[pool].random>
             - define parts <[choice].split[<&co>]>
             - define material <[parts].get[1]>
             - define qty <[parts].get[2]>
-            - if <[material]> == hephaestus_pickaxe || <[material]> == hephaestus_blessing:
-                - define display_name <[material].to_titlecase.replace[_].with[ ]>
-                - define loot_map <map[type=CUSTOM;script=<[material]>;quantity=<[qty]>;display=<[display_name]> x<[qty]>]>
-            - else if <[material]> == hephaestus_title:
-                - define loot_map <map[type=TITLE;flag=hephaestus.item.title;display=Master Smith Title]>
+            - if <[material]> == hephaestus_blessing:
+                - define loot_map <map[type=CUSTOM;script=hephaestus_blessing;quantity=<[qty]>;display=Hephaestus Blessing x<[qty]>]>
+            - else if <[material]> == hephaestus_mythic_fragment:
+                - define loot_map <map[type=CUSTOM;script=hephaestus_mythic_fragment;quantity=<[qty]>;display=Hephaestus Mythic Fragment x<[qty]>]>
             - else:
                 - define display_name <[material].to_titlecase.replace[_].with[ ]>
                 - define loot_map <map[type=ITEM;material=<[material]>;quantity=<[qty]>;display=<[display_name]> x<[qty]>]>

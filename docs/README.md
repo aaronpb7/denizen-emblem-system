@@ -1,6 +1,6 @@
 # Emblem System Documentation
 
-Documentation for the Promachos role-based progression system.
+Documentation for the Promachos emblem-based progression system.
 
 ---
 
@@ -16,25 +16,25 @@ Documentation for the Promachos role-based progression system.
 
 ---
 
-## Role Documentation
+## Emblem Documentation
 
-| Role | Greek God | Roman God (Meta) |
-|------|-----------|------------------|
-| FARMING | [demeter.md](demeter.md) | [ceres.md](ceres.md) |
-| MINING | [hephaestus.md](hephaestus.md) | [vulcan.md](vulcan.md) |
-| COMBAT | [heracles.md](heracles.md) | [mars.md](mars.md) |
+| Emblem | Greek God | Roman God (Meta) |
+|--------|-----------|------------------|
+| DEMETER | [demeter.md](demeter.md) | [ceres.md](ceres.md) |
+| HEPHAESTUS | [hephaestus.md](hephaestus.md) | [vulcan.md](vulcan.md) |
+| HERACLES | [heracles.md](heracles.md) | [mars.md](mars.md) |
 
 ### NPC System
-- [promachos.md](promachos.md) - Promachos NPC interactions and role selection
+- [promachos.md](promachos.md) - Promachos NPC interactions and emblem selection
 
 ---
 
 ## System Overview
 
-**Roles:** FARMING (Georgos), MINING (Metallourgos), COMBAT (Hoplites)
+**Emblems:** DEMETER (Demeter), HEPHAESTUS (Hephaestus), HERACLES (Heracles)
 
 **Progression Flow:**
-1. Choose role via Promachos NPC
+1. Choose emblem via Promachos NPC
 2. Complete activities to earn keys
 3. Open crates for rewards (5 tiers: MORTAL to OLYMPIAN)
 4. Reach milestones to unlock components
@@ -46,7 +46,7 @@ Documentation for the Promachos role-based progression system.
 ## For Developers
 
 See [STYLE.md](STYLE.md) for:
-- Color codes by role and tier
+- Color codes by emblem and tier
 - Sound cues for all events
 - Message patterns (keys, milestones, announcements)
 - Action bar and title patterns

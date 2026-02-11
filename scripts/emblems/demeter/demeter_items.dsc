@@ -49,7 +49,7 @@ demeter_blessing:
     - <empty>
     - <&e>Right-click to boost progress
     - <&e>on all incomplete Demeter
-    - <&e>activities by 10%.
+    - <&e>activities by 5%.
     - <empty>
     - <&8>Single-use consumable
     - <&8>Stackable & tradeable
@@ -127,3 +127,26 @@ cake_component:
     - <&8><&o>Obtained: <player.flag[demeter.component.cake_date].if_null[Unknown]>
     - <empty>
     - <&6><&l>LEGENDARY COMPONENT
+
+# ============================================
+# DEMETER MYTHIC FRAGMENT
+# ============================================
+
+demeter_mythic_fragment:
+    type: item
+    material: amethyst_shard
+    display name: <&d>Demeter Mythic Fragment<&r>
+    enchantments:
+    - mending:1
+    mechanisms:
+        hides: ENCHANTS
+    lore:
+    - <&7>A shard of divine energy
+    - <&7>from Demeter's harvest realm.
+    - <empty>
+    - <&e>Right-click to view recipe.
+    - <empty>
+    - <&8>Crafting ingredient
+    - <&8>Stackable & tradeable
+    - <empty>
+    - <&d><&l>MYTHIC FRAGMENT

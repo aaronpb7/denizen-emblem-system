@@ -1,86 +1,62 @@
 # ============================================
-# MARS CRATE - Meta-Progression
+# CERES CRATE - Meta-Progression
 # ============================================
 #
-# Mars crate opening system:
+# Ceres crate opening system:
 # - 50% chance: Enchanted Golden Apple
-# - 50% chance: Unique item from finite pool (4 items total)
+# - 50% chance: Unique item from finite pool (4 items)
 # - Once all 4 items obtained → always god apple
 #
-
-# ============================================
-# MARS KEY
-# ============================================
-
-mars_key:
-    type: item
-    material: nether_star
-    display name: <&b>Mars Key<&r>
-    enchantments:
-    - mending:1
-    mechanisms:
-        hides: ENCHANTS
-    lore:
-    - <&7>A key forged in the Roman forge,
-    - <&7>where Mars guards his most
-    - <&7>deadly and finite treasures.
-    - <empty>
-    - <&e>Right-click to unlock
-    - <&e>a Mars Crate.
-    - <empty>
-    - <&8>50% God Apple / 50% Unique Item
-    - <empty>
-    - <&b><&l><&k>|||<&r> <&b><&l>OLYMPIAN KEY<&r> <&b><&l><&k>|||
 
 # ============================================
 # KEY USAGE EVENT
 # ============================================
 
-mars_key_usage:
+ceres_key_usage:
     type: world
     debug: false
     events:
-        on player right clicks block with:mars_key:
+        on player right clicks block with:ceres_key:
         - determine cancelled passively
 
         # Roll outcome BEFORE taking key (safer)
-        - define result <proc[roll_mars_outcome]>
+        - define result <proc[roll_ceres_outcome]>
 
         # Take 1 key after successful roll
-        - take item:mars_key quantity:1
+        - take item:ceres_key quantity:1
 
         # Start crate animation with pre-rolled result
         # Use player-specific queue ID so it can be stopped if they close early
-        - run mars_crate_animation def.result:<[result]> id:mars_crate_<player.uuid>
+        - run ceres_crate_animation def.result:<[result]> id:ceres_crate_<player.uuid>
 
         # Track statistics
-        - flag player mars.crates_opened:++
+        - flag player ceres.crates_opened:++
 
-mars_crate_animation:
+ceres_crate_animation:
     type: task
     debug: false
     definitions: result
     script:
     # Store result as flag for early close detection
-    - flag player mars.crate.pending_result:<[result]>
-    - flag player mars.crate.animation_running:true
+    - flag player ceres.crate.pending_result:<[result]>
+    - flag player ceres.crate.animation_running:true
 
     # Narrate opening message
-    - narrate "<&7>You unlock the <&4>Mars Arena<&7>..."
-    - playsound <player> sound:block_ender_chest_open volume:1.0
+    - narrate "<&7>You unlock the <&b>Ceres Grove<&7>..."
+    - playsound <player> sound:block_chest_open volume:1.0
 
-    # Open GUI with dark red border frame
+    # Open GUI with cyan border frame
     - define filler <item[gray_stained_glass_pane].with[display=<&7>]>
-    - define border <item[red_stained_glass_pane].with[display=<&4>]>
+    - define border <item[cyan_stained_glass_pane].with[display=<&b>]>
     - define gui_items <list>
     - repeat 27:
         - define gui_items <[gui_items].include[<[filler]>]>
 
-    - inventory open d:mars_crate_gui
+    - inventory open d:ceres_crate_gui
     - define crate_inv <player.open_inventory>
     - inventory set d:<[crate_inv]> o:<[gui_items]>
 
-    # Set dark red border frame around entire GUI
+    # Set cyan border frame around entire GUI
     # Top row (1-9)
     - inventory set d:<[crate_inv]> o:<[border]> slot:1
     - inventory set d:<[crate_inv]> o:<[border]> slot:2
@@ -111,7 +87,7 @@ mars_crate_animation:
     # Middle row center slots: 12, 13, 14, 15, 16 (5 slots centered, scrolls right to left)
     # Alternates between god apple and mystery item
 
-    # Define preview pool as actual ItemTags
+    # Define preview pool as actual ItemTags instead of material names
     - define preview_pool <list>
     - define preview_pool <[preview_pool].include[<item[enchanted_golden_apple]>]>
     - define preview_pool <[preview_pool].include[<item[gray_dye]>]>
@@ -142,7 +118,7 @@ mars_crate_animation:
     # Phase 1: Fast scroll (20 cycles, 2t each = 2s)
     - repeat 20:
         # Check if player closed inventory early
-        - if !<player.has_flag[mars.crate.animation_running]>:
+        - if !<player.has_flag[ceres.crate.animation_running]>:
             - stop
 
         # Shift items left and add new item on right
@@ -167,7 +143,7 @@ mars_crate_animation:
     # Phase 2: Medium scroll (10 cycles, 3t each = 1.5s)
     - repeat 10:
         # Check if player closed inventory early
-        - if !<player.has_flag[mars.crate.animation_running]>:
+        - if !<player.has_flag[ceres.crate.animation_running]>:
             - stop
 
         # Shift items left and add new item on right
@@ -192,7 +168,7 @@ mars_crate_animation:
     # Phase 3: Slow scroll (5 cycles, 5t each = 1.25s)
     - repeat 5:
         # Check if player closed inventory early
-        - if !<player.has_flag[mars.crate.animation_running]>:
+        - if !<player.has_flag[ceres.crate.animation_running]>:
             - stop
 
         # Shift items left and add new item on right
@@ -278,46 +254,46 @@ mars_crate_animation:
     - wait 16t
 
     # Check one final time before closing
-    - if !<player.has_flag[mars.crate.animation_running]>:
+    - if !<player.has_flag[ceres.crate.animation_running]>:
         - stop
 
     # Clear animation flag BEFORE closing to prevent early close handler from triggering
-    - flag player mars.crate.animation_running:!
+    - flag player ceres.crate.animation_running:!
 
     # Close GUI
     - inventory close
     - wait 5t
 
     # Award loot
-    - inject award_mars_loot
+    - inject award_ceres_loot
 
     # Clear pending result flag after normal completion
-    - flag player mars.crate.pending_result:!
+    - flag player ceres.crate.pending_result:!
 
-mars_crate_gui:
+ceres_crate_gui:
     type: inventory
     inventory: chest
     gui: true
-    title: <&8>Mars Arena - Opening...
+    title: <&8>Ceres Grove - Opening...
     size: 27
 
 # ============================================
 # OUTCOME ROLLING
 # ============================================
 
-roll_mars_outcome:
+roll_ceres_outcome:
     type: procedure
     debug: false
     script:
     # Check if all items obtained
     - define all_obtained true
-    - if !<player.has_flag[mars.item.sword]>:
+    - if !<player.has_flag[ceres.item.title]>:
         - define all_obtained false
-    - if !<player.has_flag[mars.item.title]>:
+    - if !<player.has_flag[ceres.item.shulker]>:
         - define all_obtained false
-    - if !<player.has_flag[mars.item.shulker]>:
+    - if !<player.has_flag[ceres.item.wand]>:
         - define all_obtained false
-    - if !<player.has_flag[mars.item.shield]>:
+    - if !<player.has_flag[ceres.item.head]>:
         - define all_obtained false
 
     # If all obtained, force god apple
@@ -336,28 +312,28 @@ roll_mars_outcome:
     # Path B: Unique Item (roll = 2)
     # Get unobtained items
     - define available <list>
-    - if !<player.has_flag[mars.item.sword]>:
-        - define available <[available].include[sword]>
-    - if !<player.has_flag[mars.item.title]>:
+    - if !<player.has_flag[ceres.item.title]>:
         - define available <[available].include[title]>
-    - if !<player.has_flag[mars.item.shulker]>:
+    - if !<player.has_flag[ceres.item.shulker]>:
         - define available <[available].include[shulker]>
-    - if !<player.has_flag[mars.item.shield]>:
-        - define available <[available].include[shield]>
+    - if !<player.has_flag[ceres.item.wand]>:
+        - define available <[available].include[wand]>
+    - if !<player.has_flag[ceres.item.head]>:
+        - define available <[available].include[head]>
 
     # Select random from available
     - define chosen <[available].random>
 
     # Build result map
     - choose <[chosen]>:
-        - case sword:
-            - define result_map <map[type=UNIQUE;item_id=sword;item=<item[mars_sword]>;display=Mars Sword]>
         - case title:
-            - define result_map <map[type=UNIQUE;item_id=title;item=<item[book].with[display=<&4><&l>MARS TITLE<&r>;lore=<&7>Cosmetic unlock:|<&4>[Mars' Chosen]<&7> title]>;display=Mars Title]>
+            - define result_map <map[type=UNIQUE;item_id=title;item=<item[book].with[display=<&d><&l>CERES TITLE<&r>;lore=<&7>Cosmetic unlock:|<&6>[Ceres' Chosen]<&7> title]>;display=Ceres Title]>
         - case shulker:
-            - define result_map <map[type=UNIQUE;item_id=shulker;item=<item[red_shulker_box]>;display=Red Shulker Box]>
-        - case shield:
-            - define result_map <map[type=UNIQUE;item_id=shield;item=<item[mars_shield]>;display=Mars Shield]>
+            - define result_map <map[type=UNIQUE;item_id=shulker;item=<item[yellow_shulker_box]>;display=Yellow Shulker Box]>
+        - case wand:
+            - define result_map <map[type=UNIQUE;item_id=wand;item=<item[ceres_wand_blueprint]>;display=Ceres Wand Blueprint]>
+        - case head:
+            - define result_map <map[type=UNIQUE;item_id=head;item=<item[demeter_head]>;display=Head of Demeter]>
 
     - determine <[result_map]>
 
@@ -365,7 +341,7 @@ roll_mars_outcome:
 # LOOT AWARDING
 # ============================================
 
-award_mars_loot:
+award_ceres_loot:
     type: task
     debug: false
     script:
@@ -375,9 +351,9 @@ award_mars_loot:
         - case GOD_APPLE:
             - give enchanted_golden_apple
             - playsound <player> sound:entity_player_levelup
-            - flag player mars.god_apples:++
+            - flag player ceres.god_apples:++
             # Title feedback
-            - title "title:<&4><&l>MARS DROP" subtitle:<&f><[result].get[display]> fade_in:5t stay:40t fade_out:10t targets:<player>
+            - title "title:<&b><&l>CERES DROP" subtitle:<&f><[result].get[display]> fade_in:5t stay:40t fade_out:10t targets:<player>
 
         # Unique Item
         - case UNIQUE:
@@ -385,56 +361,61 @@ award_mars_loot:
 
             # Award item
             - choose <[item_id]>:
-                - case sword:
-                    - give mars_sword
-                    - flag player mars.item.sword:true
                 - case title:
-                    - flag player mars.item.title:true
+                    - flag player ceres.item.title:true
                     # No physical item for title (just flag)
                 - case shulker:
-                    - give red_shulker_box
-                    - flag player mars.item.shulker:true
-                - case shield:
-                    - give mars_shield
-                    - flag player mars.item.shield:true
+                    - give yellow_shulker_box
+                    - flag player ceres.item.shulker:true
+                - case wand:
+                    - give ceres_wand_blueprint
+                    - flag player ceres.item.wand:true
+                - case head:
+                    - give demeter_head
+                    - flag player ceres.item.head:true
 
             # Sound feedback
             - playsound <player> sound:ui_toast_challenge_complete volume:1.0
-            - playsound <player> sound:entity_wither_spawn volume:0.3 pitch:2.0
+            - playsound <player> sound:block_beacon_activate volume:0.5
 
             # Title feedback
-            - title "title:<&4><&l>OLYMPIAN DROP" subtitle:<&d><[result].get[display]> fade_in:5t stay:40t fade_out:10t targets:<player>
+            - title "title:<&b><&l>OLYMPIAN DROP" subtitle:<&d><[result].get[display]> fade_in:5t stay:40t fade_out:10t targets:<player>
 
             # Server announcement
-            - announce "<&4><&l>OLYMPIAN DROP!<&r> <&f><player.name> <&7>obtained a unique Mars item<&co> <&d><[result].get[display]><&7>!"
+            - announce "<&b><&l>OLYMPIAN DROP!<&r> <&f><player.name> <&7>obtained a unique Ceres item<&co> <&d><[result].get[display]><&7>!"
 
             # Track stats
-            - flag player mars.unique_items:++
+            - flag player ceres.unique_items:++
+
+            # Check if all unique items collected
+            - if <player.has_flag[ceres.item.title]> && <player.has_flag[ceres.item.shulker]> && <player.has_flag[ceres.item.wand]> && <player.has_flag[ceres.item.head]>:
+                - announce "<&b><&l>COLLECTION COMPLETE!<&r> <&f><player.name> <&7>has collected every unique <&b>Ceres<&7> item!"
+                - playsound <player> sound:entity_ender_dragon_growl volume:0.5
 
 # ============================================
 # EARLY CLOSE HANDLER
 # ============================================
 
-mars_crate_early_close:
+ceres_crate_early_close:
     type: world
     debug: false
     events:
-        on player closes mars_crate_gui:
+        on player closes ceres_crate_gui:
         # Check if animation is still running
-        - if !<player.has_flag[mars.crate.animation_running]>:
+        - if !<player.has_flag[ceres.crate.animation_running]>:
             - stop
 
         # Clear the animation running flag to signal the queue to stop naturally
         # Don't try to force-stop the queue - it may have already finished
-        - flag player mars.crate.animation_running:!
+        - flag player ceres.crate.animation_running:!
 
         # Wait a tick to ensure the queue sees the flag change
         - wait 1t
 
-        - define result <player.flag[mars.crate.pending_result]>
+        - define result <player.flag[ceres.crate.pending_result]>
 
         # Award loot using same logic as normal completion
-        - inject award_mars_loot
+        - inject award_ceres_loot
 
         # Clear pending result flag
-        - flag player mars.crate.pending_result:!
+        - flag player ceres.crate.pending_result:!
