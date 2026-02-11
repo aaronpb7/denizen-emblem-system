@@ -12,7 +12,8 @@
       "Bash(move \"DOCUMENTATION_UPDATES_2026-01-28.md\" \"archive\"\" && move \"heracles_PLANNING.md\" \"archive\"\")",
       "Bash(move \"heracles_CONFIRMED.md\" \"archive\"\")",
       "WebFetch(domain:hub.spigotmc.org)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(grep:*)"
     ]
   }
 }
