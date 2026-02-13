@@ -22,44 +22,6 @@ profile_inventory:
     debug: false
     title: <&8><player.name>'s Profile
     size: 45
-    procedural items:
-    - determine <proc[get_profile_items]>
-
-get_profile_items:
-    type: procedure
-    debug: false
-    script:
-    - define items <list>
-    - define filler <item[gray_stained_glass_pane].with[display=<empty>]>
-
-    # Fill all slots with filler
-    - repeat 45:
-        - define items <[items].include[<[filler]>]>
-
-    # Row 1: Player head (centered slot 5)
-    - define head <item[<player.skull_item>].with[display=<&2><player.name>;lore=<&7>Welcome to your profile!|<&7>UUID<&co> <&e><player.uuid>]>
-    - define items <[items].set[<[head]>].at[5]>
-
-    # Row 3: Active emblem (19), Progression (21), Emblems (23), Cosmetics (25), Bulletin (27)
-    - define emblem_item <proc[get_emblem_display_item]>
-    - define items <[items].set[<[emblem_item]>].at[19]>
-
-    - define ranks_item <proc[get_emblem_rank_icon_item]>
-    - define items <[items].set[<[ranks_item]>].at[21]>
-
-    - define emblems_item <proc[get_emblems_icon_item]>
-    - define items <[items].set[<[emblems_item]>].at[23]>
-
-    - define cosmetics_item <proc[get_cosmetics_icon_item]>
-    - define items <[items].set[<[cosmetics_item]>].at[25]>
-
-    - define bulletin_item <proc[get_bulletin_icon_item]>
-    - define items <[items].set[<[bulletin_item]>].at[27]>
-
-    # Row 5: Close button (bottom left slot 37)
-    - define items <[items].set[<item[profile_close_button]>].at[37]>
-
-    - determine <[items]>
 
 profile_close_button:
     type: item
@@ -73,6 +35,26 @@ open_profile_gui:
     debug: false
     script:
     - inventory open d:profile_inventory
+    - define inv <player.open_inventory>
+
+    # Fill all slots with filler
+    - define filler <item[gray_stained_glass_pane].with[display=<empty>]>
+    - repeat 45:
+        - inventory set d:<[inv]> slot:<[value]> o:<[filler]>
+
+    # Row 1: Player head (centered slot 5)
+    - define head <item[<player.skull_item>].with[display=<&2><player.name>;lore=<&7>Welcome to your profile!|<&7>UUID<&co> <&e><player.uuid>]>
+    - inventory set d:<[inv]> slot:5 o:<[head]>
+
+    # Row 3: Active emblem (19), Progression (21), Emblems (23), Cosmetics (25), Bulletin (27)
+    - inventory set d:<[inv]> slot:19 o:<proc[get_emblem_display_item]>
+    - inventory set d:<[inv]> slot:21 o:<proc[get_emblem_rank_icon_item]>
+    - inventory set d:<[inv]> slot:23 o:<proc[get_emblems_icon_item]>
+    - inventory set d:<[inv]> slot:25 o:<proc[get_cosmetics_icon_item]>
+    - inventory set d:<[inv]> slot:27 o:<proc[get_bulletin_icon_item]>
+
+    # Row 5: Close button (bottom left slot 37)
+    - inventory set d:<[inv]> slot:37 o:<item[profile_close_button]>
 
 # ============================================
 # PROFILE ITEM PROCEDURES
@@ -437,7 +419,7 @@ profile_click_handler:
             - inventory open d:triton_progress_gui
 
         after player clicks emblem_check_back_button in emblem_check_gui:
-        - inventory open d:profile_inventory
+        - run open_profile_gui
 
         # Demeter progress GUI clicks
         after player clicks demeter_progress_back_button in demeter_progress_gui:
@@ -1382,7 +1364,7 @@ cosmetics_click_handler:
 
         # Back to profile
         on player clicks cosmetics_back_button in cosmetics_inventory:
-        - inventory open d:profile_inventory
+        - run open_profile_gui
 
         # Click title items
         on player clicks name_tag in cosmetics_inventory:
