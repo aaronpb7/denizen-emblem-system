@@ -22,34 +22,34 @@ Promachos retains emblem selection and tier gating.
 
 | Activity | Mechanic | Key Threshold | Milestone | Total Keys |
 |----------|----------|--------------|-----------|------------|
-| Sea Lanterns | Turn in to Triton NPC | 10/key | 1,000 | 100 |
-| Guardian Kills | Kill guardians (regular=+1, elder=+15) | 15/key | 1,500 | 100 |
-| Conduit Crafting | Craft conduits | 1 conduit = 4 keys | 25 | 100 |
+| Sea Lanterns | Turn in to Triton NPC | 10/key | 2,000 | 200 |
+| Guardian Kills | Kill guardians (regular=+1, elder=+15) | 15/key | 3,000 | 200 |
+| Conduit Crafting | Craft conduits | 1 conduit = 4 keys | 50 | 200 |
 
 ### Sea Lanterns
 - Hold sea lanterns in hand, right-click Triton NPC
 - NPC takes all lanterns from hand, increments count
 - Keys awarded every 10 lanterns turned in
-- Component at 1,000 lanterns
+- Component at 2,000 lanterns
 
 ### Guardian Kills
 - Kill guardians with Triton emblem active
 - Regular guardian: +1 to count
 - Elder guardian: +15 to count
 - Keys awarded every 15 kill points
-- Component at 1,500 total kill points
+- Component at 3,000 total kill points
 
 ### Conduit Crafting
 - Craft conduits with Triton emblem active
 - Each conduit crafted awards 4 keys
-- Component at 25 conduits crafted
+- Component at 50 conduits crafted
 
 ## Blessing
 
 **Triton Blessing** — 5% boost on all incomplete activities:
-- Lanterns: +50 (5% of 1,000)
-- Guardians: +75 (5% of 1,500)
-- Conduits: +1 (5% of 25, rounded down)
+- Lanterns: +100 (5% of 2,000)
+- Guardians: +150 (5% of 3,000)
+- Conduits: +2 (5% of 50, rounded down)
 
 If all 3 components are already complete, converts to **10 Triton Keys** instead.
 
@@ -81,9 +81,9 @@ If all 3 components are already complete, converts to **10 Triton Keys** instead
 
 | Component | Requirement | Flag |
 |-----------|-------------|------|
-| Lantern Component | 1,000 sea lanterns | `triton.component.lanterns` |
-| Guardian Component | 1,500 guardian kills | `triton.component.guardians` |
-| Conduit Component | 25 conduits crafted | `triton.component.conduits` |
+| Lantern Component | 2,000 sea lanterns | `triton.component.lanterns` |
+| Guardian Component | 3,000 guardian kills | `triton.component.guardians` |
+| Conduit Component | 50 conduits crafted | `triton.component.conduits` |
 
 ## Emblem Unlock
 

@@ -944,11 +944,11 @@ get_triton_lanterns_progress_item:
     - define lore <[lore].include[<&7>the bond with the sea god.]>
     - define lore "<[lore].include[<&sp>]>"
     - define lore <[lore].include[<&3>Component Progress<&co>]>
-    - define lore <[lore].include[<&7><[count]> / 1,000 sea lanterns offered]>
+    - define lore <[lore].include[<&7><[count]> / 2,000 sea lanterns offered]>
     - if <[complete]>:
         - define percent 100
     - else:
-        - define percent <[count].div[1000].mul[100].round>
+        - define percent <[count].div[2000].mul[100].round>
     - define lore <[lore].include[<&7>(<[percent]>% complete)]>
     - define lore "<[lore].include[<&sp>]>"
     - define lore <[lore].include[<&8><&o>Complete all components to earn the emblem.]>
@@ -976,11 +976,11 @@ get_triton_guardians_progress_item:
     - define lore <[lore].include[<&7>elder guardians count +15.]>
     - define lore "<[lore].include[<&sp>]>"
     - define lore <[lore].include[<&3>Component Progress<&co>]>
-    - define lore <[lore].include[<&7><[count]> / 1,500 guardian kills]>
+    - define lore <[lore].include[<&7><[count]> / 3,000 guardian kills]>
     - if <[complete]>:
         - define percent 100
     - else:
-        - define percent <[count].div[1500].mul[100].round>
+        - define percent <[count].div[3000].mul[100].round>
     - define lore <[lore].include[<&7>(<[percent]>% complete)]>
     - define lore "<[lore].include[<&sp>]>"
     - define lore <[lore].include[<&8><&o>Complete all components to earn the emblem.]>
@@ -1008,11 +1008,11 @@ get_triton_conduits_progress_item:
     - define lore <[lore].include[<&7>Each conduit channels Triton's power.]>
     - define lore "<[lore].include[<&sp>]>"
     - define lore <[lore].include[<&3>Component Progress<&co>]>
-    - define lore <[lore].include[<&7><[count]> / 25 conduits crafted]>
+    - define lore <[lore].include[<&7><[count]> / 50 conduits crafted]>
     - if <[complete]>:
         - define percent 100
     - else:
-        - define percent <[count].div[25].mul[100].round>
+        - define percent <[count].div[50].mul[100].round>
     - define lore <[lore].include[<&7>(<[percent]>% complete)]>
     - define lore "<[lore].include[<&sp>]>"
     - define lore <[lore].include[<&8><&o>Complete all components to earn the emblem.]>

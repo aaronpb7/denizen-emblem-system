@@ -92,7 +92,7 @@ lantern_component:
     mechanisms:
         hides: ENCHANTS
     lore:
-    - <&7>Symbol of 1,000 sea lanterns offered.
+    - <&7>Symbol of 2,000 sea lanterns offered.
     - <&7>Required for Triton's Emblem.
     - <empty>
     - <&8><&o>Obtained: <player.flag[triton.component.lanterns_date].if_null[Unknown]>
@@ -108,7 +108,7 @@ guardian_component:
     mechanisms:
         hides: ENCHANTS
     lore:
-    - <&7>Symbol of 1,500 guardians vanquished.
+    - <&7>Symbol of 3,000 guardians vanquished.
     - <&7>Required for Triton's Emblem.
     - <empty>
     - <&8><&o>Obtained: <player.flag[triton.component.guardians_date].if_null[Unknown]>
@@ -124,7 +124,7 @@ conduit_component:
     mechanisms:
         hides: ENCHANTS
     lore:
-    - <&7>Symbol of 25 conduits crafted.
+    - <&7>Symbol of 50 conduits crafted.
     - <&7>Required for Triton's Emblem.
     - <empty>
     - <&8><&o>Obtained: <player.flag[triton.component.conduits_date].if_null[Unknown]>

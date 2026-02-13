@@ -197,9 +197,9 @@ This document lists ALL flags used in the Emblem System V2. Flags are organized 
 
 | Flag | Type | Purpose | Set When |
 |------|------|---------|----------|
-| `triton.component.lanterns` | Boolean | Lantern component obtained | Counter reaches 1,000 |
-| `triton.component.guardians` | Boolean | Guardian component obtained | Counter reaches 1,500 |
-| `triton.component.conduits` | Boolean | Conduit component obtained | Counter reaches 25 |
+| `triton.component.lanterns` | Boolean | Lantern component obtained | Counter reaches 2,000 |
+| `triton.component.guardians` | Boolean | Guardian component obtained | Counter reaches 3,000 |
+| `triton.component.conduits` | Boolean | Conduit component obtained | Counter reaches 50 |
 
 ### Emblem Unlock
 

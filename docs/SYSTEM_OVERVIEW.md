@@ -314,9 +314,9 @@ Players can equip one chat title prefix at a time via `/profile` → Cosmetics m
 | `triton_key` | tripwire_hook | Opens Triton Crate (5 tiers) |
 | `triton_blessing` | nether_star | +5% progress boost (10 keys if maxed) |
 | `triton_mythic_fragment` | prismarine_shard | Crafting ingredient for Neptune's Trident |
-| `lantern_component` | sea_lantern | Milestone component (1,000 lanterns) |
-| `guardian_component` | prismarine_crystals | Milestone component (1,500 guardian kills) |
-| `conduit_component` | conduit | Milestone component (25 conduits) |
+| `lantern_component` | sea_lantern | Milestone component (2,000 lanterns) |
+| `guardian_component` | prismarine_crystals | Milestone component (3,000 guardian kills) |
+| `conduit_component` | conduit | Milestone component (50 conduits) |
 
 ### Neptune Items
 

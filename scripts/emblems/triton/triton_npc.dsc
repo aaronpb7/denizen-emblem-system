@@ -118,7 +118,7 @@ triton_lantern_turnin:
     - define count <player.flag[triton.lanterns.count]>
 
     # Feedback
-    - narrate "<&3><&l>TRITON<&r> <&7>accepted <&3><[lanterns_in_hand]> sea lantern<tern[<[lanterns_in_hand]>.is[MORE].than[1]].if_true[s].if_false[]><&7>. <&8>(<&3><[count]><&8>/<&3>1,000<&8>)"
+    - narrate "<&3><&l>TRITON<&r> <&7>accepted <&3><[lanterns_in_hand]> sea lantern<tern[<[lanterns_in_hand]>.is[MORE].than[1]].if_true[s].if_false[]><&7>. <&8>(<&3><[count]><&8>/<&3>2,000<&8>)"
     - playsound <player> sound:entity_experience_orb_pickup
 
     # Key award logic (every 10)
@@ -131,11 +131,11 @@ triton_lantern_turnin:
         - narrate "<&e><&l>TRITON KEY!<&r> <&7>+<[keys_to_give]> key<tern[<[keys_to_give]>.is[MORE].than[1]].if_true[s].if_false[]>"
         - playsound <player> sound:entity_experience_orb_pickup
 
-    # Check for component milestone (1,000)
-    - if <[count]> >= 1000 && !<player.has_flag[triton.component.lanterns]>:
+    # Check for component milestone (2,000)
+    - if <[count]> >= 2000 && !<player.has_flag[triton.component.lanterns]>:
         - flag player triton.component.lanterns:true
         - flag player triton.component.lanterns_date:<util.time_now.format>
-        - narrate "<&6><&l>MILESTONE!<&r> <&e>Lantern Component obtained! <&7>(1,000 sea lanterns)"
+        - narrate "<&6><&l>MILESTONE!<&r> <&e>Lantern Component obtained! <&7>(2,000 sea lanterns)"
         - playsound <player> sound:ui_toast_challenge_complete
         - announce "<&3>[Triton]<&r> <&f><player.name> <&7>has obtained the <&6>Lantern Component<&7>!"
 
