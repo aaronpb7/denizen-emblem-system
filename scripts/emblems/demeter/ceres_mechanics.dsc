@@ -213,5 +213,7 @@ title_chat_handler:
                 - announce "<&8>[Vulcan's Chosen]<&r> <player.display_name><&7>: <context.message>"
             - case neptune:
                 - announce "<&3>[Neptune's Chosen]<&r> <player.display_name><&7>: <context.message>"
+            - case dis:
+                - announce "<&5>[Dis' Chosen]<&r> <player.display_name><&7>: <context.message>"
             - default:
                 - announce "<player.display_name><&7>: <context.message>"

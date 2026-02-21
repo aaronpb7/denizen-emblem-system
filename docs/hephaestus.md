@@ -95,7 +95,11 @@ Iron-themed progression loop:
 
 ### MYTHIC Pool Addition: Hephaestus Mythic Fragment
 
-The Hephaestus base crate MYTHIC tier can also drop a **Hephaestus Mythic Fragment** — a crafting ingredient used in the Mythic Forge system. Players combine 4 fragments with a Vulcan Pickaxe Blueprint and 4 Diamond Blocks to forge a Vulcan Pickaxe.
+**Hephaestus Mythic Fragments** are crafting ingredients used in the Mythic Forge system. Players combine 4 fragments with a Vulcan Pickaxe Blueprint and 4 Diamond Blocks to forge a Vulcan Pickaxe.
+
+**Sources:**
+- **Component Milestones**: 1 fragment awarded per milestone completion (Iron, Smelting, Golem = 3 total)
+- **MYTHIC Crate Tier**: 1-in-4 chance from the Hephaestus base crate MYTHIC pool
 
 ### OLYMPIAN (1% / 2% with emblem)
 | Item | Quantity |

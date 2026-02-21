@@ -300,7 +300,7 @@ The **Vulcan Pickaxe** is not a direct crate drop. Instead, the crate drops a **
 | Ingredient | Source | Quantity |
 |---|---|---|
 | Vulcan Pickaxe Blueprint | Vulcan Crate (unique item roll) | 1 |
-| Hephaestus Mythic Fragment | Hephaestus Base Crate (MYTHIC tier) | 4 |
+| Hephaestus Mythic Fragment | Component milestones (3) + MYTHIC crate tier | 4 |
 | Diamond Block | Survival | 4 |
 
 ### How to Craft

@@ -399,7 +399,7 @@ The **Mars Shield** is not a direct crate drop. Instead, the crate drops a **Mar
 | Ingredient | Source | Quantity |
 |---|---|---|
 | Mars Shield Blueprint | Mars Crate (unique item roll) | 1 |
-| Heracles Mythic Fragment | Heracles Base Crate (MYTHIC tier) | 4 |
+| Heracles Mythic Fragment | Component milestones (3) + MYTHIC crate tier | 4 |
 | Diamond Block | Survival | 4 |
 
 ### How to Craft

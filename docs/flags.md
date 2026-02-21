@@ -17,8 +17,9 @@ This document lists ALL flags used in the Emblem System V2. Flags are organized 
 | `emblem.changed_before` | Boolean | Player has changed emblem at least once | `true` | Emblem changed via Promachos |
 | `emblem.rank` | Integer | Player's progression rank (0=Uninitiated, 1=Neophyte, 2=Mystes, 3=Epoptes, 4=Aristos, 5=Heros, 6=Hemitheos) | `2` | Emblem ceremony completes |
 | `emblem.migrated` | Boolean | One-time migration flag from old role system | `true` | Migration task runs |
+| `emblem.fragments_migrated` | Boolean | One-time migration: awarded mythic fragments for already-completed milestones | `true` | Migration on join |
 
-**Valid `emblem.active` values**: `DEMETER`, `HEPHAESTUS`, `HERACLES`, `TRITON`
+**Valid `emblem.active` values**: `DEMETER`, `HEPHAESTUS`, `HERACLES`, `TRITON`, `CHARON`
 
 ---
 
@@ -197,9 +198,9 @@ This document lists ALL flags used in the Emblem System V2. Flags are organized 
 
 | Flag | Type | Purpose | Set When |
 |------|------|---------|----------|
-| `triton.component.lanterns` | Boolean | Lantern component obtained | Counter reaches 2,000 |
-| `triton.component.guardians` | Boolean | Guardian component obtained | Counter reaches 3,000 |
-| `triton.component.conduits` | Boolean | Conduit component obtained | Counter reaches 50 |
+| `triton.component.lanterns` | Boolean | Lantern component obtained | Counter reaches 1,000 |
+| `triton.component.guardians` | Boolean | Guardian component obtained | Counter reaches 1,500 |
+| `triton.component.conduits` | Boolean | Conduit component obtained | Counter reaches 25 |
 
 ### Emblem Unlock
 
@@ -218,6 +219,81 @@ This document lists ALL flags used in the Emblem System V2. Flags are organized 
 | `triton.tier.legendary` | Integer | LEGENDARY rolls |
 | `triton.tier.mythic` | Integer | MYTHIC rolls |
 | `triton.tier.olympian` | Integer | OLYMPIAN rolls |
+
+---
+
+## Charon Progression Flags
+
+### Activity Counters
+
+| Flag | Type | Purpose | Example Value | Incremented When |
+|------|------|---------|---------------|------------------|
+| `charon.debris.count` | Integer | Total ancient debris turned in | `350` | Debris turned in to Charon NPC, emblem=CHARON |
+| `charon.withers.count` | Integer | Total wither kill points | `1200` | Wither skeleton killed (+1) or Wither boss killed (+15), emblem=CHARON |
+| `charon.barters.count` | Integer | Total piglin barters completed | `1800` | Piglin barter completes near player, emblem=CHARON |
+
+### Key Award Tracking
+
+| Flag | Type | Purpose | Example Value |
+|------|------|---------|---------------|
+| `charon.debris.keys_awarded` | Integer | Keys awarded from debris | `70` |
+| `charon.withers.keys_awarded` | Integer | Keys awarded from withers | `80` |
+| `charon.barters.keys_awarded` | Integer | Keys awarded from barters | `72` |
+
+**Logic**: Debris: `floor(count / 5)`. Withers: `floor(count / 15)`. Barters: `floor(count / 25)`.
+
+### Component Flags
+
+| Flag | Type | Purpose | Set When |
+|------|------|---------|----------|
+| `charon.component.debris` | Boolean | Debris component obtained | Counter reaches 500 |
+| `charon.component.withers` | Boolean | Wither component obtained | Counter reaches 1,500 |
+| `charon.component.barters` | Boolean | Barter component obtained | Counter reaches 2,500 |
+
+### NPC Interaction
+
+| Flag | Type | Purpose |
+|------|------|---------|
+| `met_charon` | Boolean | Player has met Charon NPC |
+
+### Emblem Unlock
+
+| Flag | Type | Purpose |
+|------|------|---------|
+| `charon.emblem.unlocked` | Boolean | Charon emblem unlocked |
+| `charon.emblem.unlock_date` | Timestamp | When emblem unlocked |
+
+### Optional Statistics
+
+| Flag | Type | Purpose |
+|------|------|---------|
+| `charon.crates_opened` | Integer | Total Charon crates opened |
+| `charon.tier.mortal` | Integer | MORTAL rolls |
+| `charon.tier.heroic` | Integer | HEROIC rolls |
+| `charon.tier.legendary` | Integer | LEGENDARY rolls |
+| `charon.tier.mythic` | Integer | MYTHIC rolls |
+| `charon.tier.olympian` | Integer | OLYMPIAN rolls |
+
+---
+
+## Dis Meta-Progression Flags
+
+### Item Obtained Flags
+
+| Flag | Type | Purpose | Set When |
+|------|------|---------|----------|
+| `dis.item.title` | Boolean | Dis Title obtained | Dis crate rolls title |
+| `dis.item.shulker` | Boolean | Purple Shulker obtained | Dis crate rolls shulker |
+| `dis.item.charm` | Boolean | Dis Fire Charm obtained | Mythic Forge craft |
+| `dis.item.head` | Boolean | Head of Charon obtained | Dis crate rolls head |
+
+### Optional Statistics
+
+| Flag | Type | Purpose |
+|------|------|---------|
+| `dis.crates_opened` | Integer | Total Dis crates opened |
+| `dis.god_apples` | Integer | God apples from Dis |
+| `dis.unique_items` | Integer | Unique items from Dis (0-4) |
 
 ---
 
@@ -320,7 +396,7 @@ This document lists ALL flags used in the Emblem System V2. Flags are organized 
 
 **Cleared**: When player closes the Mythic Forge GUI.
 
-**Valid values**: `ceres_wand`, `mars_shield`, `vulcan_pickaxe`, `neptune_trident`
+**Valid values**: `ceres_wand`, `mars_shield`, `vulcan_pickaxe`, `neptune_trident`, `dis_fire_charm`
 
 ---
 

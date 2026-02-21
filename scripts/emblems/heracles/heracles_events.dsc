@@ -44,6 +44,8 @@ combat_pillager_kills:
             - narrate "<&4><&l>MILESTONE!<&r> <&c>Pillager Slayer Component obtained! <&7>(2,500 pillagers)"
             - playsound <player> sound:ui_toast_challenge_complete
             - announce "<&c>[Promachos]<&r> <&f><player.name> <&7>has obtained the <&4>Pillager Slayer Component<&7>!"
+            - give heracles_mythic_fragment quantity:1
+            - narrate "<&d>+1 Heracles Mythic Fragment!"
 
 # ============================================
 # RAID COMPLETIONS
@@ -86,6 +88,8 @@ combat_raid_victory:
                 - narrate "<&4><&l>MILESTONE!<&r> <&c>Raid Victor Component obtained! <&7>(50 raids)" targets:<[hero]>
                 - playsound <[hero]> sound:ui_toast_challenge_complete
                 - announce "<&c>[Promachos]<&r> <&f><[hero].name> <&7>has obtained the <&4>Raid Victor Component<&7>!"
+                - give heracles_mythic_fragment quantity:1 to:<[hero]>
+                - narrate "<&d>+1 Heracles Mythic Fragment!" targets:<[hero]>
 
 # ============================================
 # EMERALD TRADING
@@ -138,3 +142,5 @@ combat_emerald_trading:
             - narrate "<&4><&l>MILESTONE!<&r> <&c>Trade Master Component obtained! <&7>(10,000 emeralds)"
             - playsound <player> sound:ui_toast_challenge_complete
             - announce "<&c>[Promachos]<&r> <&f><player.name> <&7>has obtained the <&4>Trade Master Component<&7>!"
+            - give heracles_mythic_fragment quantity:1
+            - narrate "<&d>+1 Heracles Mythic Fragment!"

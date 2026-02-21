@@ -383,7 +383,11 @@ Equally weighted within tier (6 entries):
 
 ### MYTHIC Pool Addition: Heracles Mythic Fragment
 
-The Heracles base crate MYTHIC tier can also drop a **Heracles Mythic Fragment** — a crafting ingredient used in the Mythic Forge system. Players combine 4 fragments with a Mars Shield Blueprint and 4 Diamond Blocks to forge a Mars Shield.
+**Heracles Mythic Fragments** are crafting ingredients used in the Mythic Forge system. Players combine 4 fragments with a Mars Shield Blueprint and 4 Diamond Blocks to forge a Mars Shield.
+
+**Sources:**
+- **Component Milestones**: 1 fragment awarded per milestone completion (Pillagers, Raids, Emeralds = 3 total)
+- **MYTHIC Crate Tier**: 1-in-4 chance from the Heracles base crate MYTHIC pool
 
 ---
 

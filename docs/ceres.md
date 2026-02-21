@@ -551,7 +551,7 @@ The **Ceres Wand** is not a direct crate drop. Instead, the crate drops a **Cere
 | Ingredient | Source | Quantity |
 |---|---|---|
 | Ceres Wand Blueprint | Ceres Crate (unique item roll) | 1 |
-| Demeter Mythic Fragment | Demeter Base Crate (MYTHIC tier) | 4 |
+| Demeter Mythic Fragment | Component milestones (3) + MYTHIC crate tier | 4 |
 | Diamond Block | Survival | 4 |
 
 ### How to Craft

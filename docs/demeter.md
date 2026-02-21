@@ -484,7 +484,11 @@ demeter_cake_tracking:
 
 ## MYTHIC Pool Addition: Demeter Mythic Fragment
 
-The Demeter base crate MYTHIC tier can also drop a **Demeter Mythic Fragment** — a crafting ingredient used in the Mythic Forge system. Players combine 4 fragments with a Ceres Wand Blueprint and 4 Diamond Blocks to forge a Ceres Wand.
+**Demeter Mythic Fragments** are crafting ingredients used in the Mythic Forge system. Players combine 4 fragments with a Ceres Wand Blueprint and 4 Diamond Blocks to forge a Ceres Wand.
+
+**Sources:**
+- **Component Milestones**: 1 fragment awarded per milestone completion (Wheat, Cow, Cake = 3 total)
+- **MYTHIC Crate Tier**: 1-in-4 chance from the Demeter base crate MYTHIC pool
 
 ---
 

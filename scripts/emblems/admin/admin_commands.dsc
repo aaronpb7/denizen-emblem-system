@@ -13,12 +13,12 @@ emblemadmin_command:
     type: command
     name: emblemadmin
     description: Set player's active emblem
-    usage: /emblemadmin (player) (DEMETER|HEPHAESTUS|HERACLES|TRITON)
+    usage: /emblemadmin (player) (DEMETER|HEPHAESTUS|HERACLES|TRITON|CHARON)
     permission: emblems.admin
     debug: false
     script:
     - if <context.args.size> < 2:
-        - narrate "<&c>Usage: /emblemadmin <player> <DEMETER|HEPHAESTUS|HERACLES|TRITON>"
+        - narrate "<&c>Usage: /emblemadmin <player> <DEMETER|HEPHAESTUS|HERACLES|TRITON|CHARON>"
         - stop
 
     - define target <server.match_player[<context.args.get[1]>].if_null[null]>
@@ -28,7 +28,7 @@ emblemadmin_command:
 
     - define emblem <context.args.get[2].to_uppercase>
     - if !<proc[is_valid_emblem].context[<[emblem]>]>:
-        - narrate "<&c>Invalid emblem. Use: DEMETER, HEPHAESTUS, HERACLES, or TRITON"
+        - narrate "<&c>Invalid emblem. Use: DEMETER, HEPHAESTUS, HERACLES, TRITON, or CHARON"
         - stop
 
     - flag <[target]> emblem.active:<[emblem]>
@@ -143,6 +143,7 @@ demeteradmin_command:
         # Reset all Demeter flags
         - case reset:
             - flag <[target]> demeter:!
+            - flag <[target]> met_demeter:!
             - narrate "<&a>Reset all Demeter flags for <[target].name>"
 
         - default:
@@ -399,6 +400,7 @@ heraclesadmin_command:
         # Reset all Heracles flags
         - case reset:
             - flag <[target]> heracles:!
+            - flag <[target]> met_heracles:!
             - narrate "<&a>Reset all Heracles flags for <[target].name>"
 
         - default:
@@ -633,6 +635,7 @@ hephaestusadmin_command:
         # Reset all Hephaestus flags
         - case reset:
             - flag <[target]> hephaestus:!
+            - flag <[target]> met_hephaestus:!
             - narrate "<&a>Reset all Hephaestus flags for <[target].name>"
 
         - default:
@@ -874,6 +877,120 @@ tritonadmin_command:
             - narrate "<&c>Invalid action. Use: keys, set, component, max, or reset"
 
 # ============================================
+# CHARON ADMIN COMMAND
+# ============================================
+
+charonadmin_command:
+    type: command
+    name: charonadmin
+    description: Manage Charon progression
+    usage: /charonadmin (player) (action) [args...]
+    permission: emblems.admin
+    debug: false
+    script:
+    - if <context.args.size> < 2:
+        - narrate "<&c>Usage: /charonadmin <player> <keys|set|component|max|reset> [args...]"
+        - stop
+
+    - define target <server.match_player[<context.args.get[1]>].if_null[null]>
+    - if <[target]> == null:
+        - narrate "<&c>Player not found"
+        - stop
+
+    - define action <context.args.get[2].to_lowercase>
+
+    - choose <[action]>:
+        # Give keys
+        - case keys:
+            - if <context.args.size> < 3:
+                - narrate "<&c>Usage: /charonadmin <player> keys <amount>"
+                - stop
+            - define amount <context.args.get[3]>
+            - if !<[amount].is_integer>:
+                - narrate "<&c>Amount must be a number"
+                - stop
+            - run give_item_to_player def:<[target]>|charon_key|<[amount]>
+            - narrate "<&a>Gave <[target].name> <[amount]> Charon Keys"
+
+        # Set activity counter
+        - case set:
+            - if <context.args.size> < 4:
+                - narrate "<&c>Usage: /charonadmin <player> set <debris|withers|barters> <count>"
+                - stop
+            - define activity <context.args.get[3].to_lowercase>
+            - define count <context.args.get[4]>
+            - if !<[count].is_integer>:
+                - narrate "<&c>Count must be a number"
+                - stop
+            - choose <[activity]>:
+                - case debris:
+                    - flag <[target]> charon.debris.count:<[count]>
+                    - narrate "<&a>Set <[target].name>'s debris count to <[count]>"
+                - case withers:
+                    - flag <[target]> charon.withers.count:<[count]>
+                    - narrate "<&a>Set <[target].name>'s withers count to <[count]>"
+                - case barters:
+                    - flag <[target]> charon.barters.count:<[count]>
+                    - narrate "<&a>Set <[target].name>'s barters count to <[count]>"
+                - default:
+                    - narrate "<&c>Invalid activity. Use: debris, withers, or barters"
+
+        # Toggle component
+        - case component:
+            - if <context.args.size> < 4:
+                - narrate "<&c>Usage: /charonadmin <player> component <debris|withers|barters> <true|false>"
+                - stop
+            - define component <context.args.get[3].to_lowercase>
+            - define value <context.args.get[4].to_lowercase>
+            - if <[value]> != true && <[value]> != false:
+                - narrate "<&c>Value must be true or false"
+                - stop
+            - choose <[component]>:
+                - case debris:
+                    - if <[value]> == true:
+                        - flag <[target]> charon.component.debris:true
+                        - narrate "<&a>Set debris component to true for <[target].name>"
+                    - else:
+                        - flag <[target]> charon.component.debris:!
+                        - narrate "<&a>Removed debris component for <[target].name>"
+                - case withers:
+                    - if <[value]> == true:
+                        - flag <[target]> charon.component.withers:true
+                        - narrate "<&a>Set withers component to true for <[target].name>"
+                    - else:
+                        - flag <[target]> charon.component.withers:!
+                        - narrate "<&a>Removed withers component for <[target].name>"
+                - case barters:
+                    - if <[value]> == true:
+                        - flag <[target]> charon.component.barters:true
+                        - narrate "<&a>Set barters component to true for <[target].name>"
+                    - else:
+                        - flag <[target]> charon.component.barters:!
+                        - narrate "<&a>Removed barters component for <[target].name>"
+                - default:
+                    - narrate "<&c>Invalid component. Use: debris, withers, or barters"
+
+        # Max out emblem (all components + unlock)
+        - case max:
+            - flag <[target]> charon.component.debris:true
+            - flag <[target]> charon.component.withers:true
+            - flag <[target]> charon.component.barters:true
+            - flag <[target]> charon.emblem.unlocked:true
+            - flag <[target]> charon.emblem.unlock_date:<util.time_now>
+            - flag <[target]> emblem.rank:+:1
+            - narrate "<&a>Maxed out Charon emblem for <[target].name>"
+            - narrate "<&7>All components + emblem unlocked. Rank incremented."
+
+        # Reset all Charon flags
+        - case reset:
+            - flag <[target]> charon:!
+            - flag <[target]> met_charon:!
+            - narrate "<&a>Reset all Charon flags for <[target].name>"
+
+        - default:
+            - narrate "<&c>Invalid action. Use: keys, set, component, max, or reset"
+
+# ============================================
 # NEPTUNE ADMIN COMMAND
 # ============================================
 
@@ -995,6 +1112,127 @@ neptuneadmin_command:
             - narrate "<&c>Invalid action. Use: keys, give, item, or reset"
 
 # ============================================
+# DIS ADMIN COMMAND
+# ============================================
+
+disadmin_command:
+    type: command
+    name: disadmin
+    description: Manage Dis progression
+    usage: /disadmin (player) (action) [args...]
+    permission: emblems.admin
+    debug: false
+    script:
+    - if <context.args.size> < 2:
+        - narrate "<&c>Usage: /disadmin <player> <keys|give|item|reset> [args...]"
+        - stop
+
+    - define target <server.match_player[<context.args.get[1]>].if_null[null]>
+    - if <[target]> == null:
+        - narrate "<&c>Player not found"
+        - stop
+
+    - define action <context.args.get[2].to_lowercase>
+
+    - choose <[action]>:
+        # Give Dis keys
+        - case keys:
+            - if <context.args.size> < 3:
+                - narrate "<&c>Usage: /disadmin <player> keys <amount>"
+                - stop
+            - define amount <context.args.get[3]>
+            - if !<[amount].is_integer>:
+                - narrate "<&c>Amount must be a number"
+                - stop
+            - give dis_key quantity:<[amount]> player:<[target]>
+            - narrate "<&a>Gave <[target].name> <[amount]> Dis Keys"
+
+        # Give item + flag + announcement (mirrors crate drop)
+        - case give:
+            - if <context.args.size> < 3:
+                - narrate "<&c>Usage: /disadmin <player> give <title|shulker|charm|head>"
+                - stop
+            - define item <context.args.get[3].to_lowercase>
+            - choose <[item]>:
+                - case title:
+                    - flag <[target]> dis.item.title:true
+                    - define "display:Dis Title"
+                - case shulker:
+                    - flag <[target]> dis.item.shulker:true
+                    - give purple_shulker_box player:<[target]>
+                    - define "display:Purple Shulker Box"
+                - case charm:
+                    - flag <[target]> dis.item.charm:true
+                    - give dis_fire_charm_blueprint player:<[target]>
+                    - define "display:Dis Fire Charm Blueprint"
+                - case head:
+                    - flag <[target]> dis.item.head:true
+                    - give charon_head player:<[target]>
+                    - define "display:Head of Charon"
+                - default:
+                    - narrate "<&c>Invalid item. Use: title, shulker, charm, or head"
+                    - stop
+            - playsound <[target]> sound:ui_toast_challenge_complete volume:1.0
+            - playsound <[target]> sound:block_beacon_activate volume:0.5
+            - title "title:<&5><&l>OLYMPIAN DROP" "subtitle:<&d><[display]>" fade_in:5t stay:40t fade_out:10t targets:<[target]>
+            - announce "<&5><&l>OLYMPIAN DROP!<&r> <&f><[target].name> <&7>obtained a unique Dis item<&co> <&d><[display]><&7>!"
+            - flag <[target]> dis.unique_items:++
+            - if <[target].has_flag[dis.item.title]> && <[target].has_flag[dis.item.shulker]> && <[target].has_flag[dis.item.charm]> && <[target].has_flag[dis.item.head]>:
+                - announce "<&5><&l>COLLECTION COMPLETE!<&r> <&f><[target].name> <&7>has collected every unique <&5>Dis<&7> item!"
+                - playsound <[target]> sound:entity_ender_dragon_growl volume:0.5
+            - narrate "<&a>Gave Dis <[item]> to <[target].name>"
+
+        # Toggle item obtained
+        - case item:
+            - if <context.args.size> < 4:
+                - narrate "<&c>Usage: /disadmin <player> item <title|shulker|charm|head> <true|false>"
+                - stop
+            - define item <context.args.get[3].to_lowercase>
+            - define value <context.args.get[4].to_lowercase>
+            - if <[value]> != true && <[value]> != false:
+                - narrate "<&c>Value must be true or false"
+                - stop
+            - choose <[item]>:
+                - case title:
+                    - if <[value]> == true:
+                        - flag <[target]> dis.item.title:true
+                        - narrate "<&a>Set Dis Title obtained for <[target].name>"
+                    - else:
+                        - flag <[target]> dis.item.title:!
+                        - narrate "<&a>Removed Dis Title for <[target].name>"
+                - case shulker:
+                    - if <[value]> == true:
+                        - flag <[target]> dis.item.shulker:true
+                        - narrate "<&a>Set Purple Shulker obtained for <[target].name>"
+                    - else:
+                        - flag <[target]> dis.item.shulker:!
+                        - narrate "<&a>Removed Purple Shulker for <[target].name>"
+                - case charm:
+                    - if <[value]> == true:
+                        - flag <[target]> dis.item.charm:true
+                        - narrate "<&a>Set Dis Fire Charm obtained for <[target].name>"
+                    - else:
+                        - flag <[target]> dis.item.charm:!
+                        - narrate "<&a>Removed Dis Fire Charm for <[target].name>"
+                - case head:
+                    - if <[value]> == true:
+                        - flag <[target]> dis.item.head:true
+                        - narrate "<&a>Set Head of Charon obtained for <[target].name>"
+                    - else:
+                        - flag <[target]> dis.item.head:!
+                        - narrate "<&a>Removed Head of Charon for <[target].name>"
+                - default:
+                    - narrate "<&c>Invalid item. Use: title, shulker, charm, or head"
+
+        # Reset all Dis flags
+        - case reset:
+            - flag <[target]> dis:!
+            - narrate "<&a>Reset all Dis flags for <[target].name>"
+
+        - default:
+            - narrate "<&c>Invalid action. Use: keys, give, item, or reset"
+
+# ============================================
 # CHECK KEYS AWARDED COMMAND
 # ============================================
 
@@ -1097,6 +1335,26 @@ checkkeys_command:
     - define conduits_owed <[conduits_should].sub[<[conduits_awarded]>].max[0]>
     - narrate "<&7>  Conduits: <&f><[conduits_count]> <&7>| Awarded: <&f><[conduits_awarded]> <&7>| Should: <&f><[conduits_should]> <&7>| Owed: <&a><[conduits_owed]>"
 
+    # Charon
+    - narrate "<&5>CHARON:"
+    - define debris_count <[target].flag[charon.debris.count].if_null[0]>
+    - define debris_awarded <[target].flag[charon.debris.keys_awarded].if_null[0]>
+    - define debris_should <[debris_count].div[5].round_down>
+    - define debris_owed <[debris_should].sub[<[debris_awarded]>].max[0]>
+    - narrate "<&7>  Debris: <&f><[debris_count]> <&7>| Awarded: <&f><[debris_awarded]> <&7>| Should: <&f><[debris_should]> <&7>| Owed: <&a><[debris_owed]>"
+
+    - define withers_count <[target].flag[charon.withers.count].if_null[0]>
+    - define withers_awarded <[target].flag[charon.withers.keys_awarded].if_null[0]>
+    - define withers_should <[withers_count].div[15].round_down>
+    - define withers_owed <[withers_should].sub[<[withers_awarded]>].max[0]>
+    - narrate "<&7>  Withers: <&f><[withers_count]> <&7>| Awarded: <&f><[withers_awarded]> <&7>| Should: <&f><[withers_should]> <&7>| Owed: <&a><[withers_owed]>"
+
+    - define barters_count <[target].flag[charon.barters.count].if_null[0]>
+    - define barters_awarded <[target].flag[charon.barters.keys_awarded].if_null[0]>
+    - define barters_should <[barters_count].div[25].round_down>
+    - define barters_owed <[barters_should].sub[<[barters_awarded]>].max[0]>
+    - narrate "<&7>  Barters: <&f><[barters_count]> <&7>| Awarded: <&f><[barters_awarded]> <&7>| Should: <&f><[barters_should]> <&7>| Owed: <&a><[barters_owed]>"
+
     - narrate "<&6>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # ============================================
@@ -1107,12 +1365,12 @@ testroll_command:
     type: command
     name: testroll
     description: Simulate crate roll without consuming key
-    usage: /testroll (demeter|ceres|heracles|mars|hephaestus|vulcan|triton|neptune)
+    usage: /testroll (demeter|ceres|heracles|mars|hephaestus|vulcan|triton|neptune|charon|dis)
     permission: emblems.admin
     debug: false
     script:
     - if <context.args.size> < 1:
-        - narrate "<&c>Usage: /testroll <demeter|ceres|heracles|mars|hephaestus|vulcan|triton|neptune>"
+        - narrate "<&c>Usage: /testroll <demeter|ceres|heracles|mars|hephaestus|vulcan|triton|neptune|charon|dis>"
         - stop
 
     - define crate <context.args.get[1].to_lowercase>
@@ -1170,8 +1428,21 @@ testroll_command:
             - define result <proc[roll_neptune_outcome]>
             - run neptune_crate_animation def.result:<[result]>
 
+        - case charon:
+            - narrate "<&5>Simulating Charon crate roll..."
+            - define tier_result <proc[roll_charon_tier]>
+            - define tier <[tier_result].get[1]>
+            - define tier_color <[tier_result].get[2]>
+            - define loot <proc[roll_charon_loot].context[<[tier]>]>
+            - run charon_crate_animation def.tier:<[tier]> def.tier_color:<[tier_color]> def.loot:<[loot]>
+
+        - case dis:
+            - narrate "<&5>Simulating Dis crate roll..."
+            - define result <proc[roll_dis_outcome]>
+            - run dis_crate_animation def.result:<[result]>
+
         - default:
-            - narrate "<&c>Invalid crate. Use: demeter, ceres, heracles, mars, hephaestus, vulcan, triton, or neptune"
+            - narrate "<&c>Invalid crate. Use: demeter, ceres, heracles, mars, hephaestus, vulcan, triton, neptune, charon, or dis"
 
 # ============================================
 # GLOBAL RESET COMMAND
@@ -1204,7 +1475,7 @@ emblemreset_command:
         - narrate "<&7>- All Ceres unlocks (title, shulker, wand, head)"
         - narrate "<&7>- All cosmetic titles"
         - narrate "<&7>- All crate statistics"
-        - narrate "<&7>- Promachos introduction flag"
+        - narrate "<&7>- All NPC introduction flags"
         - narrate ""
         - narrate "<&e>To confirm, run: <&f>/emblemreset <[target].name> confirm"
         - stop
@@ -1212,7 +1483,7 @@ emblemreset_command:
     # Execute full reset
     - run emblemreset_task def.target:<[target]>
     - narrate "<&a>✓ Successfully reset all emblem progress for <&e><[target].name>"
-    - narrate "<&7>They can now start fresh by visiting Promachos."
+    - narrate "<&7>They can now start fresh by visiting the gods."
 
 emblemreset_task:
     type: task
@@ -1226,10 +1497,12 @@ emblemreset_task:
 
     # Demeter
     - flag <[target]> demeter:!
+    - flag <[target]> met_demeter:!
 
     # Emblem rank
     - flag <[target]> emblem.rank:!
     - flag <[target]> emblem.migrated:!
+    - flag <[target]> emblem.npc_migrated:!
 
     # Ceres
     - flag <[target]> ceres:!
@@ -1240,11 +1513,13 @@ emblemreset_task:
     # Cosmetics system
     - flag <[target]> cosmetic.title.active:!
 
-    # Hephaestus (placeholder - for future)
+    # Hephaestus
     - flag <[target]> hephaestus:!
+    - flag <[target]> met_hephaestus:!
 
-    # Heracles (placeholder - for future)
+    # Heracles
     - flag <[target]> heracles:!
+    - flag <[target]> met_heracles:!
 
     # Vulcan (placeholder - for future)
     - flag <[target]> vulcan:!
@@ -1259,9 +1534,16 @@ emblemreset_task:
     # Neptune
     - flag <[target]> neptune:!
 
+    # Charon
+    - flag <[target]> charon:!
+    - flag <[target]> met_charon:!
+
+    # Dis
+    - flag <[target]> dis:!
+
     # Notify target player
     - narrate "<&e>[Emblem System]<&r> <&7>Your emblem progression has been completely reset by an admin." targets:<[target]>
-    - narrate "<&7>Visit <&e>Promachos<&7> to begin your journey!" targets:<[target]>
+    - narrate "<&7>Visit <&e>the gods<&7> to begin your journey!" targets:<[target]>
 
     # Log to console
     - announce to_console "Emblem reset completed for player: <[target].name>"
@@ -1305,6 +1587,8 @@ rankadmin_command:
             - narrate "<&2>✓ <&7>Heracles"
         - if <[target].has_flag[triton.emblem.unlocked]>:
             - narrate "<&2>✓ <&7>Triton"
+        - if <[target].has_flag[charon.emblem.unlocked]>:
+            - narrate "<&2>✓ <&7>Charon"
 
 # ============================================
 # INVENTORY VIEWER COMMAND

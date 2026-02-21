@@ -1,11 +1,11 @@
 # ============================================
-# PROMACHOS NPC - Emblem Selection
+# PROMACHOS NPC - Herald of the Gods
 # ============================================
 #
-# Promachos (Προμαχός) - Herald of the Gods
-# - First interaction: Introduces system, forces emblem selection
-# - Returning: Main menu (change emblem, check progress, info)
-# - Emblem unlocks: Ceremony when components complete
+# Promachos (Προμαχός) - Herald & Guide
+# - First interaction: Lore introduction, directs to god NPCs
+# - Returning: Main menu (emblem progress, system info)
+# - No longer handles emblem selection or ceremonies
 #
 
 # ============================================
@@ -33,13 +33,6 @@ promachos_interact:
                 script:
                 - if !<player.has_flag[met_promachos]>:
                     - run promachos_first_meeting
-                # Check for ready emblems (components complete but not unlocked)
-                - else if <proc[check_demeter_components_complete]> && !<player.has_flag[demeter.emblem.unlocked]>:
-                    - run demeter_emblem_unlock_ceremony
-                - else if <proc[check_hephaestus_components_complete]> && !<player.has_flag[hephaestus.emblem.unlocked]>:
-                    - run hephaestus_emblem_unlock_ceremony
-                - else if <proc[check_heracles_components_complete]> && !<player.has_flag[heracles.emblem.unlocked]>:
-                    - run heracles_emblem_unlock_ceremony
                 - else:
                     - inventory open d:promachos_main_menu
 
@@ -51,38 +44,41 @@ promachos_first_meeting:
     type: task
     debug: false
     script:
-    # Dialogue sequence (5 parts, 3s delay)
-    - narrate "<&e><&l>Promachos<&r><&7>: Greetings, <player.name>. I am Promachos, Herald of the Gods."
+    # Title/subtitle intro
+    - title "title:<&e><&l>PROMACHOS" "subtitle:<&7>Herald of the Gods" fade_in:10t stay:50t fade_out:10t
+    - playsound <player> sound:block_amethyst_block_chime volume:0.5
+
+    - narrate "<&e><&l>Promachos<&r><&7>: Hold, mortal. I am <&e>Promachos<&7>, Herald of the Gods. I was sent ahead to prepare this world for what is coming."
     - wait 3s
 
-    - narrate "<&e><&l>Promachos<&r><&7>: The Olympians watch your deeds. Through your labors, you may earn their favor—and their gifts."
+    - narrate "<&e><&l>Promachos<&r><&7>: The gods have fled Olympus. Something ancient — something that devours divinity itself — woke beneath the mountain and shattered everything."
     - wait 3s
 
-    - narrate "<&e><&l>Promachos<&r><&7>: You must choose an emblem to pursue. Only one may be pursued at a time."
+    - narrate "<&e><&l>Promachos<&r><&7>: They arrived here broken, their divine essence scattered into fragments. They cannot act directly — every use of their power draws the enemy closer."
     - wait 3s
 
-    - narrate "<&e><&l>Promachos<&r><&7>: Each emblem requires completing three sacred tasks. Finish all three, and I shall bestow the emblem upon you."
+    - narrate "<&e><&l>Promachos<&r><&7>: But mortal labor is invisible to it. Your work, your sweat, your devotion — it can restore what was lost without alerting what hunts them."
     - wait 3s
 
-    - narrate "<&e><&l>Promachos<&r><&7>: Choose wisely. Your journey begins now."
+    - narrate "<&e><&l>Promachos<&r><&7>: Three gods have taken refuge nearby. Seek them out — <&6>Demeter<&7>, <&8>Hephaestus<&7>, and <&c>Heracles<&7>. They will explain what they need. Choose one to serve."
     - wait 1s
 
-    # Flag as met and open emblem selection
+    # Flag as met — NO GUI opened, just directs to gods
     - flag player met_promachos:true
-    - inventory open d:emblem_selection_gui
+    - narrate "<&e><&l>Promachos<&r><&7>: Return to me if you need guidance. Now go."
 
 # ============================================
 # MAIN MENU GUI
 # ============================================
 
-promachos_change_emblem_button:
+promachos_emblem_progress_button:
     type: item
-    material: compass
-    display name: <&6><&l>Change Emblem
+    material: nether_star
+    display name: <&6><&l>Emblem Progress
     lore:
-    - <&7>Switch your active emblem.
+    - <&7>View your progress across all emblems.
     - <empty>
-    - <&e>Click to change emblem.
+    - <&e>Click to view progress.
 
 promachos_system_info_button:
     type: item
@@ -101,137 +97,12 @@ promachos_main_menu:
     size: 27
     definitions:
         filler: <item[gray_stained_glass_pane].with[display=<&7>]>
-        change_emblem: <item[promachos_change_emblem_button]>
+        progress: <item[promachos_emblem_progress_button]>
         system_info: <item[promachos_system_info_button]>
     slots:
     - [filler] [filler] [filler] [filler] [filler] [filler] [filler] [filler] [filler]
-    - [filler] [filler] [filler] [change_emblem] [filler] [system_info] [filler] [filler] [filler]
+    - [filler] [filler] [filler] [progress] [filler] [system_info] [filler] [filler] [filler]
     - [filler] [filler] [filler] [filler] [filler] [filler] [filler] [filler] [filler]
-
-# ============================================
-# EMBLEM SELECTION GUI
-# ============================================
-
-promachos_back_button:
-    type: item
-    material: arrow
-    display name: <&e>← Back
-    lore:
-    - <&7>Return to Promachos
-
-emblem_selection_gui:
-    type: inventory
-    inventory: chest
-    gui: true
-    debug: false
-    title: <&8>Promachos - Choose Your Emblem
-    size: 27
-    procedural items:
-    - determine <proc[get_emblem_selection_items]>
-
-get_emblem_selection_items:
-    type: procedure
-    debug: false
-    script:
-    - define items <list>
-    - define filler <item[gray_stained_glass_pane].with[display=<&7>]>
-    - repeat 27:
-        - define items <[items].include[<[filler]>]>
-
-    # Row 2: Three Tier 1 emblem selection icons (slots 12, 14, 16)
-    - define items <[items].set[<proc[get_demeter_emblem_select_item]>].at[12]>
-    - define items <[items].set[<proc[get_hephaestus_emblem_select_item]>].at[14]>
-    - define items <[items].set[<proc[get_heracles_emblem_select_item]>].at[16]>
-
-    # Back button (bottom left slot 19)
-    - define items <[items].set[<item[promachos_back_button]>].at[19]>
-
-    - determine <[items]>
-
-# Selection-specific item procedures (show "Click to select" instead of "Click for detailed progress")
-get_demeter_emblem_select_item:
-    type: procedure
-    debug: false
-    script:
-    - define lore <list>
-    - define lore <[lore].include[<&7><&o>"Emblem of agricultural mastery"]>
-    - define lore "<[lore].include[<&sp>]>"
-    - if <player.has_flag[demeter.emblem.unlocked]>:
-        - define lore <[lore].include[<&6><&l>Emblem Attained]>
-    - else:
-        - define components_done 0
-        - if <player.has_flag[demeter.component.wheat]>:
-            - define components_done <[components_done].add[1]>
-        - if <player.has_flag[demeter.component.cow]>:
-            - define components_done <[components_done].add[1]>
-        - if <player.has_flag[demeter.component.cake]>:
-            - define components_done <[components_done].add[1]>
-        - define lore <[lore].include[<&e>Progress<&co> <&7><[components_done]>/3 components]>
-    - define lore "<[lore].include[<&sp>]>"
-    - define lore <[lore].include[<&7>Complete three sacred activities]>
-    - define lore <[lore].include[<&7>to unlock Demeter's blessing.]>
-    - define lore "<[lore].include[<&sp>]>"
-    - define lore <[lore].include[<&e>Click to select]>
-    - if <player.has_flag[demeter.emblem.unlocked]>:
-        - determine <item[wheat].with[display=<&6><&l>Demeter's Emblem;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
-    - else:
-        - determine <item[wheat].with[display=<&6><&l>Demeter's Emblem;lore=<[lore]>]>
-
-get_hephaestus_emblem_select_item:
-    type: procedure
-    debug: false
-    script:
-    - define lore <list>
-    - define lore <[lore].include[<&7><&o>"Emblem of forge mastery"]>
-    - define lore "<[lore].include[<&sp>]>"
-    - if <player.has_flag[hephaestus.emblem.unlocked]>:
-        - define lore <[lore].include[<&8><&l>Emblem Attained]>
-    - else:
-        - define components_done 0
-        - if <player.has_flag[hephaestus.component.iron]>:
-            - define components_done <[components_done].add[1]>
-        - if <player.has_flag[hephaestus.component.smelting]>:
-            - define components_done <[components_done].add[1]>
-        - if <player.has_flag[hephaestus.component.golem]>:
-            - define components_done <[components_done].add[1]>
-        - define lore <[lore].include[<&8>Progress<&co> <&7><[components_done]>/3 components]>
-    - define lore "<[lore].include[<&sp>]>"
-    - define lore <[lore].include[<&7>Complete three sacred activities]>
-    - define lore <[lore].include[<&7>to unlock Hephaestus' blessing.]>
-    - define lore "<[lore].include[<&sp>]>"
-    - define lore <[lore].include[<&e>Click to select]>
-    - if <player.has_flag[hephaestus.emblem.unlocked]>:
-        - determine <item[iron_pickaxe].with[display=<&8><&l>Hephaestus' Emblem;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
-    - else:
-        - determine <item[iron_pickaxe].with[display=<&8><&l>Hephaestus' Emblem;lore=<[lore]>]>
-
-get_heracles_emblem_select_item:
-    type: procedure
-    debug: false
-    script:
-    - define lore <list>
-    - define lore <[lore].include[<&7><&o>"Emblem of heroic valor"]>
-    - define lore "<[lore].include[<&sp>]>"
-    - if <player.has_flag[heracles.emblem.unlocked]>:
-        - define lore <[lore].include[<&c><&l>Emblem Attained]>
-    - else:
-        - define components_done 0
-        - if <player.has_flag[heracles.component.pillagers]>:
-            - define components_done <[components_done].add[1]>
-        - if <player.has_flag[heracles.component.raids]>:
-            - define components_done <[components_done].add[1]>
-        - if <player.has_flag[heracles.component.emeralds]>:
-            - define components_done <[components_done].add[1]>
-        - define lore <[lore].include[<&e>Progress<&co> <&7><[components_done]>/3 components]>
-    - define lore "<[lore].include[<&sp>]>"
-    - define lore <[lore].include[<&7>Complete three heroic deeds]>
-    - define lore <[lore].include[<&7>to unlock Heracles' favor.]>
-    - define lore "<[lore].include[<&sp>]>"
-    - define lore <[lore].include[<&e>Click to select]>
-    - if <player.has_flag[heracles.emblem.unlocked]>:
-        - determine <item[diamond_sword].with[display=<&c><&l>Heracles' Emblem;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
-    - else:
-        - determine <item[diamond_sword].with[display=<&c><&l>Heracles' Emblem;lore=<[lore]>]>
 
 # ============================================
 # GUI EVENT HANDLERS
@@ -242,67 +113,15 @@ promachos_gui_events:
     debug: false
     events:
         # Main menu clicks
-        after player clicks promachos_change_emblem_button in promachos_main_menu:
-        - inventory open d:emblem_selection_gui
+        after player clicks promachos_emblem_progress_button in promachos_main_menu:
+        - inventory open d:emblem_check_gui
 
         after player clicks promachos_system_info_button in promachos_main_menu:
         - inventory open d:system_info_gui
 
-        # Emblem selection clicks (slot-based: 12=Demeter, 14=Hephaestus, 16=Heracles)
-        after player clicks item in emblem_selection_gui:
-        - if <context.raw_slot> == 12:
-            - run set_player_emblem def:DEMETER
-        - else if <context.raw_slot> == 14:
-            - run set_player_emblem def:HEPHAESTUS
-        - else if <context.raw_slot> == 16:
-            - run set_player_emblem def:HERACLES
-
-        after player clicks promachos_back_button in emblem_selection_gui:
-        - inventory open d:promachos_main_menu
-
         # System info menu clicks
         after player clicks system_info_back_button in system_info_gui:
         - inventory open d:promachos_main_menu
-
-# ============================================
-# ROLE SETTING TASK
-# ============================================
-
-set_player_emblem:
-    type: task
-    debug: false
-    definitions: emblem
-    script:
-    # Check if already active
-    - if <player.flag[emblem.active].if_null[NONE]> == <[emblem]>:
-        - inventory close
-        - define display <proc[get_emblem_display_name].context[<[emblem]>]>
-        - narrate "<&7>You are already a <&6><[display]><&7>."
-        - playsound <player> sound:entity_villager_no
-        - stop
-
-    # Set new emblem
-    - flag player emblem.active:<[emblem]>
-    - inventory close
-
-    # Confirmation message
-    - define display <proc[get_emblem_display_name].context[<[emblem]>]>
-
-    - if <player.has_flag[emblem.changed_before]>:
-        - narrate "<&e><&l>Promachos<&r><&7>: You have switched to <&6><[display]><&7>. Your previous progress is preserved."
-    - else:
-        - choose <[emblem]>:
-            - case DEMETER:
-                - narrate "<&e><&l>Promachos<&r><&7>: You have chosen the <&6>Emblem of Demeter<&7>. May the goddess bless your fields."
-            - case HEPHAESTUS:
-                - narrate "<&e><&l>Promachos<&r><&7>: You have chosen the <&8>Emblem of Hephaestus<&7>. May the god of the forge guide your works."
-            - case HERACLES:
-                - narrate "<&e><&l>Promachos<&r><&7>: You have chosen the <&c>Emblem of Heracles<&7>. May the hero grant you strength."
-            - case TRITON:
-                - narrate "<&3><&l>Triton<&r><&7>: You have accepted my emblem. May the seas guide your voyage."
-        - flag player emblem.changed_before:true
-
-    - playsound <player> sound:block_enchantment_table_use
 
 # ============================================
 # SYSTEM INFO GUI
@@ -324,7 +143,7 @@ system_info_roles:
     - <&7>Performing them earns keys and
     - <&7>advances you toward component milestones.
     - <empty>
-    - <&8>Select an emblem to see its activities.
+    - <&8>Visit a god to select their emblem.
 
 system_info_ranks:
     type: item
@@ -356,7 +175,7 @@ system_info_emblems:
     - <&7>in your emblem's activities.
     - <empty>
     - <&7>Once all 3 components are gathered,
-    - <&7>return to me for the emblem ceremony.
+    - <&7>return to your god for the emblem ceremony.
     - <empty>
     - <&8>Track progress with /profile → Emblems
 
@@ -458,8 +277,9 @@ get_emblem_check_items:
     - define tier2_label <item[cyan_stained_glass_pane].with[display=<&3><&l>Tier 2;lore=<&7>Requires 2 Tier 1 emblems]>
     - define items <[items].set[<[tier2_label]>].at[29]>
 
-    # Row 4: Tier 2 emblem (slot 31)
+    # Row 4: Tier 2 emblems (slots 31, 33)
     - define items <[items].set[<proc[get_triton_emblem_status_item]>].at[31]>
+    - define items <[items].set[<proc[get_charon_emblem_status_item]>].at[33]>
 
     # Back button (bottom left slot 37)
     - define items <[items].set[<item[emblem_check_back_button]>].at[37]>
@@ -530,7 +350,7 @@ demeter_emblem_ready:
     - <&7>You have gathered all three
     - <&7>sacred offerings of <&6>Demeter<&7>.
     - <empty>
-    - <&e>Speak to <&6>Promachos<&e> to
+    - <&e>Speak to <&6>Demeter<&e> to
     - <&e>receive your emblem!
     enchantments:
     - mending:1
@@ -594,7 +414,7 @@ hephaestus_emblem_ready:
     - <&7>You have mastered all three
     - <&7>sacred crafts of <&8>Hephaestus<&7>.
     - <empty>
-    - <&e>Speak to <&6>Promachos<&e> to
+    - <&e>Speak to <&8>Hephaestus<&e> to
     - <&e>receive your emblem!
     enchantments:
     - mending:1
@@ -658,7 +478,7 @@ heracles_emblem_ready:
     - <&7>You have completed all three
     - <&7>heroic trials of <&c>Heracles<&7>.
     - <empty>
-    - <&e>Speak to <&6>Promachos<&e> to
+    - <&e>Speak to <&c>Heracles<&e> to
     - <&e>receive your emblem!
     enchantments:
     - mending:1
@@ -729,167 +549,66 @@ triton_emblem_ready:
     mechanisms:
         hides: ENCHANTS
 
-# Check if all Demeter components complete
-check_demeter_components_complete:
+# Charon emblem status
+get_charon_emblem_status_item:
     type: procedure
     debug: false
     script:
-    - if <player.has_flag[demeter.component.wheat]> && <player.has_flag[demeter.component.cow]> && <player.has_flag[demeter.component.cake]>:
-        - determine true
-    - determine false
+    # If unlocked
+    - if <player.has_flag[charon.emblem.unlocked]>:
+        - define lore <list>
+        - define lore <[lore].include[<&7><&o>"Emblem of underworld mastery"]>
+        - define lore "<[lore].include[<&sp>]>"
+        - define lore <[lore].include[<&5><&l>Emblem Attained]>
+        - define lore "<[lore].include[<&sp>]>"
+        - define lore <[lore].include[<&7>Complete three nether trials]>
+        - define lore <[lore].include[<&7>to unlock Charon's domain.]>
+        - define lore "<[lore].include[<&sp>]>"
+        - define lore <[lore].include[<&e>Click for detailed progress]>
+        - determine <item[soul_lantern].with[display=<&5><&l>Charon's Emblem;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
 
-# Check if all Heracles components complete
-check_heracles_components_complete:
-    type: procedure
-    debug: false
-    script:
-    - if <player.has_flag[heracles.component.pillagers]> && <player.has_flag[heracles.component.raids]> && <player.has_flag[heracles.component.emeralds]>:
-        - determine true
-    - determine false
+    # Check if ready
+    - if <proc[check_charon_components_complete]>:
+        - determine <item[charon_emblem_ready]>
 
-# Check if all Hephaestus components complete
-check_hephaestus_components_complete:
-    type: procedure
-    debug: false
-    script:
-    - if <player.has_flag[hephaestus.component.iron]> && <player.has_flag[hephaestus.component.smelting]> && <player.has_flag[hephaestus.component.golem]>:
-        - determine true
-    - determine false
+    # In progress - high level overview
+    - define debris_complete <player.has_flag[charon.component.debris]>
+    - define withers_complete <player.has_flag[charon.component.withers]>
+    - define barters_complete <player.has_flag[charon.component.barters]>
 
-# ============================================
-# EMBLEM UNLOCK CEREMONY
-# ============================================
+    - define components_done 0
+    - if <[debris_complete]>:
+        - define components_done <[components_done].add[1]>
+    - if <[withers_complete]>:
+        - define components_done <[components_done].add[1]>
+    - if <[barters_complete]>:
+        - define components_done <[components_done].add[1]>
 
-demeter_emblem_unlock_ceremony:
-    type: task
-    debug: false
-    script:
-    # Close GUI
-    - inventory close
+    - define lore <list>
+    - define lore <[lore].include[<&7><&o>"Emblem of underworld mastery"]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&e>Progress<&co> <&7><[components_done]>/3 components]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&7>Complete three nether trials]>
+    - define lore <[lore].include[<&7>to unlock Charon's domain.]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&e>Click for detailed progress]>
 
-    # Play epic sound
-    - playsound <player> sound:ui_toast_challenge_complete volume:1.0
+    - determine <item[soul_lantern].with[display=<&5><&l>Charon's Emblem;lore=<[lore]>]>
 
-    # Dialogue sequence
-    - narrate "<&e><&l>Promachos<&r><&7>: You have gathered the sacred offerings of <&e>Demeter<&7>."
-    - wait 3s
-
-    - narrate "<&e><&l>Promachos<&r><&7>: The goddess of harvest smiles upon you. Receive her emblem!"
-    - wait 3s
-
-    - narrate "<&e><&l>Promachos<&r><&7>: <&2>You have unlocked the <&6><&l>Emblem of Demeter<&2>!"
-
-    # Set flags
-    - flag player demeter.emblem.unlocked:true
-    - flag player emblem.rank:+:1
-    - flag player demeter.emblem.unlock_date:<util.time_now>
-
-    # Award bonus keys
-    - give demeter_key quantity:30
-    - narrate "<&7>Bonus reward: <&e>30 Demeter Keys"
-
-    # Visual effects
-    - title "title:<&6><&l>EMBLEM UNLOCKED!" "subtitle:<&e>Demeter's Blessing" fade_in:10t stay:40t fade_out:10t
-    - playeffect effect:totem at:<player.location> quantity:50 offset:1.5
-
-    # Server announcement
-    - announce "<&e><&l>[Promachos]<&r> <&f><player.name> <&7>has unlocked the <&6><&l>Emblem of Demeter<&7>!"
-    - playsound <server.online_players> sound:ui_toast_challenge_complete volume:0.5
-
-    # Check tier progression
-    - define tier1_done <proc[count_completed_tier_emblems].context[<player>|1]>
-    - wait 2s
-    - if <[tier1_done]> >= 2:
-        - narrate "<&e><&l>Promachos<&r><&7>: Your mastery grows. <&e>Tier 2 emblems<&7> are now within your reach."
-    - else:
-        - narrate "<&e><&l>Promachos<&r><&7>: Well done. Continue your journey — more emblems await."
-
-heracles_emblem_unlock_ceremony:
-    type: task
-    debug: false
-    script:
-    # Close GUI
-    - inventory close
-
-    # Play epic sound
-    - playsound <player> sound:ui_toast_challenge_complete volume:1.0
-    - playsound <player> sound:entity_ender_dragon_growl volume:0.5
-
-    # Dialogue sequence
-    - narrate "<&e><&l>Promachos<&r><&7>: You have completed the heroic trials of <&c>Heracles<&7>."
-    - wait 3s
-
-    - narrate "<&e><&l>Promachos<&r><&7>: The greatest of heroes recognizes your valor. Receive his emblem!"
-    - wait 3s
-
-    - narrate "<&e><&l>Promachos<&r><&7>: <&2>You have unlocked the <&c><&l>Emblem of Heracles<&2>!"
-
-    # Set flags
-    - flag player heracles.emblem.unlocked:true
-    - flag player emblem.rank:+:1
-    - flag player heracles.emblem.unlock_date:<util.time_now>
-
-    # Award bonus keys
-    - give heracles_key quantity:30
-    - narrate "<&7>Bonus reward: <&c>30 Heracles Keys"
-
-    # Visual effects
-    - title "title:<&c><&l>EMBLEM UNLOCKED!" "subtitle:<&4>Heracles' Favor" fade_in:10t stay:40t fade_out:10t
-    - playeffect effect:flame at:<player.location> quantity:50 offset:1.5
-
-    # Server announcement
-    - announce "<&c><&l>[Promachos]<&r> <&f><player.name> <&7>has unlocked the <&c><&l>Emblem of Heracles<&7>!"
-    - playsound <server.online_players> sound:ui_toast_challenge_complete volume:0.5
-
-    # Check tier progression
-    - define tier1_done <proc[count_completed_tier_emblems].context[<player>|1]>
-    - wait 2s
-    - if <[tier1_done]> >= 2:
-        - narrate "<&e><&l>Promachos<&r><&7>: Your mastery grows. <&e>Tier 2 emblems<&7> are now within your reach."
-    - else:
-        - narrate "<&e><&l>Promachos<&r><&7>: Well done. Continue your journey — more emblems await."
-
-hephaestus_emblem_unlock_ceremony:
-    type: task
-    debug: false
-    script:
-    # Close GUI
-    - inventory close
-
-    # Play epic sound
-    - playsound <player> sound:ui_toast_challenge_complete volume:1.0
-    - playsound <player> sound:block_anvil_use volume:0.5
-
-    # Dialogue sequence
-    - narrate "<&e><&l>Promachos<&r><&7>: You have mastered the sacred crafts of <&8>Hephaestus<&7>."
-    - wait 3s
-
-    - narrate "<&e><&l>Promachos<&r><&7>: The god of the forge blesses your works. Receive his emblem!"
-    - wait 3s
-
-    - narrate "<&e><&l>Promachos<&r><&7>: <&2>You have unlocked the <&8><&l>Emblem of Hephaestus<&2>!"
-
-    # Set flags
-    - flag player hephaestus.emblem.unlocked:true
-    - flag player emblem.rank:+:1
-    - flag player hephaestus.emblem.unlock_date:<util.time_now>
-
-    # Award bonus keys
-    - give hephaestus_key quantity:30
-    - narrate "<&7>Bonus reward: <&7>30 Hephaestus Keys"
-
-    # Visual effects
-    - title "title:<&8><&l>EMBLEM UNLOCKED!" "subtitle:<&f>Hephaestus' Blessing" fade_in:10t stay:40t fade_out:10t
-    - playeffect effect:lava at:<player.location> quantity:50 offset:1.5
-
-    # Server announcement
-    - announce "<&8><&l>[Promachos]<&r> <&f><player.name> <&8>has unlocked the <&8><&l>Emblem of Hephaestus<&8>!"
-    - playsound <server.online_players> sound:ui_toast_challenge_complete volume:0.5
-
-    # Check tier progression
-    - define tier1_done <proc[count_completed_tier_emblems].context[<player>|1]>
-    - wait 2s
-    - if <[tier1_done]> >= 2:
-        - narrate "<&e><&l>Promachos<&r><&7>: Your mastery grows. <&e>Tier 2 emblems<&7> are now within your reach."
-    - else:
-        - narrate "<&e><&l>Promachos<&r><&7>: Well done. Continue your journey — more emblems await."
+charon_emblem_ready:
+    type: item
+    material: soul_lantern
+    display name: <&5><&l>Charon's Emblem <&a>✓
+    lore:
+    - <&a><&l>READY TO UNLOCK!
+    - <empty>
+    - <&7>You have conquered all three
+    - <&7>nether trials of <&5>Charon<&7>.
+    - <empty>
+    - <&e>Speak to <&5>Charon<&e> to
+    - <&e>receive your emblem!
+    enchantments:
+    - mending:1
+    mechanisms:
+        hides: ENCHANTS

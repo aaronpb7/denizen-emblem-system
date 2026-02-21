@@ -31,7 +31,7 @@ god_head_placement:
     type: world
     debug: false
     events:
-        after player places demeter_head|heracles_head|hephaestus_head:
+        after player places demeter_head|heracles_head|hephaestus_head|triton_head|charon_head:
         - flag <context.location> god_head:<context.item_in_hand.script.name>
         - strike <context.location>
 

@@ -217,7 +217,7 @@ The **Neptune's Trident** is not a direct crate drop. Instead, the crate drops a
 | Ingredient | Source | Quantity |
 |---|---|---|
 | Neptune Trident Blueprint | Neptune Crate (unique item roll) | 1 |
-| Triton Mythic Fragment | Triton Base Crate (MYTHIC tier) | 4 |
+| Triton Mythic Fragment | Component milestones (3) + MYTHIC crate tier | 4 |
 | Diamond Block | Survival | 4 |
 
 ### How to Craft
@@ -292,7 +292,7 @@ Simulates a Neptune crate roll for the executing player (does not consume key).
 - 100 Triton Keys opened → ~1 Neptune Key
 - To obtain all 4 items:
   - Need ~8 Neptune Keys (50% item rate → 4 items expected in 8 rolls)
-  - Need ~800 Triton Keys (8 Neptune Keys × 100 Triton Keys per Neptune)
+  - Need ~800 Triton Keys (8 Neptune Keys x 100 Triton Keys per Neptune)
 
 **Conclusion**: Neptune items are **very rare**, suitable for long-term/endgame players. Additionally, Triton is a Tier 2 emblem requiring 2 Tier 1 completions, adding another layer of gating.
 

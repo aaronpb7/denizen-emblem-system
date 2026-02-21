@@ -49,6 +49,8 @@ mining_ore_break:
                 - narrate "<&8><&l>MILESTONE!<&r> <&f>Iron Component obtained! <&8>(5,000 iron ore)"
                 - playsound <player> sound:ui_toast_challenge_complete
                 - announce "<&e>[Promachos]<&r> <&f><player.name> <&8>has obtained the <&7>Iron Component<&8>!"
+                - give hephaestus_mythic_fragment quantity:1
+                - narrate "<&d>+1 Hephaestus Mythic Fragment!"
 
 # ============================================
 # BLAST FURNACE SMELTING
@@ -91,6 +93,8 @@ mining_blast_furnace_smelt:
             - narrate "<&8><&l>MILESTONE!<&r> <&f>Smelting Component obtained! <&8>(5,000 smelts)"
             - playsound <player> sound:ui_toast_challenge_complete
             - announce "<&e>[Promachos]<&r> <&f><player.name> <&8>has obtained the <&7>Smelting Component<&8>!"
+            - give hephaestus_mythic_fragment quantity:1
+            - narrate "<&d>+1 Hephaestus Mythic Fragment!"
 
 # ============================================
 # IRON GOLEM CREATION
@@ -129,4 +133,6 @@ mining_golem_creation:
             - narrate "<&8><&l>MILESTONE!<&r> <&f>Golem Component obtained! <&8>(100 golems)" targets:<[builder]>
             - playsound <[builder]> sound:ui_toast_challenge_complete
             - announce "<&e>[Promachos]<&r> <&f><[builder].name> <&8>has obtained the <&7>Golem Component<&8>!"
+            - give hephaestus_mythic_fragment quantity:1 to:<[builder]>
+            - narrate "<&d>+1 Hephaestus Mythic Fragment!" targets:<[builder]>
 

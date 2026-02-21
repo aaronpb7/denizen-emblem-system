@@ -20,6 +20,10 @@ emblem_migration_handler:
             - define rank <[rank].add[1]>
         - if <player.has_flag[heracles.emblem.unlocked]>:
             - define rank <[rank].add[1]>
+        - if <player.has_flag[triton.emblem.unlocked]>:
+            - define rank <[rank].add[1]>
+        - if <player.has_flag[charon.emblem.unlocked]>:
+            - define rank <[rank].add[1]>
         - flag player emblem.rank:<[rank]>
 
         # One-time: reset crafted item flags so players can use Mythic Crafting
@@ -45,6 +49,53 @@ emblem_migration_handler:
                 - if <[active]> == demeter || <[active]> == hephaestus || <[active]> == heracles:
                     - flag player cosmetic.title.active:!
             - flag player emblem.titles_migrated:true
+
+        # One-time: award mythic fragments for already-completed milestones
+        - if !<player.has_flag[emblem.fragments_migrated]>:
+            # Demeter milestones
+            - if <player.has_flag[demeter.component.wheat]>:
+                - give demeter_mythic_fragment quantity:1
+            - if <player.has_flag[demeter.component.cow]>:
+                - give demeter_mythic_fragment quantity:1
+            - if <player.has_flag[demeter.component.cake]>:
+                - give demeter_mythic_fragment quantity:1
+            # Heracles milestones
+            - if <player.has_flag[heracles.component.pillagers]>:
+                - give heracles_mythic_fragment quantity:1
+            - if <player.has_flag[heracles.component.raids]>:
+                - give heracles_mythic_fragment quantity:1
+            - if <player.has_flag[heracles.component.emeralds]>:
+                - give heracles_mythic_fragment quantity:1
+            # Hephaestus milestones
+            - if <player.has_flag[hephaestus.component.iron]>:
+                - give hephaestus_mythic_fragment quantity:1
+            - if <player.has_flag[hephaestus.component.smelting]>:
+                - give hephaestus_mythic_fragment quantity:1
+            - if <player.has_flag[hephaestus.component.golem]>:
+                - give hephaestus_mythic_fragment quantity:1
+            # Triton milestones
+            - if <player.has_flag[triton.component.lanterns]>:
+                - give triton_mythic_fragment quantity:1
+            - if <player.has_flag[triton.component.guardians]>:
+                - give triton_mythic_fragment quantity:1
+            - if <player.has_flag[triton.component.conduits]>:
+                - give triton_mythic_fragment quantity:1
+            # Charon milestones
+            - if <player.has_flag[charon.component.debris]>:
+                - give charon_mythic_fragment quantity:1
+            - if <player.has_flag[charon.component.withers]>:
+                - give charon_mythic_fragment quantity:1
+            - if <player.has_flag[charon.component.barters]>:
+                - give charon_mythic_fragment quantity:1
+            - flag player emblem.fragments_migrated:true
+
+        # One-time: reset NPC meeting flags for god NPC restructure
+        # Forces all players to re-experience new lore introductions
+        - if !<player.has_flag[emblem.npc_migrated]>:
+            - flag player met_promachos:!
+            - flag player met_triton:!
+            - flag player met_charon:!
+            - flag player emblem.npc_migrated:true
 
         # Skip rest if already migrated
         - if <player.has_flag[emblem.migrated]>:

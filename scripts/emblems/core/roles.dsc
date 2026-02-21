@@ -11,6 +11,7 @@
 #
 # Tier 2 Emblems:
 # - TRITON → God of the Sea (requires 2 Tier 1 completions)
+# - CHARON → Ferryman of the Dead (requires 2 Tier 1 completions)
 #
 # Tier system gates future content:
 # - Tier 1: Available immediately
@@ -29,6 +30,7 @@ emblem_data:
         - HEPHAESTUS
         - HERACLES
         - TRITON
+        - CHARON
 
     # Tier assignments
     tiers:
@@ -36,6 +38,7 @@ emblem_data:
         HEPHAESTUS: 1
         HERACLES: 1
         TRITON: 2
+        CHARON: 2
 
     # Tier requirements (number of completed emblems from previous tier)
     tier_requirements:
@@ -48,6 +51,7 @@ emblem_data:
         HEPHAESTUS: Hephaestus
         HERACLES: Heracles
         TRITON: Triton
+        CHARON: Charon
 
     # Emblem colors
     colors:
@@ -55,6 +59,7 @@ emblem_data:
         HEPHAESTUS: <&8>
         HERACLES: <&4>
         TRITON: <&3>
+        CHARON: <&5>
 
     # Emblem icons (materials for GUI)
     icons:
@@ -62,6 +67,7 @@ emblem_data:
         HEPHAESTUS: iron_pickaxe
         HERACLES: diamond_sword
         TRITON: trident
+        CHARON: soul_lantern
 
 # ============================================
 # PROCEDURES
@@ -191,3 +197,37 @@ get_player_emblem_rank:
     definitions: player
     script:
     - determine <[player].flag[emblem.rank].if_null[0]>
+
+# ============================================
+# SET PLAYER EMBLEM
+# ============================================
+# Shared task called by all god NPCs to set the player's active emblem
+# Uses neutral messages — each god's NPC handles its own dialogue context
+
+set_player_emblem:
+    type: task
+    debug: false
+    definitions: emblem
+    script:
+    # Check if already active
+    - if <player.flag[emblem.active].if_null[NONE]> == <[emblem]>:
+        - inventory close
+        - define display <proc[get_emblem_display_name].context[<[emblem]>]>
+        - narrate "<&7>You are already pursuing <&e><[display]><&7>'s emblem."
+        - playsound <player> sound:entity_villager_no
+        - stop
+
+    # Set new emblem
+    - flag player emblem.active:<[emblem]>
+    - inventory close
+
+    # Confirmation message
+    - define display <proc[get_emblem_display_name].context[<[emblem]>]>
+
+    - if <player.has_flag[emblem.changed_before]>:
+        - narrate "<&7>You have switched to <&e><[display]><&7>'s emblem. Your previous progress is preserved."
+    - else:
+        - narrate "<&7>You have accepted <&e><[display]><&7>'s emblem. Your journey begins."
+        - flag player emblem.changed_before:true
+
+    - playsound <player> sound:block_enchantment_table_use

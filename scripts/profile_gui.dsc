@@ -70,7 +70,7 @@ get_emblem_display_item:
         - define lore <[lore].include[<empty>]>
         - define lore <[lore].include[<&7>You have not chosen an emblem yet.]>
         - define lore <[lore].include[<empty>]>
-        - define lore <[lore].include[<&e>Speak to Promachos to choose an emblem]>
+        - define lore <[lore].include[<&e>Visit a god to choose an emblem]>
         - determine <item[compass].with[display=<&6>No Emblem Selected;lore=<[lore]>]>
 
     - define emblem <player.flag[emblem.active]>
@@ -148,8 +148,24 @@ get_emblem_display_item:
             - define lore <[lore].include[<&7>• Conduits crafted<&co> <&3><[conduits].format_number>]>
             - define lore "<[lore].include[<&sp>]>"
             - define lore <[lore].include[<&3>Keys earned<&co> <&3><[keys]> <&7>Triton Keys]>
+        - case CHARON:
+            - define lore <[lore].include[<&e>Patron<&co> <&5><[god]><&7>, Ferryman of the Dead]>
+            - define lore "<[lore].include[<&sp>]>"
+
+            # Show actual progress stats
+            - define debris <player.flag[charon.debris.count].if_null[0]>
+            - define withers <player.flag[charon.withers.count].if_null[0]>
+            - define barters <player.flag[charon.barters.count].if_null[0]>
+            - define keys <player.flag[charon.debris.keys_awarded].if_null[0].add[<player.flag[charon.withers.keys_awarded].if_null[0]>].add[<player.flag[charon.barters.keys_awarded].if_null[0]>]>
+
+            - define lore <[lore].include[<&5>Your Progress<&co>]>
+            - define lore <[lore].include[<&7>• Ancient debris offered<&co> <&5><[debris].format_number>]>
+            - define lore <[lore].include[<&7>• Withers slain<&co> <&5><[withers].format_number>]>
+            - define lore <[lore].include[<&7>• Piglin barters<&co> <&5><[barters].format_number>]>
+            - define lore "<[lore].include[<&sp>]>"
+            - define lore <[lore].include[<&5>Keys earned<&co> <&5><[keys]> <&7>Charon Keys]>
     - define lore "<[lore].include[<&sp>]>"
-    - define lore <[lore].include[<&8>Change emblem by speaking to Promachos]>
+    - define lore <[lore].include[<&8>Change emblem by visiting the gods]>
 
     - determine <item[<[icon]>].with[display=<&6><&l><[display]>;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
 
@@ -353,7 +369,7 @@ get_demeter_progress_item:
         - define lore <[lore].include[<&6>Emblem: <&2>✓ UNLOCKED]>
     - else if <[wheat_complete]> && <[cow_complete]> && <[cake_complete]>:
         - define lore <[lore].include[<&6>Emblem: <&e>⚠ READY TO UNLOCK!]>
-        - define lore <[lore].include[<&e>Visit Promachos]>
+        - define lore <[lore].include[<&e>Visit your god]>
     - else:
         - define components 0
         - if <[wheat_complete]>:
@@ -417,6 +433,13 @@ profile_click_handler:
                 - playsound <player> sound:entity_villager_no
                 - stop
             - inventory open d:triton_progress_gui
+        # Check if clicking Charon emblem (soul lantern item)
+        - else if <context.item.material.name> == soul_lantern:
+            - if !<proc[can_access_tier].context[<player>|2]>:
+                - narrate "<&c>You haven't unlocked Tier 2 emblems yet. Complete 2 Tier 1 emblems first."
+                - playsound <player> sound:entity_villager_no
+                - stop
+            - inventory open d:charon_progress_gui
 
         after player clicks emblem_check_back_button in emblem_check_gui:
         - run open_profile_gui
@@ -435,6 +458,10 @@ profile_click_handler:
 
         # Triton progress GUI clicks
         after player clicks triton_progress_back_button in triton_progress_gui:
+        - inventory open d:emblem_check_gui
+
+        # Charon progress GUI clicks
+        after player clicks charon_progress_back_button in charon_progress_gui:
         - inventory open d:emblem_check_gui
 
 # ============================================
@@ -944,11 +971,11 @@ get_triton_lanterns_progress_item:
     - define lore <[lore].include[<&7>the bond with the sea god.]>
     - define lore "<[lore].include[<&sp>]>"
     - define lore <[lore].include[<&3>Component Progress<&co>]>
-    - define lore <[lore].include[<&7><[count]> / 2,000 sea lanterns offered]>
+    - define lore <[lore].include[<&7><[count]> / 1,000 sea lanterns offered]>
     - if <[complete]>:
         - define percent 100
     - else:
-        - define percent <[count].div[2000].mul[100].round>
+        - define percent <[count].div[1000].mul[100].round>
     - define lore <[lore].include[<&7>(<[percent]>% complete)]>
     - define lore "<[lore].include[<&sp>]>"
     - define lore <[lore].include[<&8><&o>Complete all components to earn the emblem.]>
@@ -976,11 +1003,11 @@ get_triton_guardians_progress_item:
     - define lore <[lore].include[<&7>elder guardians count +15.]>
     - define lore "<[lore].include[<&sp>]>"
     - define lore <[lore].include[<&3>Component Progress<&co>]>
-    - define lore <[lore].include[<&7><[count]> / 3,000 guardian kills]>
+    - define lore <[lore].include[<&7><[count]> / 1,500 guardian kills]>
     - if <[complete]>:
         - define percent 100
     - else:
-        - define percent <[count].div[3000].mul[100].round>
+        - define percent <[count].div[1500].mul[100].round>
     - define lore <[lore].include[<&7>(<[percent]>% complete)]>
     - define lore "<[lore].include[<&sp>]>"
     - define lore <[lore].include[<&8><&o>Complete all components to earn the emblem.]>
@@ -1008,11 +1035,11 @@ get_triton_conduits_progress_item:
     - define lore <[lore].include[<&7>Each conduit channels Triton's power.]>
     - define lore "<[lore].include[<&sp>]>"
     - define lore <[lore].include[<&3>Component Progress<&co>]>
-    - define lore <[lore].include[<&7><[count]> / 50 conduits crafted]>
+    - define lore <[lore].include[<&7><[count]> / 25 conduits crafted]>
     - if <[complete]>:
         - define percent 100
     - else:
-        - define percent <[count].div[50].mul[100].round>
+        - define percent <[count].div[25].mul[100].round>
     - define lore <[lore].include[<&7>(<[percent]>% complete)]>
     - define lore "<[lore].include[<&sp>]>"
     - define lore <[lore].include[<&8><&o>Complete all components to earn the emblem.]>
@@ -1023,6 +1050,152 @@ get_triton_conduits_progress_item:
         - determine <item[conduit].with[display=<&3><&l>Conduit Crafting;lore=<[lore]>]>
 
 triton_progress_back_button:
+    type: item
+    material: arrow
+    display name: <&e>← Back
+    lore:
+    - <&7>Return<&sp>to<&sp>emblems
+
+# ============================================
+# CHARON DETAILED PROGRESS GUI
+# ============================================
+
+charon_progress_gui:
+    type: inventory
+    inventory: chest
+    gui: true
+    debug: false
+    title: <&8>Charon - Activity Progress
+    size: 27
+    procedural items:
+    - determine <proc[get_charon_progress_items]>
+
+get_charon_progress_items:
+    type: procedure
+    debug: false
+    script:
+    - define items <list>
+    - define filler <item[gray_stained_glass_pane].with[display=<empty>]>
+
+    # Fill all slots
+    - repeat 27:
+        - define items <[items].include[<[filler]>]>
+
+    # Row 2: Three activity items centered (slots 12, 14, 16)
+    - define debris_item <proc[get_charon_debris_progress_item]>
+    - define items <[items].set[<[debris_item]>].at[12]>
+
+    - define withers_item <proc[get_charon_withers_progress_item]>
+    - define items <[items].set[<[withers_item]>].at[14]>
+
+    - define barters_item <proc[get_charon_barters_progress_item]>
+    - define items <[items].set[<[barters_item]>].at[16]>
+
+    # Meta-crate progress (bottom right slot 27)
+    - define items <[items].set[<proc[get_dis_meta_progress_item]>].at[27]>
+
+    # Back button (bottom left slot 19)
+    - define items <[items].set[<item[charon_progress_back_button]>].at[19]>
+
+    - determine <[items]>
+
+get_charon_debris_progress_item:
+    type: procedure
+    debug: false
+    script:
+    - define count <player.flag[charon.debris.count].if_null[0]>
+    - define complete <player.has_flag[charon.component.debris]>
+
+    - define lore <list>
+    - if !<[complete]>:
+        - define lore <[lore].include[<&7>Component In Progress]>
+        - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&7><&o>"Unearth the bones of the nether"]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&5>Task<&co> <&7>Offer ancient debris to Charon.]>
+    - define lore <[lore].include[<&7>Each fragment offered strengthens]>
+    - define lore <[lore].include[<&7>the bond with the ferryman.]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&5>Component Progress<&co>]>
+    - define lore <[lore].include[<&7><[count]> / 500 ancient debris offered]>
+    - if <[complete]>:
+        - define percent 100
+    - else:
+        - define percent <[count].div[500].mul[100].round>
+    - define lore <[lore].include[<&7>(<[percent]>% complete)]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&8><&o>Complete all components to earn the emblem.]>
+
+    - if <[complete]>:
+        - determine <item[ancient_debris].with[display=<&5><&l>Ancient Debris;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+    - else:
+        - determine <item[ancient_debris].with[display=<&5><&l>Ancient Debris;lore=<[lore]>]>
+
+get_charon_withers_progress_item:
+    type: procedure
+    debug: false
+    script:
+    - define count <player.flag[charon.withers.count].if_null[0]>
+    - define complete <player.has_flag[charon.component.withers]>
+
+    - define lore <list>
+    - if !<[complete]>:
+        - define lore <[lore].include[<&7>Component In Progress]>
+        - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&7><&o>"Vanquish the skeletal legions of death"]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&5>Task<&co> <&7>Slay wither skeletons and withers.]>
+    - define lore <[lore].include[<&7>Wither skeletons count +1,]>
+    - define lore <[lore].include[<&7>wither bosses count +15.]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&5>Component Progress<&co>]>
+    - define lore <[lore].include[<&7><[count]> / 1,500 wither kills]>
+    - if <[complete]>:
+        - define percent 100
+    - else:
+        - define percent <[count].div[1500].mul[100].round>
+    - define lore <[lore].include[<&7>(<[percent]>% complete)]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&8><&o>Complete all components to earn the emblem.]>
+
+    - if <[complete]>:
+        - determine <item[wither_skeleton_skull].with[display=<&5><&l>Wither Slayer;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+    - else:
+        - determine <item[wither_skeleton_skull].with[display=<&5><&l>Wither Slayer;lore=<[lore]>]>
+
+get_charon_barters_progress_item:
+    type: procedure
+    debug: false
+    script:
+    - define count <player.flag[charon.barters.count].if_null[0]>
+    - define complete <player.has_flag[charon.component.barters]>
+
+    - define lore <list>
+    - if !<[complete]>:
+        - define lore <[lore].include[<&7>Component In Progress]>
+        - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&7><&o>"Trade with the denizens of the nether"]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&5>Task<&co> <&7>Barter with piglins by throwing]>
+    - define lore <[lore].include[<&7>gold ingots. Stand within 8 blocks]>
+    - define lore <[lore].include[<&7>of the piglin to receive credit.]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&5>Component Progress<&co>]>
+    - define lore <[lore].include[<&7><[count]> / 2,500 piglin barters]>
+    - if <[complete]>:
+        - define percent 100
+    - else:
+        - define percent <[count].div[2500].mul[100].round>
+    - define lore <[lore].include[<&7>(<[percent]>% complete)]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&8><&o>Complete all components to earn the emblem.]>
+
+    - if <[complete]>:
+        - determine <item[gold_ingot].with[display=<&5><&l>Piglin Barter;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+    - else:
+        - determine <item[gold_ingot].with[display=<&5><&l>Piglin Barter;lore=<[lore]>]>
+
+charon_progress_back_button:
     type: item
     material: arrow
     display name: <&e>← Back
@@ -1141,6 +1314,33 @@ get_neptune_meta_progress_item:
         - determine <item[nether_star].with[display=<&3><&l>Neptune Depths;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
     - determine <item[nether_star].with[display=<&3><&l>Neptune Depths;lore=<[lore]>]>
 
+get_dis_meta_progress_item:
+    type: procedure
+    debug: false
+    script:
+    - define count 0
+    - if <player.has_flag[dis.item.title]>:
+        - define count <[count].add[1]>
+    - if <player.has_flag[dis.item.shulker]>:
+        - define count <[count].add[1]>
+    - if <player.has_flag[dis.item.charm]>:
+        - define count <[count].add[1]>
+    - if <player.has_flag[dis.item.head]>:
+        - define count <[count].add[1]>
+    - define lore <list>
+    - define lore <[lore].include[<&7><&o>"Relics of the underworld passage"]>
+    - define lore "<[lore].include[<&sp>]>"
+    - if <[count]> == 4:
+        - define lore <[lore].include[<&a><&l>All Items Collected]>
+    - else:
+        - define lore <[lore].include[<&e>Collected<&co> <&7><[count]>/4 unique items]>
+    - define lore "<[lore].include[<&sp>]>"
+    - define lore <[lore].include[<&7>Obtained from the Dis Passage]>
+    - define lore <[lore].include[<&7>via Olympian key drops.]>
+    - if <[count]> == 4:
+        - determine <item[nether_star].with[display=<&5><&l>Dis Passage;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+    - determine <item[nether_star].with[display=<&5><&l>Dis Passage;lore=<[lore]>]>
+
 create_progress_bar:
     type: procedure
     debug: false
@@ -1174,6 +1374,8 @@ get_cosmetics_icon_item:
         - define title_count <[title_count].add[1]>
     - if <player.has_flag[neptune.item.title]>:
         - define title_count <[title_count].add[1]>
+    - if <player.has_flag[dis.item.title]>:
+        - define title_count <[title_count].add[1]>
 
     - define lore <[lore].include[<&e>Available Titles<&co> <&6><[title_count]>]>
 
@@ -1191,6 +1393,8 @@ get_cosmetics_icon_item:
                 - define lore "<[lore].include[<&4><&lb>Mars' Chosen<&rb>]>"
             - case neptune:
                 - define lore "<[lore].include[<&3><&lb>Neptune's Chosen<&rb>]>"
+            - case dis:
+                - define lore "<[lore].include[<&5><&lb>Dis' Chosen<&rb>]>"
     - else:
         - define lore "<[lore].include[<&sp>]>"
         - define lore <[lore].include[<&7>No title equipped]>
@@ -1225,11 +1429,12 @@ get_cosmetics_menu_items:
     - repeat 27:
         - define items <[items].include[<[filler]>]>
 
-    # Show 4 meta-progression titles centered (slots 11, 13, 15, 17)
-    - define items <[items].set[<proc[get_ceres_title_item]>].at[11]>
-    - define items <[items].set[<proc[get_vulcan_title_item]>].at[13]>
-    - define items <[items].set[<proc[get_mars_title_item]>].at[15]>
-    - define items <[items].set[<proc[get_neptune_title_item]>].at[17]>
+    # Show 5 meta-progression titles centered (slots 10, 12, 14, 16, 18)
+    - define items <[items].set[<proc[get_ceres_title_item]>].at[10]>
+    - define items <[items].set[<proc[get_vulcan_title_item]>].at[12]>
+    - define items <[items].set[<proc[get_mars_title_item]>].at[14]>
+    - define items <[items].set[<proc[get_neptune_title_item]>].at[16]>
+    - define items <[items].set[<proc[get_dis_title_item]>].at[18]>
 
     # Back button (bottom left)
     - define items <[items].set[<item[cosmetics_back_button]>].at[19]>
@@ -1343,6 +1548,33 @@ get_neptune_title_item:
         - define lore <[lore].include[<&7>Unlock from<&co> <&3>Neptune Crates]>
         - determine <item[gray_dye].with[display=<&8>???;lore=<[lore]>]>
 
+
+get_dis_title_item:
+    type: procedure
+    debug: false
+    script:
+    - define lore <list>
+
+    # Check if unlocked
+    - if <player.has_flag[dis.item.title]>:
+        - define lore "<[lore].include[<&5><&lb>Dis' Chosen<&rb>]>"
+        - define lore "<[lore].include[<&sp>]>"
+        - if <player.has_flag[cosmetic.title.active]> && <player.flag[cosmetic.title.active]> == dis:
+            - define lore <[lore].include[<&2>✓ Currently Active]>
+            - define lore "<[lore].include[<&sp>]>"
+            - define lore <[lore].include[<&e>Click to unequip]>
+            - determine <item[name_tag].with[display=<&5><&l>Dis Title;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+        - else:
+            - define lore <[lore].include[<&7>Not equipped]>
+            - define lore "<[lore].include[<&sp>]>"
+            - define lore <[lore].include[<&e>Click to equip]>
+            - determine <item[name_tag].with[display=<&5><&l>Dis Title;lore=<[lore]>]>
+    - else:
+        - define lore <[lore].include[<&8>???]>
+        - define lore "<[lore].include[<&sp>]>"
+        - define lore <[lore].include[<&7>Unlock from<&co> <&5>Dis Crates]>
+        - determine <item[gray_dye].with[display=<&8>???;lore=<[lore]>]>
+
 cosmetics_back_button:
     type: item
     material: arrow
@@ -1370,23 +1602,27 @@ cosmetics_click_handler:
         on player clicks name_tag in cosmetics_inventory:
         - define clicked_title ""
 
-        # Determine which title was clicked based on slot (11=Ceres, 13=Vulcan, 15=Mars, 17=Neptune)
-        - if <context.slot> == 11:
+        # Determine which title was clicked based on slot (10=Ceres, 12=Vulcan, 14=Mars, 16=Neptune, 18=Dis)
+        - if <context.slot> == 10:
             - define clicked_title ceres
             - define title_flag ceres.item.title
             - define title_name "<&6>[Ceres' Chosen]"
-        - else if <context.slot> == 13:
+        - else if <context.slot> == 12:
             - define clicked_title vulcan
             - define title_flag vulcan.item.title
             - define title_name "<&8>[Vulcan's Chosen]"
-        - else if <context.slot> == 15:
+        - else if <context.slot> == 14:
             - define clicked_title mars
             - define title_flag mars.item.title
             - define title_name "<&4>[Mars' Chosen]"
-        - else if <context.slot> == 17:
+        - else if <context.slot> == 16:
             - define clicked_title neptune
             - define title_flag neptune.item.title
             - define title_name "<&3>[Neptune's Chosen]"
+        - else if <context.slot> == 18:
+            - define clicked_title dis
+            - define title_flag dis.item.title
+            - define title_name "<&5>[Dis' Chosen]"
 
         # Check if player has this title unlocked
         - if !<player.has_flag[<[title_flag]>]>:

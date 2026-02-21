@@ -60,6 +60,8 @@ farming_crop_harvest:
                 - narrate "<&6><&l>MILESTONE!<&r> <&e>Wheat Component obtained! <&7>(15,000 wheat)"
                 - playsound <player> sound:ui_toast_challenge_complete
                 - announce "<&e>[Promachos]<&r> <&f><player.name> <&7>has obtained the <&6>Wheat Component<&7>!"
+                - give demeter_mythic_fragment quantity:1
+                - narrate "<&d>+1 Demeter Mythic Fragment!"
 
 # ============================================
 # ANIMAL BREEDING
@@ -106,6 +108,8 @@ farming_animal_breeding:
                 - narrate "<&6><&l>MILESTONE!<&r> <&e>Cow Component obtained! <&7>(2,000 cows)" targets:<[breeder]>
                 - playsound <[breeder]> sound:ui_toast_challenge_complete
                 - announce "<&e>[Promachos]<&r> <&f><[breeder].name> <&7>has obtained the <&6>Cow Component<&7>!"
+                - give demeter_mythic_fragment quantity:1 to:<[breeder]>
+                - narrate "<&d>+1 Demeter Mythic Fragment!" targets:<[breeder]>
 
 # ============================================
 # FOOD CRAFTING
@@ -146,3 +150,5 @@ farming_food_crafting:
                 - narrate "<&6><&l>MILESTONE!<&r> <&e>Cake Component obtained! <&7>(500 cakes)"
                 - playsound <player> sound:ui_toast_challenge_complete
                 - announce "<&e>[Promachos]<&r> <&f><player.name> <&7>has obtained the <&6>Cake Component<&7>!"
+                - give demeter_mythic_fragment quantity:1
+                - narrate "<&d>+1 Demeter Mythic Fragment!"

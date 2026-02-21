@@ -61,11 +61,11 @@ triton_turn_away:
     - playsound <player> sound:entity_elder_guardian_ambient volume:0.3
     - choose <[tier1_done]>:
         - case 0:
-            - narrate "<&3><&l>Triton<&r><&7>: You smell of dry land, mortal. The sea does not welcome the unproven."
+            - narrate "<&3><&l>Triton<&r><&7>: You smell of dry land, mortal. The ocean does not open for the unproven."
             - wait 2s
-            - narrate "<&3><&l>Triton<&r><&7>: Return when you have earned <&3>two emblems<&7> from the gods above."
+            - narrate "<&3><&l>Triton<&r><&7>: Return when you have earned <&3>two emblems<&7> from the gods above. Then we will speak."
         - case 1:
-            - narrate "<&3><&l>Triton<&r><&7>: I sense one emblem upon you... but the deep demands more."
+            - narrate "<&3><&l>Triton<&r><&7>: One emblem... the current stirs, but the deep demands more."
             - wait 2s
             - narrate "<&3><&l>Triton<&r><&7>: Earn <&3>one more emblem<&7>, and the sea will open to you."
 
@@ -77,17 +77,23 @@ triton_first_meeting:
     type: task
     debug: false
     script:
+    # Title/subtitle intro
+    - title "title:<&3><&l>TRITON" "subtitle:<&b>God of the Sea" fade_in:10t stay:50t fade_out:10t
     - playsound <player> sound:entity_elder_guardian_ambient volume:0.5
-    - narrate "<&3><&l>Triton<&r><&7>: So... you have proven yourself to the gods above."
+
+    - narrate "<&3><&l>Triton<&r><&7>: So. Another surface-dweller comes dripping into my domain."
     - wait 3s
 
-    - narrate "<&3><&l>Triton<&r><&7>: I am <&3>Triton<&7>, God of the Sea. The deep has watched your journey with interest."
+    - narrate "<&3><&l>Triton<&r><&7>: I am <&3>Triton<&7>, God of the Sea. Son of Poseidon — though my father is... gone. The ocean that once obeyed my every command now flows as if I am nothing."
     - wait 3s
 
-    - narrate "<&3><&l>Triton<&r><&7>: My trials are not like those on the surface. You will bring me <&3>sea lanterns<&7>, slay <&3>guardians<&7> of the ocean monuments, and forge <&3>conduits<&7> of power."
+    - narrate "<&3><&l>Triton<&r><&7>: When Olympus fell, I dove into the deepest trench I could find. I thought the sea would protect me. It did not. The ocean <&3>flinched<&7>. The entire ocean. I have never felt that before."
     - wait 3s
 
-    - narrate "<&3><&l>Triton<&r><&7>: Accept my emblem, and the ocean's depths will become your domain."
+    - narrate "<&3><&l>Triton<&r><&7>: I need mortal hands to remind the sea who I am. Bring me <&3>sea lanterns<&7>, slay the <&3>guardians<&7> of the deep, and forge <&3>conduits<&7> of power in my name."
+    - wait 3s
+
+    - narrate "<&3><&l>Triton<&r><&7>: Accept my emblem. I will not ask twice."
     - wait 1s
 
     # Flag as met and open info menu
@@ -118,7 +124,7 @@ triton_lantern_turnin:
     - define count <player.flag[triton.lanterns.count]>
 
     # Feedback
-    - narrate "<&3><&l>TRITON<&r> <&7>accepted <&3><[lanterns_in_hand]> sea lantern<tern[<[lanterns_in_hand]>.is[MORE].than[1]].if_true[s].if_false[]><&7>. <&8>(<&3><[count]><&8>/<&3>2,000<&8>)"
+    - narrate "<&3><&l>TRITON<&r> <&7>accepted <&3><[lanterns_in_hand]> sea lantern<tern[<[lanterns_in_hand]>.is[MORE].than[1]].if_true[s].if_false[]><&7>. <&8>(<&3><[count]><&8>/<&3>1,000<&8>)"
     - playsound <player> sound:entity_experience_orb_pickup
 
     # Key award logic (every 10)
@@ -131,13 +137,15 @@ triton_lantern_turnin:
         - narrate "<&e><&l>TRITON KEY!<&r> <&7>+<[keys_to_give]> key<tern[<[keys_to_give]>.is[MORE].than[1]].if_true[s].if_false[]>"
         - playsound <player> sound:entity_experience_orb_pickup
 
-    # Check for component milestone (2,000)
-    - if <[count]> >= 2000 && !<player.has_flag[triton.component.lanterns]>:
+    # Check for component milestone (1,000)
+    - if <[count]> >= 1000 && !<player.has_flag[triton.component.lanterns]>:
         - flag player triton.component.lanterns:true
         - flag player triton.component.lanterns_date:<util.time_now.format>
-        - narrate "<&6><&l>MILESTONE!<&r> <&e>Lantern Component obtained! <&7>(2,000 sea lanterns)"
+        - narrate "<&6><&l>MILESTONE!<&r> <&e>Lantern Component obtained! <&7>(1,000 sea lanterns)"
         - playsound <player> sound:ui_toast_challenge_complete
         - announce "<&3>[Triton]<&r> <&f><player.name> <&7>has obtained the <&6>Lantern Component<&7>!"
+        - give triton_mythic_fragment quantity:1
+        - narrate "<&d>+1 Triton Mythic Fragment!"
 
 # ============================================
 # EMBLEM UNLOCK CEREMONY

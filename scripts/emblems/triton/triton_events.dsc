@@ -3,8 +3,8 @@
 # ============================================
 #
 # Activity tracking for component milestones
-# 1. Guardian kills → component at 3,000 (regular=+1, elder=+15)
-# 2. Conduit crafting → component at 50
+# 1. Guardian kills → component at 1,500 (regular=+1, elder=+15)
+# 2. Conduit crafting → component at 25
 #
 # Sea lantern turn-in is handled by the Triton NPC (triton_npc.dsc)
 #
@@ -35,16 +35,18 @@ ocean_guardian_combat:
             - define keys_to_give <[keys_should_have].sub[<[keys_awarded]>]>
             - give triton_key quantity:<[keys_to_give]>
             - flag player triton.guardians.keys_awarded:<[keys_should_have]>
-            - narrate "<&e><&l>TRITON KEY!<&r> <&7>Guardians: <&a><[count]><&7>/3,000"
+            - narrate "<&e><&l>TRITON KEY!<&r> <&7>Guardians: <&a><[count]><&7>/1,500"
             - playsound <player> sound:entity_experience_orb_pickup
 
-        # Check for component milestone (3,000)
-        - if <[count]> >= 3000 && !<player.has_flag[triton.component.guardians]>:
+        # Check for component milestone (1,500)
+        - if <[count]> >= 1500 && !<player.has_flag[triton.component.guardians]>:
             - flag player triton.component.guardians:true
             - flag player triton.component.guardians_date:<util.time_now.format>
-            - narrate "<&6><&l>MILESTONE!<&r> <&e>Guardian Component obtained! <&7>(3,000 guardians)"
+            - narrate "<&6><&l>MILESTONE!<&r> <&e>Guardian Component obtained! <&7>(1,500 guardians)"
             - playsound <player> sound:ui_toast_challenge_complete
             - announce "<&3>[Triton]<&r> <&f><player.name> <&7>has obtained the <&6>Guardian Component<&7>!"
+            - give triton_mythic_fragment quantity:1
+            - narrate "<&d>+1 Triton Mythic Fragment!"
 
         after player kills elder_guardian:
         # Emblem gate
@@ -62,16 +64,18 @@ ocean_guardian_combat:
             - define keys_to_give <[keys_should_have].sub[<[keys_awarded]>]>
             - give triton_key quantity:<[keys_to_give]>
             - flag player triton.guardians.keys_awarded:<[keys_should_have]>
-            - narrate "<&e><&l>TRITON KEY!<&r> <&7>Guardians: <&a><[count]><&7>/3,000 <&8>(Elder +15)"
+            - narrate "<&e><&l>TRITON KEY!<&r> <&7>Guardians: <&a><[count]><&7>/1,500 <&8>(Elder +15)"
             - playsound <player> sound:entity_experience_orb_pickup
 
-        # Check for component milestone (3,000)
-        - if <[count]> >= 3000 && !<player.has_flag[triton.component.guardians]>:
+        # Check for component milestone (1,500)
+        - if <[count]> >= 1500 && !<player.has_flag[triton.component.guardians]>:
             - flag player triton.component.guardians:true
             - flag player triton.component.guardians_date:<util.time_now.format>
-            - narrate "<&6><&l>MILESTONE!<&r> <&e>Guardian Component obtained! <&7>(3,000 guardians)"
+            - narrate "<&6><&l>MILESTONE!<&r> <&e>Guardian Component obtained! <&7>(1,500 guardians)"
             - playsound <player> sound:ui_toast_challenge_complete
             - announce "<&3>[Triton]<&r> <&f><player.name> <&7>has obtained the <&6>Guardian Component<&7>!"
+            - give triton_mythic_fragment quantity:1
+            - narrate "<&d>+1 Triton Mythic Fragment!"
 
 # ============================================
 # CONDUIT CRAFTING
@@ -97,13 +101,15 @@ ocean_conduit_crafting:
             - define keys_to_give <[keys_should_have].sub[<[keys_awarded]>]>
             - give triton_key quantity:<[keys_to_give]>
             - flag player triton.conduits.keys_awarded:<[keys_should_have]>
-            - narrate "<&e><&l>TRITON KEY!<&r> <&7>Conduits: <&a><[count]><&7>/50 <&8>(+4 keys)"
+            - narrate "<&e><&l>TRITON KEY!<&r> <&7>Conduits: <&a><[count]><&7>/25 <&8>(+4 keys)"
             - playsound <player> sound:entity_experience_orb_pickup
 
-        # Check for component milestone (50)
-        - if <[count]> >= 50 && !<player.has_flag[triton.component.conduits]>:
+        # Check for component milestone (25)
+        - if <[count]> >= 25 && !<player.has_flag[triton.component.conduits]>:
             - flag player triton.component.conduits:true
             - flag player triton.component.conduits_date:<util.time_now.format>
-            - narrate "<&6><&l>MILESTONE!<&r> <&e>Conduit Component obtained! <&7>(50 conduits)"
+            - narrate "<&6><&l>MILESTONE!<&r> <&e>Conduit Component obtained! <&7>(25 conduits)"
             - playsound <player> sound:ui_toast_challenge_complete
             - announce "<&3>[Triton]<&r> <&f><player.name> <&7>has obtained the <&6>Conduit Component<&7>!"
+            - give triton_mythic_fragment quantity:1
+            - narrate "<&d>+1 Triton Mythic Fragment!"

@@ -5,13 +5,13 @@
 The Promachos system is an emblem-based progression framework where players choose one of three paths (DEMETER, HEPHAESTUS, HERACLES) and progress through activities to earn keys, unlock crate rewards, and obtain cosmetic titles.
 
 **System Architecture:**
-- **4 Emblems**: DEMETER (Demeter), HEPHAESTUS (Hephaestus), HERACLES (Heracles), TRITON (Triton)
+- **5 Emblems**: DEMETER (Demeter), HEPHAESTUS (Hephaestus), HERACLES (Heracles), TRITON (Triton), CHARON (Charon)
 - **Activity Tracking**: Players earn keys by completing emblem-specific activities
 - **Component Milestones**: One-time achievements at high activity counts (unlock emblems)
 - **Emblem Rank**: Global rank that increments each time an emblem is unlocked
 - **Tier System**: Tier 1 emblems available immediately; Tier 2 requires 2 Tier 1 completions
 - **Crate System**: Keys unlock tiered crates with rewards (5 tiers per crate)
-- **Meta-Progression**: Ultra-rare Roman god crates (Ceres, Vulcan, Mars, Neptune) with finite unique items
+- **Meta-Progression**: Ultra-rare Roman god crates (Ceres, Vulcan, Mars, Neptune, Dis) with finite unique items
 - **Cosmetics**: Unlockable chat title prefixes from crates
 
 ---
@@ -55,14 +55,23 @@ scripts/
     │   ├── hephaestus_items.dsc   # Custom items (key, pickaxe, blessing, fragment)
     │   ├── vulcan_crate.dsc       # Vulcan vault (meta-progression)
     │   └── vulcan_items.dsc       # Unique items (pickaxe, blueprint, head)
-    └── triton/                    # TRITON emblem (Tier 2) + Neptune meta
-        ├── triton_npc.dsc         # Triton NPC (turn-ins, ceremony, info GUI)
-        ├── triton_events.dsc      # Activity tracking (guardians, conduits)
-        ├── triton_crate.dsc       # Triton crate opening system
-        ├── triton_blessing.dsc    # Triton Blessing consumable
-        ├── triton_items.dsc       # Custom items (key, blessing, fragment, components)
-        ├── neptune_crate.dsc      # Neptune depths (meta-progression)
-        └── neptune_items.dsc      # Unique items (trident, blueprint, head)
+    ├── triton/                    # TRITON emblem (Tier 2) + Neptune meta
+    │   ├── triton_npc.dsc         # Triton NPC (turn-ins, ceremony, info GUI)
+    │   ├── triton_events.dsc      # Activity tracking (guardians, conduits)
+    │   ├── triton_crate.dsc       # Triton crate opening system
+    │   ├── triton_blessing.dsc    # Triton Blessing consumable
+    │   ├── triton_items.dsc       # Custom items (key, blessing, fragment, components)
+    │   ├── neptune_crate.dsc      # Neptune depths (meta-progression)
+    │   └── neptune_items.dsc      # Unique items (trident, blueprint, head)
+    └── charon/                    # CHARON emblem (Tier 2) + Dis meta
+        ├── charon_npc.dsc         # Charon NPC (debris turn-in, ceremony, info GUI)
+        ├── charon_events.dsc      # Activity tracking (wither combat, piglin barter)
+        ├── charon_crate.dsc       # Charon crate opening system
+        ├── charon_blessing.dsc    # Charon Blessing consumable
+        ├── charon_items.dsc       # Custom items (key, blessing, fragment, components)
+        ├── dis_crate.dsc          # Dis passage (meta-progression)
+        ├── dis_items.dsc          # Unique items (fire charm, blueprint, head)
+        └── dis_mechanics.dsc      # Fire charm passive + title handler
 ```
 
 ---
@@ -79,12 +88,13 @@ Players interact with **Promachos NPC** (requires `met_promachos` flag) to choos
 | HEPHAESTUS | Hephaestus | Hephaestus, God of the Forge | Mining ores, smelting, golem creation |
 | HERACLES | Heracles | Heracles, Hero of Strength | Pillager slaying, raid defense, emerald trading |
 | TRITON | Triton | Triton, God of the Sea | Sea lantern turn-ins, guardian kills, conduit crafting |
+| CHARON | Charon | Charon, Ferryman of the Dead | Ancient debris turn-in, wither combat, piglin bartering |
 
 **Key Mechanics:**
 - Players can switch emblems at any time
 - Progress is preserved across emblem changes
 - Only activities performed with active emblem count toward progression
-- Flag: `emblem.active` (value: "DEMETER", "HEPHAESTUS", or "HERACLES")
+- Flag: `emblem.active` (value: "DEMETER", "HEPHAESTUS", "HERACLES", "TRITON", or "CHARON")
 
 ### Emblem Colors
 
@@ -93,6 +103,7 @@ DEMETER:     <&6>  (Gold)
 HEPHAESTUS:  <&c>  (Red)
 HERACLES:    <&4>  (Dark Red)
 TRITON:      <&3>  (Dark Aqua)
+CHARON:      <&5>  (Dark Purple)
 ```
 
 ### Tier System
@@ -102,7 +113,7 @@ Emblems are organized into two tiers:
 | Tier | Requirement | Emblems |
 |------|-------------|---------|
 | **Tier 1** | Available immediately | DEMETER, HEPHAESTUS, HERACLES |
-| **Tier 2** | Complete 2 Tier 1 emblems | TRITON |
+| **Tier 2** | Complete 2 Tier 1 emblems | TRITON, CHARON |
 
 Completing an emblem (all components collected) increments the player's `emblem.rank` flag.
 
@@ -193,7 +204,7 @@ A global `emblem.rank` integer that increments each time a player completes an e
 
 **MYTHIC Loot Pool:**
 - `demeter_blessing` (consumable +5% progress boost)
-- `demeter_mythic_fragment` (crafting ingredient for Ceres Wand)
+- `demeter_mythic_fragment` (crafting ingredient for Ceres Wand; also awarded 1x per component milestone)
 - Enchanted Golden Apple
 - Gold/Emerald Blocks (x16)
 
@@ -234,8 +245,9 @@ Players can equip one chat title prefix at a time via `/profile` → Cosmetics m
 | Vulcan's Chosen | `vulcan.item.title` | [Vulcan's Chosen] | Vulcan Crate | <&8>Dark Gray |
 | Mars' Chosen | `mars.item.title` | [Mars' Chosen] | Mars Crate | <&4>Dark Red |
 | Neptune's Chosen | `neptune.item.title` | [Neptune's Chosen] | Neptune Crate | <&3>Dark Aqua |
+| Dis' Chosen | `dis.item.title` | [Dis' Chosen] | Dis Crate | <&5>Dark Purple |
 
-**Active Title Flag:** `cosmetic.title.active` (value: "ceres", "demeter", or "heracles")
+**Active Title Flag:** `cosmetic.title.active` (value: "ceres", "vulcan", "mars", "neptune", or "dis")
 
 **Chat Format:**
 ```
@@ -314,9 +326,9 @@ Players can equip one chat title prefix at a time via `/profile` → Cosmetics m
 | `triton_key` | tripwire_hook | Opens Triton Crate (5 tiers) |
 | `triton_blessing` | nether_star | +5% progress boost (10 keys if maxed) |
 | `triton_mythic_fragment` | prismarine_shard | Crafting ingredient for Neptune's Trident |
-| `lantern_component` | sea_lantern | Milestone component (2,000 lanterns) |
-| `guardian_component` | prismarine_crystals | Milestone component (3,000 guardian kills) |
-| `conduit_component` | conduit | Milestone component (50 conduits) |
+| `lantern_component` | sea_lantern | Milestone component (1,000 lanterns) |
+| `guardian_component` | prismarine_crystals | Milestone component (1,500 guardian kills) |
+| `conduit_component` | conduit | Milestone component (25 conduits) |
 
 ### Neptune Items
 
@@ -328,9 +340,34 @@ Players can equip one chat title prefix at a time via `/profile` → Cosmetics m
 | `triton_head` | player_head | Head of Triton trophy |
 | *(raw item)* | cyan_shulker_box | Cyan Shulker Box |
 
+### Charon Items
+
+| Script Name | Material | Purpose |
+|-------------|----------|---------|
+| `charon_key` | tripwire_hook | Opens Charon Crate (5 tiers) |
+| `charon_blessing` | nether_star | +5% progress boost (10 keys if maxed) |
+| `charon_mythic_fragment` | blaze_powder | Crafting ingredient for Dis Fire Charm |
+| `debris_component` | ancient_debris | Milestone component (500 debris) |
+| `wither_component` | wither_skeleton_skull | Milestone component (1,500 withers) |
+| `barter_component` | gold_ingot | Milestone component (2,500 barters) |
+
+### Dis Items
+
+| Script Name | Material | Purpose |
+|-------------|----------|---------|
+| `dis_key` | nether_star | Opens Dis Crate (50/50 system) |
+| `dis_fire_charm` | red_dye | Passive fire resistance in any inventory slot (via Mythic Crafting) |
+| `dis_fire_charm_blueprint` | map | Blueprint for Dis Fire Charm (from crate) |
+| `charon_head` | player_head | Head of Charon trophy |
+| *(raw item)* | purple_shulker_box | Purple Shulker Box |
+
 ### Mythic Crafting System
 
-Players combine Blueprints (from meta crates) + Mythic Fragments (from base crate MYTHIC tier) + Diamond Blocks to forge Olympian items.
+Players combine Blueprints (from meta crates) + Mythic Fragments + Diamond Blocks to forge Olympian items.
+
+**Fragment Sources:**
+- **Component Milestones**: Each milestone awards 1 fragment (3 per emblem, guaranteed through gameplay)
+- **MYTHIC Crate Tier**: 1-in-4 chance from the MYTHIC pool (5% roll chance per crate open)
 
 | Recipe | Blueprint | Fragment (x4) | Result |
 |--------|-----------|---------------|--------|
@@ -338,6 +375,7 @@ Players combine Blueprints (from meta crates) + Mythic Fragments (from base crat
 | Mars Shield | `mars_shield_blueprint` | `heracles_mythic_fragment` | `mars_shield` |
 | Vulcan Pickaxe | `vulcan_pickaxe_blueprint` | `hephaestus_mythic_fragment` | `vulcan_pickaxe` |
 | Neptune's Trident | `neptune_trident_blueprint` | `triton_mythic_fragment` | `neptune_trident` |
+| Dis Fire Charm | `dis_fire_charm_blueprint` | `charon_mythic_fragment` | `dis_fire_charm` |
 
 All recipes also require **4x Diamond Block**. Right-click any fragment or blueprint to view the recipe GUI.
 
@@ -347,7 +385,7 @@ All recipes also require **4x Diamond Block**. Right-click any fragment or bluep
 
 ### Emblem Management
 ```
-/emblemadmin <player> <DEMETER|HEPHAESTUS|HERACLES|TRITON>
+/emblemadmin <player> <DEMETER|HEPHAESTUS|HERACLES|TRITON|CHARON>
 ```
 
 ### Progress Management
@@ -357,9 +395,10 @@ All recipes also require **4x Diamond Block**. Right-click any fragment or bluep
 /hephaestusadmin <player> <keys|set|component|reset>
 ```
 
-### Triton Progress Management
+### Tier 2 Progress Management
 ```
 /tritonadmin <player> <keys|set|component|reset>
+/charonadmin <player> <keys|set|component|reset>
 ```
 
 ### Meta-Progression Management
@@ -368,13 +407,14 @@ All recipes also require **4x Diamond Block**. Right-click any fragment or bluep
 /marsadmin <player> <keys|item|reset>          # items: title, shulker, shield, head
 /vulcanadmin <player> <keys|item|reset>        # items: pickaxe, title, shulker, head
 /neptuneadmin <player> <keys|give|item|reset>  # items: title, shulker, trident, head
+/disadmin <player> <keys|give|item|reset>      # items: title, shulker, charm, head
 ```
 
 ### Utility Commands
 ```
 /rankadmin <player> [set <number>]
 /checkkeys [player]
-/testroll <demeter|ceres|heracles|mars|hephaestus|vulcan|triton|neptune>
+/testroll <demeter|ceres|heracles|mars|hephaestus|vulcan|triton|neptune|charon|dis>
 /emblemreset <player> [confirm]
 /invsee <player>                                # View/edit inventory (works offline)
 /endersee <player>                              # View/edit ender chest (works offline)
@@ -403,7 +443,7 @@ Server-wide announcements shown on join and accessible via `/profile`.
 ### Core Flags
 ```
 met_promachos              # Boolean: Introduced to NPC
-emblem.active              # String: "DEMETER", "HEPHAESTUS", "HERACLES", "TRITON"
+emblem.active              # String: "DEMETER", "HEPHAESTUS", "HERACLES", "TRITON", "CHARON"
 emblem.rank                # Integer: Increments per emblem unlock (0+)
 emblem.migrated            # Boolean: Migrated from old role.active system
 ```
@@ -496,14 +536,60 @@ neptune.god_apples
 neptune.unique_items
 ```
 
+### Charon Flags
+```
+# Activity Progress
+charon.debris.count
+charon.debris.keys_awarded
+charon.component.debris
+
+charon.withers.count
+charon.withers.keys_awarded
+charon.component.withers
+
+charon.barters.count
+charon.barters.keys_awarded
+charon.component.barters
+
+# NPC
+met_charon
+
+# Emblem Unlock
+charon.emblem.unlocked
+charon.emblem.unlock_date
+
+# Crate System
+charon.crates_opened
+charon.tier.mortal
+charon.tier.heroic
+charon.tier.legendary
+charon.tier.mythic
+charon.tier.olympian
+```
+
+### Dis Flags
+```
+# Unique Items (Finite Pool)
+dis.item.head
+dis.item.title
+dis.item.shulker
+dis.item.charm
+
+# Meta Stats
+dis.crates_opened
+dis.god_apples
+dis.unique_items
+```
+
 ### Cosmetics Flags
 ```
-cosmetic.title.active      # String: "ceres", "vulcan", "mars", "neptune" (or not set)
+cosmetic.title.active      # String: "ceres", "vulcan", "mars", "neptune", "dis" (or not set)
 ```
 
 ### Crafting Flags
 ```
 crafting.viewing_recipe    # Temporary, cleared on close
+# Valid values: ceres_wand, mars_shield, vulcan_pickaxe, neptune_trident, dis_fire_charm
 ```
 
 ### Bulletin Flags
@@ -553,6 +639,12 @@ bulletin.seen_version      # Integer: Last bulletin version viewed
 - ✅ Neptune's Trident (mythic trident via Mythic Crafting)
 - ✅ Tier 2 gating (requires 2 Tier 1 completions)
 - ✅ Selection GUI expansion (45 slots, tier labels)
+- ✅ Charon activity tracking (ancient debris, wither combat, piglin barter)
+- ✅ Charon crate system (5 tiers, nether theme)
+- ✅ Charon Blessing consumable (+5% progress boost)
+- ✅ Charon NPC (dedicated NPC for debris turn-in, ceremony, info)
+- ✅ Dis meta-progression crate (50/50 system, 4 unique items)
+- ✅ Dis Fire Charm (passive fire resistance via Mythic Crafting)
 
 ### 🔜 Future Enhancements
 

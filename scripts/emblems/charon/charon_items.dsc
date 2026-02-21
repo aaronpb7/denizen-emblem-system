@@ -1,54 +1,54 @@
 # ============================================
-# TRITON ITEMS
+# CHARON ITEMS
 # ============================================
 #
-# All items for Triton progression:
-# - Triton Key (crate opener)
-# - Triton Blessing (consumable boost)
-# - Triton Mythic Fragment (crafting ingredient)
+# All items for Charon progression:
+# - Charon Key (crate opener)
+# - Charon Blessing (consumable boost)
+# - Charon Mythic Fragment (crafting ingredient)
 # - Component items (milestone rewards)
 #
 
 # ============================================
-# TRITON KEY
+# CHARON KEY
 # ============================================
 
-triton_key:
+charon_key:
     type: item
     material: tripwire_hook
-    display name: <&e>Triton Key<&r>
+    display name: <&e>Charon Key<&r>
     enchantments:
     - mending:1
     mechanisms:
         hides: ENCHANTS
     lore:
-    - <&7>A coral-encrusted key from
-    - <&7>the depths of Triton's domain.
+    - <&7>A soul-forged key from
+    - <&7>the rivers of the underworld.
     - <empty>
     - <&e>Right-click to open a
-    - <&e>Triton Crate.
+    - <&e>Charon Crate.
     - <empty>
     - <&e><&l>HEROIC KEY
 
 # ============================================
-# TRITON BLESSING
+# CHARON BLESSING
 # ============================================
 
-triton_blessing:
+charon_blessing:
     type: item
     material: nether_star
-    display name: <&d>Triton Blessing<&r>
+    display name: <&d>Charon Blessing<&r>
     enchantments:
     - mending:1
     mechanisms:
         hides: ENCHANTS
     lore:
     - <&7>A divine blessing from the
-    - <&7>god of the sea, imbued with
-    - <&7>the ocean's boundless power.
+    - <&7>ferryman of the dead, imbued
+    - <&7>with the underworld's power.
     - <empty>
     - <&e>Right-click to boost progress
-    - <&e>on all incomplete Triton
+    - <&e>on all incomplete Charon
     - <&e>activities by 5%.
     - <empty>
     - <&8>Single-use consumable
@@ -57,20 +57,20 @@ triton_blessing:
     - <&d><&l>MYTHIC CONSUMABLE
 
 # ============================================
-# TRITON MYTHIC FRAGMENT
+# CHARON MYTHIC FRAGMENT
 # ============================================
 
-triton_mythic_fragment:
+charon_mythic_fragment:
     type: item
-    material: prismarine_shard
-    display name: <&d>Triton Mythic Fragment<&r>
+    material: blaze_powder
+    display name: <&d>Charon Mythic Fragment<&r>
     enchantments:
     - mending:1
     mechanisms:
         hides: ENCHANTS
     lore:
     - <&7>A shard of divine energy
-    - <&7>from Triton's ocean realm.
+    - <&7>from Charon's underworld realm.
     - <empty>
     - <&e>Right-click to view recipe.
     - <empty>
@@ -83,50 +83,50 @@ triton_mythic_fragment:
 # COMPONENT ITEMS
 # ============================================
 
-lantern_component:
+debris_component:
     type: item
-    material: sea_lantern
-    display name: <&6>Lantern Component<&r>
+    material: ancient_debris
+    display name: <&6>Debris Component<&r>
     enchantments:
     - mending:1
     mechanisms:
         hides: ENCHANTS
     lore:
-    - <&7>Symbol of 1,000 sea lanterns offered.
-    - <&7>Required for Triton's Emblem.
+    - <&7>Symbol of 500 ancient debris offered.
+    - <&7>Required for Charon's Emblem.
     - <empty>
-    - <&8><&o>Obtained: <player.flag[triton.component.lanterns_date].if_null[Unknown]>
+    - <&8><&o>Obtained: <player.flag[charon.component.debris_date].if_null[Unknown]>
     - <empty>
     - <&6><&l>LEGENDARY COMPONENT
 
-guardian_component:
+wither_component:
     type: item
-    material: prismarine_crystals
-    display name: <&6>Guardian Component<&r>
+    material: wither_skeleton_skull
+    display name: <&6>Wither Component<&r>
     enchantments:
     - mending:1
     mechanisms:
         hides: ENCHANTS
     lore:
-    - <&7>Symbol of 1,500 guardians vanquished.
-    - <&7>Required for Triton's Emblem.
+    - <&7>Symbol of 1,500 wither forces slain.
+    - <&7>Required for Charon's Emblem.
     - <empty>
-    - <&8><&o>Obtained: <player.flag[triton.component.guardians_date].if_null[Unknown]>
+    - <&8><&o>Obtained: <player.flag[charon.component.withers_date].if_null[Unknown]>
     - <empty>
     - <&6><&l>LEGENDARY COMPONENT
 
-conduit_component:
+barter_component:
     type: item
-    material: conduit
-    display name: <&6>Conduit Component<&r>
+    material: gold_ingot
+    display name: <&6>Barter Component<&r>
     enchantments:
     - mending:1
     mechanisms:
         hides: ENCHANTS
     lore:
-    - <&7>Symbol of 25 conduits crafted.
-    - <&7>Required for Triton's Emblem.
+    - <&7>Symbol of 2,500 piglin barters.
+    - <&7>Required for Charon's Emblem.
     - <empty>
-    - <&8><&o>Obtained: <player.flag[triton.component.conduits_date].if_null[Unknown]>
+    - <&8><&o>Obtained: <player.flag[charon.component.barters_date].if_null[Unknown]>
     - <empty>
     - <&6><&l>LEGENDARY COMPONENT

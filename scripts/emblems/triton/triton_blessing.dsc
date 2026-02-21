@@ -3,9 +3,9 @@
 # ============================================
 #
 # Consumable item that boosts all incomplete Triton activities by +5%
-# - Lanterns: +100 (5% of 2,000)
-# - Guardians: +150 (5% of 3,000)
-# - Conduits: +2 (5% of 50, rounded down)
+# - Lanterns: +50 (5% of 1,000)
+# - Guardians: +75 (5% of 1,500)
+# - Conduits: +1 (5% of 25, rounded down)
 #
 # Only boosts incomplete activities (component not obtained)
 # Caps at requirement (cannot exceed milestone)
@@ -39,8 +39,8 @@ triton_blessing_usage:
         # ===== LANTERN BOOST =====
         - if !<player.has_flag[triton.component.lanterns]>:
             - define current <player.flag[triton.lanterns.count].if_null[0]>
-            - define boost 100
-            - define new_count <[current].add[<[boost]>].min[2000]>
+            - define boost 50
+            - define new_count <[current].add[<[boost]>].min[1000]>
             - define actual_boost <[new_count].sub[<[current]>]>
 
             - flag player triton.lanterns.count:<[new_count]>
@@ -56,18 +56,18 @@ triton_blessing_usage:
                 - narrate "<&e><&l>BONUS KEYS!<&r> <&7>+<[keys_to_give]> Triton Keys (Lanterns)"
 
             # Check for component milestone
-            - if <[new_count]> >= 2000:
+            - if <[new_count]> >= 1000:
                 - flag player triton.component.lanterns:true
                 - flag player triton.component.lanterns_date:<util.time_now.format>
-                - narrate "<&6><&l>MILESTONE!<&r> <&e>Lantern Component obtained! <&7>(2,000 sea lanterns)"
+                - narrate "<&6><&l>MILESTONE!<&r> <&e>Lantern Component obtained! <&7>(1,000 sea lanterns)"
                 - playsound <player> sound:ui_toast_challenge_complete
                 - announce "<&3>[Triton]<&r> <&f><player.name> <&7>has obtained the <&6>Lantern Component<&7>!"
 
         # ===== GUARDIAN BOOST =====
         - if !<player.has_flag[triton.component.guardians]>:
             - define current <player.flag[triton.guardians.count].if_null[0]>
-            - define boost 150
-            - define new_count <[current].add[<[boost]>].min[3000]>
+            - define boost 75
+            - define new_count <[current].add[<[boost]>].min[1500]>
             - define actual_boost <[new_count].sub[<[current]>]>
 
             - flag player triton.guardians.count:<[new_count]>
@@ -83,18 +83,18 @@ triton_blessing_usage:
                 - narrate "<&e><&l>BONUS KEYS!<&r> <&7>+<[keys_to_give]> Triton Keys (Guardians)"
 
             # Check for component milestone
-            - if <[new_count]> >= 3000:
+            - if <[new_count]> >= 1500:
                 - flag player triton.component.guardians:true
                 - flag player triton.component.guardians_date:<util.time_now.format>
-                - narrate "<&6><&l>MILESTONE!<&r> <&e>Guardian Component obtained! <&7>(3,000 guardians)"
+                - narrate "<&6><&l>MILESTONE!<&r> <&e>Guardian Component obtained! <&7>(1,500 guardians)"
                 - playsound <player> sound:ui_toast_challenge_complete
                 - announce "<&3>[Triton]<&r> <&f><player.name> <&7>has obtained the <&6>Guardian Component<&7>!"
 
         # ===== CONDUIT BOOST =====
         - if !<player.has_flag[triton.component.conduits]>:
             - define current <player.flag[triton.conduits.count].if_null[0]>
-            - define boost 2
-            - define new_count <[current].add[<[boost]>].min[50]>
+            - define boost 1
+            - define new_count <[current].add[<[boost]>].min[25]>
             - define actual_boost <[new_count].sub[<[current]>]>
 
             - flag player triton.conduits.count:<[new_count]>
@@ -110,10 +110,10 @@ triton_blessing_usage:
                 - narrate "<&e><&l>BONUS KEYS!<&r> <&7>+<[keys_to_give]> Triton Keys (Conduits)"
 
             # Check for component milestone
-            - if <[new_count]> >= 50:
+            - if <[new_count]> >= 25:
                 - flag player triton.component.conduits:true
                 - flag player triton.component.conduits_date:<util.time_now.format>
-                - narrate "<&6><&l>MILESTONE!<&r> <&e>Conduit Component obtained! <&7>(50 conduits)"
+                - narrate "<&6><&l>MILESTONE!<&r> <&e>Conduit Component obtained! <&7>(25 conduits)"
                 - playsound <player> sound:ui_toast_challenge_complete
                 - announce "<&3>[Triton]<&r> <&f><player.name> <&7>has obtained the <&6>Conduit Component<&7>!"
 

@@ -10,6 +10,7 @@
 # - Mars Shield: mars_shield_blueprint + 4x heracles_mythic_fragment + 4x diamond_block
 # - Vulcan Pickaxe: vulcan_pickaxe_blueprint + 4x hephaestus_mythic_fragment + 4x diamond_block
 # - Neptune Trident: neptune_trident_blueprint + 4x triton_mythic_fragment + 4x diamond_block
+# - Dis Fire Charm: dis_fire_charm_blueprint + 4x charon_mythic_fragment + 4x diamond_block
 #
 
 # ============================================
@@ -41,6 +42,8 @@ get_recipe_data:
             - determine <map[blueprint=vulcan_pickaxe_blueprint;fragment=hephaestus_mythic_fragment;result=vulcan_pickaxe;result_name=<&b>Vulcan Pickaxe;flag=vulcan.item.pickaxe;fragment_name=<&d>Hephaestus Mythic Fragment;god_color=<&b>]>
         - case neptune_trident:
             - determine <map[blueprint=neptune_trident_blueprint;fragment=triton_mythic_fragment;result=neptune_trident;result_name=<&b>Neptune's Trident;flag=neptune.item.trident;fragment_name=<&d>Triton Mythic Fragment;god_color=<&3>]>
+        - case dis_fire_charm:
+            - determine <map[blueprint=dis_fire_charm_blueprint;fragment=charon_mythic_fragment;result=dis_fire_charm;result_name=<&5>Dis Fire Charm;flag=dis.item.charm;fragment_name=<&d>Charon Mythic Fragment;god_color=<&5>]>
     # Fallback
     - determine null
 
@@ -173,6 +176,22 @@ mythic_crafting_right_click:
         on player right clicks air with:neptune_trident_blueprint:
         - determine cancelled passively
         - run open_recipe_gui def.recipe_id:neptune_trident
+
+        on player right clicks block with:charon_mythic_fragment:
+        - determine cancelled passively
+        - run open_recipe_gui def.recipe_id:dis_fire_charm
+
+        on player right clicks air with:charon_mythic_fragment:
+        - determine cancelled passively
+        - run open_recipe_gui def.recipe_id:dis_fire_charm
+
+        on player right clicks block with:dis_fire_charm_blueprint:
+        - determine cancelled passively
+        - run open_recipe_gui def.recipe_id:dis_fire_charm
+
+        on player right clicks air with:dis_fire_charm_blueprint:
+        - determine cancelled passively
+        - run open_recipe_gui def.recipe_id:dis_fire_charm
 
 # ============================================
 # CRAFT CLICK HANDLER (slot 26 = result)

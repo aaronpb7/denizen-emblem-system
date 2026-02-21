@@ -77,12 +77,12 @@ This project uses Denizen, a scripting language for Minecraft servers.
 ## Emblem Progression System
 
 **Quick Reference:**
-- 4 emblems: DEMETER, HEPHAESTUS, HERACLES, TRITON
+- 5 emblems: DEMETER, HEPHAESTUS, HERACLES, TRITON, CHARON
 - Emblem-based activity tracking with key rewards
 - Crate system with 5 tiers (MORTAL → OLYMPIAN)
 - Component milestones (3 per emblem → emblem unlock)
 - Player progression: 7 ranks (Uninitiated → Hemitheos), 1 rank per emblem earned
-- Meta-progression via Roman god crates (Ceres, Vulcan, Mars, Neptune)
+- Meta-progression via Roman god crates (Ceres, Vulcan, Mars, Neptune, Dis)
 
 **Documentation:**
 - `docs/SYSTEM_OVERVIEW.md` - Complete system reference
@@ -96,6 +96,8 @@ This project uses Denizen, a scripting language for Minecraft servers.
 - `docs/vulcan.md` - Vulcan meta-progression
 - `docs/triton.md` - Triton emblem (Tier 2, activities, crates)
 - `docs/neptune.md` - Neptune meta-progression
+- `docs/charon.md` - Charon emblem (Tier 2, activities, crates)
+- `docs/dis.md` - Dis meta-progression
 - `docs/promachos.md` - NPC interactions
 - `docs/flags.md` - Flag reference
 - `docs/testing.md` - Testing procedures and admin commands
@@ -143,6 +145,15 @@ scripts/
     │   ├── triton_blessing.dsc
     │   ├── neptune_items.dsc
     │   └── neptune_crate.dsc
+    ├── charon/             # CHARON emblem (Tier 2) + Dis meta
+    │   ├── charon_npc.dsc
+    │   ├── charon_events.dsc
+    │   ├── charon_items.dsc
+    │   ├── charon_crate.dsc
+    │   ├── charon_blessing.dsc
+    │   ├── dis_items.dsc
+    │   ├── dis_crate.dsc
+    │   └── dis_mechanics.dsc
     └── admin/
         ├── admin_commands.dsc
         └── migration.dsc
@@ -159,6 +170,8 @@ scripts/
 - `/vulcanadmin` - Vulcan items
 - `/tritonadmin` - Triton progression
 - `/neptuneadmin` - Neptune items
+- `/charonadmin` - Charon progression
+- `/disadmin` - Dis items
 - `/checkkeys` - View key tracking
 - `/testroll` - Simulate crate rolls
 - `/emblemreset` - Full player reset

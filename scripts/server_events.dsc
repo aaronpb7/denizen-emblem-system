@@ -50,6 +50,6 @@ server_join_handler:
                 - wait 5s
             - else:
                 - wait 40t
-            - narrate "<&e><&l>Promachos<&r><&7>: You have not chosen an emblem! Speak to me to select one."
+            - narrate "<&e><&l>Promachos<&r><&7>: You have not chosen an emblem! Visit one of the gods to choose one."
             - playsound <player> sound:entity_villager_ambient
-            - title "subtitle:<&7>Visit <&e>Promachos <&7>to choose an emblem" fade_in:10t stay:60t fade_out:10t
+            - title "subtitle:<&7>Visit a god to choose an emblem" fade_in:10t stay:60t fade_out:10t
