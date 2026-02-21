@@ -56,6 +56,13 @@ hephaestus_key_usage:
         - flag player hephaestus.crates_opened:++
         - flag player hephaestus.tier.<[tier].to_lowercase>:++
 
+        # Pity counter tracking (only while wearing divine armor)
+        - if <proc[is_wearing_divine_armor].context[<player>|hephaestus]>:
+            - if <[tier]> == OLYMPIAN:
+                - flag player hephaestus.pity_counter:0
+            - else:
+                - flag player hephaestus.pity_counter:++
+
 hephaestus_crate_animation:
     type: task
     debug: false
@@ -320,15 +327,15 @@ roll_hephaestus_tier:
     type: procedure
     debug: false
     script:
+    # Pity timer: guaranteed OLYMPIAN every 50 crates while wearing divine armor
+    - if <proc[is_wearing_divine_armor].context[<player>|hephaestus]>:
+        - if <player.flag[hephaestus.pity_counter].if_null[0]> >= 49:
+            - determine <list[OLYMPIAN|<&b>]>
+
     - define roll <util.random.int[1].to[100]>
 
-    # Emblem unlocked: OLYMPIAN 2% (MORTAL loses 1%)
-    # Default:  56/26/12/5/1
-    # Unlocked: 55/26/12/5/2
-    - if <player.has_flag[hephaestus.emblem.unlocked]>:
-        - define caps <list[55|81|93|98]>
-    - else:
-        - define caps <list[56|82|94|99]>
+    # Standard rates: 56/26/12/5/1
+    - define caps <list[56|82|94|99]>
 
     - if <[roll]> <= <[caps].get[1]>:
         - determine <list[MORTAL|<&f>]>

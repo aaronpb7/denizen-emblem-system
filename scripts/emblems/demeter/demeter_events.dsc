@@ -126,7 +126,7 @@ farming_food_crafting:
 
         # Get food name and amount (context.amount handles shift-click)
         - define food <context.item.material.name>
-        - define craft_amount <context.amount>
+        - define craft_amount <context.item.quantity>
 
         # Track cakes specifically for component milestone
         - if <[food]> == cake:

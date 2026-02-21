@@ -44,24 +44,25 @@ promachos_first_meeting:
     type: task
     debug: false
     script:
-    # Title/subtitle intro
-    - title "title:<&e><&l>PROMACHOS" "subtitle:<&7>Herald of the Gods" fade_in:10t stay:50t fade_out:10t
     - playsound <player> sound:block_amethyst_block_chime volume:0.5
 
     - narrate "<&e><&l>Promachos<&r><&7>: Hold, mortal. I am <&e>Promachos<&7>, Herald of the Gods. I was sent ahead to prepare this world for what is coming."
-    - wait 3s
+    - wait 5s
 
     - narrate "<&e><&l>Promachos<&r><&7>: The gods have fled Olympus. Something ancient — something that devours divinity itself — woke beneath the mountain and shattered everything."
-    - wait 3s
+    - wait 5s
 
     - narrate "<&e><&l>Promachos<&r><&7>: They arrived here broken, their divine essence scattered into fragments. They cannot act directly — every use of their power draws the enemy closer."
-    - wait 3s
+    - wait 5s
 
     - narrate "<&e><&l>Promachos<&r><&7>: But mortal labor is invisible to it. Your work, your sweat, your devotion — it can restore what was lost without alerting what hunts them."
-    - wait 3s
+    - wait 5s
 
     - narrate "<&e><&l>Promachos<&r><&7>: Three gods have taken refuge nearby. Seek them out — <&6>Demeter<&7>, <&8>Hephaestus<&7>, and <&c>Heracles<&7>. They will explain what they need. Choose one to serve."
-    - wait 1s
+    - wait 3s
+
+    # Character introduction title
+    - title "title:<&6>Character Introduction" "subtitle:<&f>Promachos" fade_in:10t stay:50t fade_out:10t
 
     # Flag as met — NO GUI opened, just directs to gods
     - flag player met_promachos:true

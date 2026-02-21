@@ -42,10 +42,13 @@ triton_interact:
                 # Priority 1: Ceremony if all components complete and not unlocked
                 - if <proc[check_triton_components_complete]> && !<player.has_flag[triton.emblem.unlocked]>:
                     - run triton_emblem_unlock_ceremony
-                # Priority 2: Sea lantern turn-in if holding sea lanterns and emblem active
+                # Priority 2: Armor quest (before turn-in, after ceremony)
+                - else if <player.has_flag[triton.emblem.unlocked]> && !<player.has_flag[triton.armor.crafted]>:
+                    - run triton_armor_quest_handler
+                # Priority 3: Sea lantern turn-in if holding sea lanterns and emblem active
                 - else if <player.item_in_hand.material.name> == sea_lantern && <player.flag[emblem.active].if_null[NONE]> == TRITON:
                     - run triton_lantern_turnin
-                # Priority 3: Info menu
+                # Priority 4: Info menu
                 - else:
                     - inventory open d:triton_info_gui
 
@@ -62,11 +65,11 @@ triton_turn_away:
     - choose <[tier1_done]>:
         - case 0:
             - narrate "<&3><&l>Triton<&r><&7>: You smell of dry land, mortal. The ocean does not open for the unproven."
-            - wait 2s
+            - wait 4s
             - narrate "<&3><&l>Triton<&r><&7>: Return when you have earned <&3>two emblems<&7> from the gods above. Then we will speak."
         - case 1:
             - narrate "<&3><&l>Triton<&r><&7>: One emblem... the current stirs, but the deep demands more."
-            - wait 2s
+            - wait 4s
             - narrate "<&3><&l>Triton<&r><&7>: Earn <&3>one more emblem<&7>, and the sea will open to you."
 
 # ============================================
@@ -77,24 +80,25 @@ triton_first_meeting:
     type: task
     debug: false
     script:
-    # Title/subtitle intro
-    - title "title:<&3><&l>TRITON" "subtitle:<&b>God of the Sea" fade_in:10t stay:50t fade_out:10t
     - playsound <player> sound:entity_elder_guardian_ambient volume:0.5
 
     - narrate "<&3><&l>Triton<&r><&7>: So. Another surface-dweller comes dripping into my domain."
-    - wait 3s
+    - wait 5s
 
     - narrate "<&3><&l>Triton<&r><&7>: I am <&3>Triton<&7>, God of the Sea. Son of Poseidon — though my father is... gone. The ocean that once obeyed my every command now flows as if I am nothing."
-    - wait 3s
+    - wait 5s
 
     - narrate "<&3><&l>Triton<&r><&7>: When Olympus fell, I dove into the deepest trench I could find. I thought the sea would protect me. It did not. The ocean <&3>flinched<&7>. The entire ocean. I have never felt that before."
-    - wait 3s
+    - wait 5s
 
     - narrate "<&3><&l>Triton<&r><&7>: I need mortal hands to remind the sea who I am. Bring me <&3>sea lanterns<&7>, slay the <&3>guardians<&7> of the deep, and forge <&3>conduits<&7> of power in my name."
-    - wait 3s
+    - wait 5s
 
     - narrate "<&3><&l>Triton<&r><&7>: Accept my emblem. I will not ask twice."
-    - wait 1s
+    - wait 3s
+
+    # Character introduction title
+    - title "title:<&6>Character Introduction" "subtitle:<&f>Triton" fade_in:10t stay:50t fade_out:10t
 
     # Flag as met and open info menu
     - flag player met_triton:true
@@ -117,7 +121,7 @@ triton_lantern_turnin:
     # Triton dialogue
     - narrate "<&3><&l>Triton<&r><&7>: Good... the sea's light returns to me."
     - playsound <player> sound:entity_experience_orb_pickup
-    - wait 2s
+    - wait 4s
 
     # Increment count
     - flag player triton.lanterns.count:+:<[lanterns_in_hand]>
@@ -164,10 +168,10 @@ triton_emblem_unlock_ceremony:
 
     # Dialogue sequence
     - narrate "<&3><&l>Triton<&r><&7>: You have conquered the depths and mastered the sea."
-    - wait 3s
+    - wait 5s
 
     - narrate "<&3><&l>Triton<&r><&7>: The ocean itself bows to your will. Receive my emblem!"
-    - wait 3s
+    - wait 5s
 
     - narrate "<&3><&l>Triton<&r><&7>: <&2>You have unlocked the <&3><&l>Emblem of Triton<&2>!"
 
@@ -189,7 +193,7 @@ triton_emblem_unlock_ceremony:
     - playsound <server.online_players> sound:ui_toast_challenge_complete volume:0.5
 
     # Tier progression tease
-    - wait 2s
+    - wait 4s
     - narrate "<&3><&l>Triton<&r><&7>: You have conquered the depths. Your legend grows."
 
 # ============================================

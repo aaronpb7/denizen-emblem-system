@@ -1233,6 +1233,131 @@ disadmin_command:
             - narrate "<&c>Invalid action. Use: keys, give, item, or reset"
 
 # ============================================
+# ARMOR ADMIN COMMAND
+# ============================================
+
+armoradmin_command:
+    type: command
+    name: armoradmin
+    description: Manage divine armor quest progression
+    usage: /armoradmin (player) (action) (god) [args...]
+    permission: emblems.admin
+    debug: false
+    script:
+    - if <context.args.size> < 3:
+        - narrate "<&c>Usage: /armoradmin <player> <status|give|gifts|stage|setcount|complete|pity|reset> <god> [args...]"
+        - narrate "<&7>Gods: demeter, hephaestus, heracles, triton, charon"
+        - stop
+
+    - define target <server.match_player[<context.args.get[1]>].if_null[null]>
+    - if <[target]> == null:
+        - narrate "<&c>Player not found: <context.args.get[1]>"
+        - stop
+
+    - define action <context.args.get[2].to_lowercase>
+    - define god <context.args.get[3].to_lowercase>
+
+    - if !<list[demeter|hephaestus|heracles|triton|charon].contains[<[god]>]>:
+        - narrate "<&c>Invalid god. Use: demeter, hephaestus, heracles, triton, or charon"
+        - stop
+
+    - choose <[action]>:
+        # Show all armor quest flags
+        - case status:
+            - narrate "<&6>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            - narrate "<&e><&l>ARMOR STATUS: <[target].name> — <[god].to_titlecase>"
+            - narrate "<&6>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            - narrate "<&7>Quest Offered: <&f><[target].has_flag[<[god]>.armor.quest_offered]>"
+            - narrate "<&7>Current Stage: <&f><[target].flag[<[god]>.armor.stage].if_null[not started]>"
+            - narrate "<&7>Stage 1: <&f><[target].flag[<[god]>.armor.stage1].if_null[0]> <&7>| Complete: <&f><[target].has_flag[<[god]>.armor.stage1_complete]>"
+            - narrate "<&7>Stage 2: <&f><[target].flag[<[god]>.armor.stage2].if_null[0]> <&7>| Complete: <&f><[target].has_flag[<[god]>.armor.stage2_complete]>"
+            - narrate "<&7>Stage 3: <&f><[target].flag[<[god]>.armor.stage3].if_null[0]> <&7>| Complete: <&f><[target].has_flag[<[god]>.armor.stage3_complete]>"
+            - narrate "<&7>Gifts Received: <&f><[target].has_flag[<[god]>.armor.gifts_received]>"
+            - narrate "<&7>Armor Crafted: <&f><[target].has_flag[<[god]>.armor.crafted]>"
+            - narrate "<&7>Pity Counter: <&f><[target].flag[<[god]>.pity_counter].if_null[0]>"
+            - narrate "<&6>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+        # Give full armor set + set crafted flag
+        - case give:
+            - give <item[<[god]>_divine_helm]> player:<[target]>
+            - give <item[<[god]>_divine_chestplate]> player:<[target]>
+            - give <item[<[god]>_divine_leggings]> player:<[target]>
+            - give <item[<[god]>_divine_boots]> player:<[target]>
+            - flag <[target]> <[god]>.armor.crafted:true
+            - narrate "<&a>Gave full <[god].to_titlecase> divine armor to <[target].name> and set crafted flag"
+
+        # Give divine gift + set gifts_received
+        - case gifts:
+            - give <item[<[god]>_divine_gift]> quantity:1 player:<[target]>
+            - flag <[target]> <[god]>.armor.gifts_received:true
+            - narrate "<&a>Gave <[god].to_titlecase> divine gift to <[target].name> and set gifts_received flag"
+
+        # Set quest to specific stage
+        - case stage:
+            - if <context.args.size> < 4:
+                - narrate "<&c>Usage: /armoradmin <player> stage <god> <1|2|3>"
+                - stop
+            - define stage_num <context.args.get[4]>
+            - if !<list[1|2|3].contains[<[stage_num]>]>:
+                - narrate "<&c>Stage must be 1, 2, or 3"
+                - stop
+            - flag <[target]> <[god]>.armor.quest_offered:true
+            - flag <[target]> <[god]>.armor.stage:<[stage_num]>
+            - flag <[target]> <[god]>.armor.stage<[stage_num]>:0
+            # Mark previous stages complete
+            - if <[stage_num]> >= 2:
+                - flag <[target]> <[god]>.armor.stage1_complete:true
+            - if <[stage_num]> >= 3:
+                - flag <[target]> <[god]>.armor.stage2_complete:true
+            - narrate "<&a>Set <[target].name>'s <[god].to_titlecase> armor quest to stage <[stage_num]>"
+
+        # Set a stage's progress counter
+        - case setcount:
+            - if <context.args.size> < 5:
+                - narrate "<&c>Usage: /armoradmin <player> setcount <god> <1|2|3> <count>"
+                - stop
+            - define stage_num <context.args.get[4]>
+            - define count <context.args.get[5]>
+            - if !<list[1|2|3].contains[<[stage_num]>]>:
+                - narrate "<&c>Stage must be 1, 2, or 3"
+                - stop
+            - if !<[count].is_integer>:
+                - narrate "<&c>Count must be a number"
+                - stop
+            - flag <[target]> <[god]>.armor.stage<[stage_num]>:<[count]>
+            - narrate "<&a>Set <[target].name>'s <[god].to_titlecase> stage <[stage_num]> counter to <[count]>"
+
+        # Force-complete all 3 stages (ready for gift bestowal)
+        - case complete:
+            - flag <[target]> <[god]>.armor.quest_offered:true
+            - flag <[target]> <[god]>.armor.stage1_complete:true
+            - flag <[target]> <[god]>.armor.stage2_complete:true
+            - flag <[target]> <[god]>.armor.stage3_complete:true
+            - narrate "<&a>Force-completed all 3 stages of <[god].to_titlecase> armor quest for <[target].name>"
+            - narrate "<&7>Player can now click the god NPC to receive divine gifts."
+
+        # Show or set pity counter
+        - case pity:
+            - if <context.args.size> >= 4:
+                - define value <context.args.get[4]>
+                - if !<[value].is_integer>:
+                    - narrate "<&c>Value must be a number"
+                    - stop
+                - flag <[target]> <[god]>.pity_counter:<[value]>
+                - narrate "<&a>Set <[target].name>'s <[god].to_titlecase> pity counter to <[value]>"
+            - else:
+                - narrate "<&e><[target].name>'s <[god].to_titlecase> Pity Counter: <&f><[target].flag[<[god]>.pity_counter].if_null[0]>"
+
+        # Clear all armor flags for that god
+        - case reset:
+            - flag <[target]> <[god]>.armor:!
+            - flag <[target]> <[god]>.pity_counter:!
+            - narrate "<&a>Reset all <[god].to_titlecase> armor flags and pity counter for <[target].name>"
+
+        - default:
+            - narrate "<&c>Invalid action. Use: status, give, gifts, stage, setcount, complete, pity, or reset"
+
+# ============================================
 # CHECK KEYS AWARDED COMMAND
 # ============================================
 

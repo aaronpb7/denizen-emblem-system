@@ -43,6 +43,9 @@ heracles_interact:
                 # Components complete + not unlocked → ceremony
                 - if <proc[check_heracles_components_complete]> && !<player.has_flag[heracles.emblem.unlocked]>:
                     - run heracles_emblem_unlock_ceremony
+                # Emblem unlocked + armor not crafted → armor quest
+                - else if <player.has_flag[heracles.emblem.unlocked]> && !<player.has_flag[heracles.armor.crafted]>:
+                    - run heracles_armor_quest_handler
                 # Default → info/selection GUI
                 - else:
                     - inventory open d:heracles_info_gui
@@ -66,24 +69,25 @@ heracles_first_meeting:
     type: task
     debug: false
     script:
-    # Title/subtitle intro
-    - title "title:<&c><&l>HERACLES" "subtitle:<&4>Hero of Legend" fade_in:10t stay:50t fade_out:10t
     - playsound <player> sound:entity_ender_dragon_growl volume:0.3
 
     - narrate "<&c><&l>Heracles<&r><&7>: Stop. Let me look at you."
-    - wait 3s
+    - wait 5s
 
     - narrate "<&c><&l>Heracles<&r><&7>: I am <&c>Heracles<&7>. I was mortal once — born mortal, earned my divinity through twelve labors the songs still echo. I know what it means to fight with nothing but your hands and your refusal to die."
-    - wait 3s
+    - wait 5s
 
     - narrate "<&c><&l>Heracles<&r><&7>: When Olympus fell, I was the last to leave. I stayed to fight. I failed. Whatever came for us... it swatted me aside like a child."
-    - wait 3s
+    - wait 5s
 
     - narrate "<&c><&l>Heracles<&r><&7>: Now I need mortals who can do what I cannot. Slay <&c>pillagers<&7>, survive <&c>raids<&7>, trade for <&c>emeralds<&7> — prove you have the will to stand where a god fell."
-    - wait 3s
+    - wait 5s
 
     - narrate "<&c><&l>Heracles<&r><&7>: Choose my emblem. I won't dress it up with pretty words. It will be hard. But you look like you can take it."
-    - wait 1s
+    - wait 3s
+
+    # Character introduction title
+    - title "title:<&6>Character Introduction" "subtitle:<&f>Heracles" fade_in:10t stay:50t fade_out:10t
 
     # Flag as met and open selection GUI
     - flag player met_heracles:true
@@ -106,10 +110,10 @@ heracles_emblem_unlock_ceremony:
 
     # Dialogue sequence — Heracles speaks in first person
     - narrate "<&c><&l>Heracles<&r><&7>: You've done it. Every trial. Every battle. You didn't quit."
-    - wait 3s
+    - wait 5s
 
     - narrate "<&c><&l>Heracles<&r><&7>: When I was mortal, I wished for someone to fight beside me. I never found them. Maybe you're what I was looking for."
-    - wait 3s
+    - wait 5s
 
     - narrate "<&c><&l>Heracles<&r><&7>: <&2>You have unlocked the <&c><&l>Emblem of Heracles<&2>!"
 
@@ -132,7 +136,7 @@ heracles_emblem_unlock_ceremony:
 
     # Check tier progression
     - define tier1_done <proc[count_completed_tier_emblems].context[<player>|1]>
-    - wait 2s
+    - wait 4s
     - if <[tier1_done]> >= 2:
         - narrate "<&c><&l>Heracles<&r><&7>: Your strength grows beyond what I can teach. <&e>Tier 2 emblems<&7> are now within your reach."
     - else:

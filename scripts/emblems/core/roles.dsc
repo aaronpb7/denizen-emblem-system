@@ -231,3 +231,103 @@ set_player_emblem:
         - flag player emblem.changed_before:true
 
     - playsound <player> sound:block_enchantment_table_use
+
+# ============================================
+# DIVINE ARMOR CHECK
+# ============================================
+# Check if player is wearing full divine armor set for a god
+# Usage: <proc[is_wearing_divine_armor].context[<player>|demeter]>
+# Returns: true/false
+
+is_wearing_divine_armor:
+    type: procedure
+    debug: false
+    definitions: player|god
+    script:
+    - if <[player].equipment_map.get[helmet].script.name.if_null[null]> != <[god]>_divine_helm:
+        - determine false
+    - if <[player].equipment_map.get[chestplate].script.name.if_null[null]> != <[god]>_divine_chestplate:
+        - determine false
+    - if <[player].equipment_map.get[leggings].script.name.if_null[null]> != <[god]>_divine_leggings:
+        - determine false
+    - if <[player].equipment_map.get[boots].script.name.if_null[null]> != <[god]>_divine_boots:
+        - determine false
+    - determine true
+
+# ============================================
+# DIVINE ARMOR TRIM HANDLER
+# ============================================
+# Allows players to apply armor trims to divine armor
+# at a smithing table without losing custom item data.
+
+divine_armor_trim_handler:
+    type: world
+    debug: false
+    events:
+        on player prepares smithing item:
+        - inject divine_armor_trim_check
+
+        on player smiths item:
+        - inject divine_armor_trim_check
+
+divine_armor_trim_check:
+    type: task
+    debug: false
+    script:
+    - define divine_items <list[demeter_divine_helm|demeter_divine_chestplate|demeter_divine_leggings|demeter_divine_boots|hephaestus_divine_helm|hephaestus_divine_chestplate|hephaestus_divine_leggings|hephaestus_divine_boots|heracles_divine_helm|heracles_divine_chestplate|heracles_divine_leggings|heracles_divine_boots|triton_divine_helm|triton_divine_chestplate|triton_divine_leggings|triton_divine_boots|charon_divine_helm|charon_divine_chestplate|charon_divine_leggings|charon_divine_boots]>
+    # Find divine armor in smithing table
+    - define base_script null
+    - foreach <list[1|2|3]> as:slot_num:
+        - define slot_item <context.inventory.slot[<[slot_num]>]>
+        - define sname <[slot_item].script.name.if_null[null]>
+        - if <[sname]> != null && <[divine_items].contains[<[sname]>]>:
+            - define base_script <[sname]>
+    - if <[base_script]> == null:
+        - stop
+    # If vanilla produced a result with trim data, copy it onto our scripted item
+    - define result <context.item>
+    - if <[result].material.name> != AIR:
+        - define trim_data <[result].trim.if_null[null]>
+        - if <[trim_data]> != null:
+            - determine <item[<[base_script]>].with[trim=<[trim_data]>]>
+    # Fallback: manually construct trim from template + material slots
+    - define template <context.inventory.slot[1]>
+    - define material <context.inventory.slot[3]>
+    - if <[template].material.name> == AIR || <[material].material.name> == AIR:
+        - stop
+    - define tname <[template].material.name>
+    - if !<[tname].contains_text[ARMOR_TRIM]>:
+        - stop
+    - define pattern <[tname].before[_ARMOR_TRIM_SMITHING_TEMPLATE].to_lowercase>
+    - define trim_materials <map[IRON_INGOT=iron|COPPER_INGOT=copper|GOLD_INGOT=gold|DIAMOND=diamond|EMERALD=emerald|LAPIS_LAZULI=lapis|NETHERITE_INGOT=netherite|REDSTONE=redstone|AMETHYST_SHARD=amethyst|QUARTZ=quartz]>
+    - define trim_mat <[trim_materials].get[<[material].material.name>].if_null[null]>
+    - if <[trim_mat]> == null:
+        - stop
+    - determine <item[<[base_script]>].with[trim=<map[pattern=<[pattern]>;material=<[trim_mat]>]>]>
+
+# ============================================
+# DIVINE ARMOR SET EFFECTS
+# ============================================
+# Ambient particle effects while wearing a full divine armor set:
+# - Demeter: Green sparkles (happy_villager)
+# - Hephaestus: Forge embers (flame)
+# - Heracles: Combat sparks (crit)
+# - Triton: Water bubbles (bubble_pop)
+# - Charon: Soul fire (soul_fire_flame)
+
+divine_armor_set_effects:
+    type: world
+    debug: false
+    events:
+        on system time secondly every:2:
+        - foreach <server.online_players> as:p:
+            - if <proc[is_wearing_divine_armor].context[<[p]>|demeter]>:
+                - playeffect effect:happy_villager at:<[p].location> quantity:8 offset:0.6
+            - else if <proc[is_wearing_divine_armor].context[<[p]>|hephaestus]>:
+                - playeffect effect:flame at:<[p].location> quantity:8 offset:0.6
+            - else if <proc[is_wearing_divine_armor].context[<[p]>|heracles]>:
+                - playeffect effect:crit at:<[p].location> quantity:8 offset:0.6
+            - else if <proc[is_wearing_divine_armor].context[<[p]>|triton]>:
+                - playeffect effect:bubble_pop at:<[p].location> quantity:8 offset:0.6
+            - else if <proc[is_wearing_divine_armor].context[<[p]>|charon]>:
+                - playeffect effect:soul_fire_flame at:<[p].location> quantity:8 offset:0.6

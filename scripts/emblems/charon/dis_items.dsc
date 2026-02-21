@@ -88,13 +88,10 @@ dis_fire_charm:
         hides: ENCHANTS
     lore:
     - <&7>A charm infused with the
-    - <&7>fires of the underworld.
-    - <&7>Grants immunity to fire and
-    - <&7>lava while in your inventory.
+    - <&7>fires of the underworld,
+    - <&7>cold to the touch yet burning
+    - <&7>with the memory of the Styx.
     - <empty>
-    - <&5>Passive: Fire Immunity
-    - <empty>
-    - <&8>Keep in inventory to activate
     - <&8>Unique - One per player
     - <empty>
     - <&5><&l><&k>|||<&r> <&5><&l>OLYMPIAN CHARM<&r> <&5><&l><&k>|||

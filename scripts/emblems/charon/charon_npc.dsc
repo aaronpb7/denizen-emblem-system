@@ -42,10 +42,13 @@ charon_interact:
                 # Priority 1: Ceremony if all components complete and not unlocked
                 - if <proc[check_charon_components_complete]> && !<player.has_flag[charon.emblem.unlocked]>:
                     - run charon_emblem_unlock_ceremony
-                # Priority 2: Ancient debris turn-in if holding debris and emblem active
+                # Priority 2: Armor quest (before turn-in, after ceremony)
+                - else if <player.has_flag[charon.emblem.unlocked]> && !<player.has_flag[charon.armor.crafted]>:
+                    - run charon_armor_quest_handler
+                # Priority 3: Ancient debris turn-in if holding debris and emblem active
                 - else if <player.item_in_hand.material.name> == ancient_debris && <player.flag[emblem.active].if_null[NONE]> == CHARON:
                     - run charon_debris_turnin
-                # Priority 3: Info menu
+                # Priority 4: Info menu
                 - else:
                     - inventory open d:charon_info_gui
 
@@ -62,11 +65,11 @@ charon_turn_away:
     - choose <[tier1_done]>:
         - case 0:
             - narrate "<&5><&l>Charon<&r><&7>: The living do not cross my river unbidden. You are not strong enough to hear what I have to say."
-            - wait 2s
+            - wait 4s
             - narrate "<&5><&l>Charon<&r><&7>: Return when you have earned <&5>two emblems<&7> from the gods above. Then perhaps."
         - case 1:
             - narrate "<&5><&l>Charon<&r><&7>: One emblem... the river stirs, but the underworld demands more."
-            - wait 2s
+            - wait 4s
             - narrate "<&5><&l>Charon<&r><&7>: Earn <&5>one more emblem<&7>, and I shall grant you passage."
 
 # ============================================
@@ -77,24 +80,25 @@ charon_first_meeting:
     type: task
     debug: false
     script:
-    # Title/subtitle intro
-    - title "title:<&5><&l>CHARON" "subtitle:<&d>Ferryman of the Dead" fade_in:10t stay:50t fade_out:10t
     - playsound <player> sound:entity_wither_ambient volume:0.5
 
     - narrate "<&5><&l>Charon<&r><&7>: ...You. Come closer. Let me look at you."
-    - wait 3s
+    - wait 5s
 
     - narrate "<&5><&l>Charon<&r><&7>: I am <&5>Charon<&7>, Ferryman of the Dead. I am older than Olympus. Older than the Titans. I have ferried the dead since the concept of death was new."
-    - wait 3s
+    - wait 5s
 
     - narrate "<&5><&l>Charon<&r><&7>: I did not flee Olympus — I fled the underworld. My own domain. Something entered from <&5>below<&7>... from somewhere even I did not know existed. The Styx began to dry. Souls were unmade."
-    - wait 3s
+    - wait 5s
 
     - narrate "<&5><&l>Charon<&r><&7>: I need mortals who can endure the nether's fire. Bring me <&5>ancient debris<&7>, slay <&5>withers<&7> in my name, and <&5>barter<&7> with the piglins of the deep."
-    - wait 3s
+    - wait 5s
 
     - narrate "<&5><&l>Charon<&r><&7>: Accept my emblem. Do not ask me what I saw down there. You are not ready."
-    - wait 1s
+    - wait 3s
+
+    # Character introduction title
+    - title "title:<&6>Character Introduction" "subtitle:<&f>Charon" fade_in:10t stay:50t fade_out:10t
 
     # Flag as met and open info menu
     - flag player met_charon:true
@@ -117,7 +121,7 @@ charon_debris_turnin:
     # Charon dialogue
     - narrate "<&5><&l>Charon<&r><&7>: Good... the nether's bones return to me."
     - playsound <player> sound:entity_experience_orb_pickup
-    - wait 2s
+    - wait 4s
 
     # Increment count
     - flag player charon.debris.count:+:<[debris_in_hand]>
@@ -164,10 +168,10 @@ charon_emblem_unlock_ceremony:
 
     # Dialogue sequence
     - narrate "<&5><&l>Charon<&r><&7>: You have braved the fires and mastered the underworld."
-    - wait 3s
+    - wait 5s
 
     - narrate "<&5><&l>Charon<&r><&7>: Death itself acknowledges your will. Receive my emblem!"
-    - wait 3s
+    - wait 5s
 
     - narrate "<&5><&l>Charon<&r><&7>: <&2>You have unlocked the <&5><&l>Emblem of Charon<&2>!"
 
@@ -189,7 +193,7 @@ charon_emblem_unlock_ceremony:
     - playsound <server.online_players> sound:ui_toast_challenge_complete volume:0.5
 
     # Tier progression tease
-    - wait 2s
+    - wait 4s
     - narrate "<&5><&l>Charon<&r><&7>: You have conquered death itself. Your legend is eternal."
 
 # ============================================

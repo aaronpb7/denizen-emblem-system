@@ -43,6 +43,9 @@ hephaestus_interact:
                 # Components complete + not unlocked → ceremony
                 - if <proc[check_hephaestus_components_complete]> && !<player.has_flag[hephaestus.emblem.unlocked]>:
                     - run hephaestus_emblem_unlock_ceremony
+                # Emblem unlocked + armor not crafted → armor quest
+                - else if <player.has_flag[hephaestus.emblem.unlocked]> && !<player.has_flag[hephaestus.armor.crafted]>:
+                    - run hephaestus_armor_quest_handler
                 # Default → info/selection GUI
                 - else:
                     - inventory open d:hephaestus_info_gui
@@ -66,21 +69,22 @@ hephaestus_first_meeting:
     type: task
     debug: false
     script:
-    # Title/subtitle intro
-    - title "title:<&8><&l>HEPHAESTUS" "subtitle:<&f>God of the Forge" fade_in:10t stay:50t fade_out:10t
     - playsound <player> sound:block_anvil_use volume:0.5
 
     - narrate "<&8><&l>Hephaestus<&r><&7>: Hmph. Another one. At least you had the sense to find me."
-    - wait 3s
+    - wait 5s
 
     - narrate "<&8><&l>Hephaestus<&r><&7>: I am <&8>Hephaestus<&7>, God of the Forge. My divine forge — the one that mattered — is gone. Unmade. This crude thing is all I have left."
-    - wait 3s
+    - wait 5s
 
     - narrate "<&8><&l>Hephaestus<&r><&7>: I need mortal hands. Yours will do. Mine <&8>iron<&7>, <&8>smelt<&7> ore, build <&8>golems<&7> of iron — the kind of work I once did with a thought, now requiring muscle and sweat."
-    - wait 3s
+    - wait 5s
 
     - narrate "<&8><&l>Hephaestus<&r><&7>: I don't need your words. I need your hands. Choose my emblem if you're willing to work."
-    - wait 1s
+    - wait 3s
+
+    # Character introduction title
+    - title "title:<&6>Character Introduction" "subtitle:<&f>Hephaestus" fade_in:10t stay:50t fade_out:10t
 
     # Flag as met and open selection GUI
     - flag player met_hephaestus:true
@@ -103,10 +107,10 @@ hephaestus_emblem_unlock_ceremony:
 
     # Dialogue sequence — Hephaestus speaks in first person
     - narrate "<&8><&l>Hephaestus<&r><&7>: You've done it. The forge burns brighter than it has since the fall."
-    - wait 3s
+    - wait 5s
 
     - narrate "<&8><&l>Hephaestus<&r><&7>: I built things for gods who never thanked me. You... you helped when I asked. That is worth more than gratitude."
-    - wait 3s
+    - wait 5s
 
     - narrate "<&8><&l>Hephaestus<&r><&7>: <&2>You have unlocked the <&8><&l>Emblem of Hephaestus<&2>!"
 
@@ -129,7 +133,7 @@ hephaestus_emblem_unlock_ceremony:
 
     # Check tier progression
     - define tier1_done <proc[count_completed_tier_emblems].context[<player>|1]>
-    - wait 2s
+    - wait 4s
     - if <[tier1_done]> >= 2:
         - narrate "<&8><&l>Hephaestus<&r><&7>: Your work speaks for itself. <&e>Tier 2 emblems<&7> are now within your reach."
     - else:

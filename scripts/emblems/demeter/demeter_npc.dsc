@@ -43,6 +43,9 @@ demeter_interact:
                 # Components complete + not unlocked → ceremony
                 - if <proc[check_demeter_components_complete]> && !<player.has_flag[demeter.emblem.unlocked]>:
                     - run demeter_emblem_unlock_ceremony
+                # Emblem unlocked + armor not crafted → armor quest
+                - else if <player.has_flag[demeter.emblem.unlocked]> && !<player.has_flag[demeter.armor.crafted]>:
+                    - run demeter_armor_quest_handler
                 # Default → info/selection GUI
                 - else:
                     - inventory open d:demeter_info_gui
@@ -66,24 +69,25 @@ demeter_first_meeting:
     type: task
     debug: false
     script:
-    # Title/subtitle intro
-    - title "title:<&6><&l>DEMETER" "subtitle:<&e>Goddess of the Harvest" fade_in:10t stay:50t fade_out:10t
     - playsound <player> sound:block_amethyst_block_chime volume:0.5
 
     - narrate "<&6><&l>Demeter<&r><&7>: Oh... a mortal. Come closer. You need not be afraid."
-    - wait 3s
+    - wait 5s
 
     - narrate "<&6><&l>Demeter<&r><&7>: I am <&6>Demeter<&7>, Goddess of the Harvest. I fled here when Olympus fell... carrying what little warmth I had left."
-    - wait 3s
+    - wait 5s
 
     - narrate "<&6><&l>Demeter<&r><&7>: My essence — the warmth that made crops grow, that turned barren soil fertile — it shattered. Scattered across this world in fragments I cannot reclaim alone."
-    - wait 3s
+    - wait 5s
 
     - narrate "<&6><&l>Demeter<&r><&7>: But mortal hands... your labor is invisible to the enemy. If you would work the fields in my name — harvest <&6>wheat<&7>, tend to <&6>cattle<&7>, bake the sacred <&6>cakes<&7> — you could restore what I have lost."
-    - wait 3s
+    - wait 5s
 
     - narrate "<&6><&l>Demeter<&r><&7>: Will you help me? Choose my emblem, and your journey begins."
-    - wait 1s
+    - wait 3s
+
+    # Character introduction title
+    - title "title:<&6>Character Introduction" "subtitle:<&f>Demeter" fade_in:10t stay:50t fade_out:10t
 
     # Flag as met and open selection GUI
     - flag player met_demeter:true
@@ -105,10 +109,10 @@ demeter_emblem_unlock_ceremony:
 
     # Dialogue sequence — Demeter speaks in first person
     - narrate "<&6><&l>Demeter<&r><&7>: You have gathered all three fragments of my warmth. I can feel it returning... like spring after an endless winter."
-    - wait 3s
+    - wait 5s
 
     - narrate "<&6><&l>Demeter<&r><&7>: You have done what I could not. Receive my emblem — you have earned it, truly."
-    - wait 3s
+    - wait 5s
 
     - narrate "<&6><&l>Demeter<&r><&7>: <&2>You have unlocked the <&6><&l>Emblem of Demeter<&2>!"
 
@@ -131,7 +135,7 @@ demeter_emblem_unlock_ceremony:
 
     # Check tier progression
     - define tier1_done <proc[count_completed_tier_emblems].context[<player>|1]>
-    - wait 2s
+    - wait 4s
     - if <[tier1_done]> >= 2:
         - narrate "<&6><&l>Demeter<&r><&7>: Your devotion grows beyond my fields. <&e>Tier 2 emblems<&7> are now within your reach."
     - else:
