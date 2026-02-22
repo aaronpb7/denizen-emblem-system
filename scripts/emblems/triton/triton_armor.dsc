@@ -101,7 +101,7 @@ triton_armor_quest_events:
     events:
         # Stage 1: Throw a trident
         after projectile launched:
-        - if <context.projectile.entity_type> != TRIDENT:
+        - if <context.projectile.type.if_null[none]> != trident:
             - stop
         - define shooter <context.shooter.if_null[null]>
         - if <[shooter]> == null:

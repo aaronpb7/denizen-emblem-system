@@ -96,6 +96,10 @@ get_emblem_display_item:
             - define lore <[lore].include[<&7>• Cakes crafted<&co> <&e><[cakes].format_number>]>
             - define lore "<[lore].include[<&sp>]>"
             - define lore <[lore].include[<&6>Keys earned<&co> <&e><[keys]> <&7>Demeter Keys]>
+            - if <player.has_flag[demeter.armor.crafted]>:
+                - define pity <player.flag[demeter.pity_counter].if_null[0]>
+                - define lore "<[lore].include[<&sp>]>"
+                - define lore <[lore].include[<&6>Pity Timer<&co> <&e><[pity]><&7>/<&e>50 <&7>until guaranteed Ceres Key]>
 
         - case HEPHAESTUS:
             - define lore <[lore].include[<&e>Patron<&co> <&6><[god]><&7>, God of the Forge]>
@@ -113,6 +117,10 @@ get_emblem_display_item:
             - define lore <[lore].include[<&8>• Golems created<&co> <&f><[golems].format_number>]>
             - define lore "<[lore].include[<&sp>]>"
             - define lore <[lore].include[<&7>Keys earned<&co> <&f><[keys]> <&8>Hephaestus Keys]>
+            - if <player.has_flag[hephaestus.armor.crafted]>:
+                - define pity <player.flag[hephaestus.pity_counter].if_null[0]>
+                - define lore "<[lore].include[<&sp>]>"
+                - define lore <[lore].include[<&8>Pity Timer<&co> <&f><[pity]><&7>/<&f>50 <&7>until guaranteed Vulcan Key]>
         - case HERACLES:
             - define lore <[lore].include[<&e>Patron<&co> <&6><[god]><&7>, Hero of Strength]>
             - define lore "<[lore].include[<&sp>]>"
@@ -132,6 +140,10 @@ get_emblem_display_item:
             - define lore <[lore].include[<&7>•<&sp>Emeralds<&sp>traded<&co><&sp><&c><[emeralds].format_number>]>
             - define lore "<[lore].include[<&sp>]>"
             - define lore <[lore].include[<&c>Keys<&sp>earned<&co><&sp><&c><[keys]><&sp><&7>Heracles<&sp>Keys]>
+            - if <player.has_flag[heracles.armor.crafted]>:
+                - define pity <player.flag[heracles.pity_counter].if_null[0]>
+                - define lore "<[lore].include[<&sp>]>"
+                - define lore <[lore].include[<&c>Pity Timer<&co> <&c><[pity]><&7>/<&c>50 <&7>until guaranteed Mars Key]>
         - case TRITON:
             - define lore <[lore].include[<&e>Patron<&co> <&3><[god]><&7>, God of the Sea]>
             - define lore "<[lore].include[<&sp>]>"
@@ -148,6 +160,10 @@ get_emblem_display_item:
             - define lore <[lore].include[<&7>• Conduits crafted<&co> <&3><[conduits].format_number>]>
             - define lore "<[lore].include[<&sp>]>"
             - define lore <[lore].include[<&3>Keys earned<&co> <&3><[keys]> <&7>Triton Keys]>
+            - if <player.has_flag[triton.armor.crafted]>:
+                - define pity <player.flag[triton.pity_counter].if_null[0]>
+                - define lore "<[lore].include[<&sp>]>"
+                - define lore <[lore].include[<&3>Pity Timer<&co> <&3><[pity]><&7>/<&3>50 <&7>until guaranteed Neptune Key]>
         - case CHARON:
             - define lore <[lore].include[<&e>Patron<&co> <&5><[god]><&7>, Ferryman of the Dead]>
             - define lore "<[lore].include[<&sp>]>"
@@ -164,6 +180,10 @@ get_emblem_display_item:
             - define lore <[lore].include[<&7>• Piglin barters<&co> <&5><[barters].format_number>]>
             - define lore "<[lore].include[<&sp>]>"
             - define lore <[lore].include[<&5>Keys earned<&co> <&5><[keys]> <&7>Charon Keys]>
+            - if <player.has_flag[charon.armor.crafted]>:
+                - define pity <player.flag[charon.pity_counter].if_null[0]>
+                - define lore "<[lore].include[<&sp>]>"
+                - define lore <[lore].include[<&5>Pity Timer<&co> <&5><[pity]><&7>/<&5>50 <&7>until guaranteed Dis Key]>
     - define lore "<[lore].include[<&sp>]>"
     - define lore <[lore].include[<&8>Change emblem by visiting the gods]>
 

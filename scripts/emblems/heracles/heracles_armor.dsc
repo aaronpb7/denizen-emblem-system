@@ -123,19 +123,22 @@ heracles_armor_quest_events:
             - stop
         - flag player heracles.armor.stage2_complete:true
         - flag player heracles.armor.stage:3
+        - adjust <player> revoke_advancement:minecraft:nether/return_to_sender
         - narrate "<&c><&l>Heracles<&r><&7>: <&o>My father is Zeus. Was Zeus. I don't know what he is now..."
         - playsound <player> sound:ui_toast_challenge_complete volume:0.8
         - announce "<&c><&l>[Heracles]<&r> <&f><player.name> <&7>has completed Stage 2 of the <&c>Rite of Investiture<&7>!"
 
         # Stage 3: Kill a ghast with its own fireball
-        after player kills ghast:
+        # Bukkit doesn't expose reflected fireball shooter as player, but MC advancements do track it
+        # So we revoke "Return to Sender" when stage 3 starts, then listen for re-completion
+        after player completes advancement:
+        - if !<context.advancement.ends_with[nether/return_to_sender]>:
+            - stop
         - if !<player.has_flag[heracles.armor.quest_offered]>:
             - stop
         - if <player.flag[heracles.armor.stage].if_null[0]> != 3:
             - stop
         - if <player.has_flag[heracles.armor.stage3_complete]>:
-            - stop
-        - if <context.projectile.entity_type.if_null[null]> != FIREBALL:
             - stop
         - flag player heracles.armor.stage3_complete:true
         - narrate "<&c><&l>Heracles<&r><&7>: <&o>I stayed to fight. I was the last one on the mountain..."
@@ -197,6 +200,7 @@ heracles_armor_quest_handler:
             - case 2:
                 - narrate "<&c><&l>Heracles<&r><&7>: <&o>A grey monster charges with the raiders. Horns like stone, hide like iron. Most run. You will not."
             - case 3:
+                - adjust <player> revoke_advancement:minecraft:nether/return_to_sender
                 - narrate "<&c><&l>Heracles<&r><&7>: <&o>In the burning lands, a creature weeps and spits fire. Catch its fury and send it back. Let it taste its own flame."
         - playsound <player> sound:entity_iron_golem_hurt volume:0.3
         - inventory open d:heracles_info_gui

@@ -73,7 +73,7 @@ farming_animal_breeding:
     events:
         after entity breeds:
         # Filter for farmable animals only
-        - define animal <context.child.entity_type>
+        - define animal <context.child.type>
         - if !<list[cow|sheep|pig|chicken|rabbit|horse|llama|bee|turtle|hoglin].contains[<[animal]>]>:
             - stop
 

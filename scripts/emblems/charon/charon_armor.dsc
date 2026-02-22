@@ -118,8 +118,8 @@ charon_armor_quest_events:
         - define found_harming false
         - foreach <context.result> as:item:
             - if <[item].material.name> == POTION || <[item].material.name> == SPLASH_POTION || <[item].material.name> == LINGERING_POTION:
-                - define ptype <[item].potion_type.if_null[null]>
-                - if <[ptype]> == HARMING || <[ptype]> == STRONG_HARMING || <[ptype]> == INSTANT_DAMAGE:
+                - define ptype <[item].effects_data.first.get[base_type].if_null[null]>
+                - if <[ptype]> == harming || <[ptype]> == strong_harming:
                     - define found_harming true
         - if !<[found_harming]>:
             - stop

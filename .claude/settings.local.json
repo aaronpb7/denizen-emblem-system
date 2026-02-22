@@ -25,7 +25,8 @@
       "Bash(git commit -m \"$\\(cat <<''EOF''\nFix profile GUI errors by replacing procedural items with task-based population\n\nprocedural items in inventory scripts lacks player context, causing all\nplayer tag lookups to fail. Moved item building into open_profile_gui task\nwhere player context is available, and updated back-navigation handlers.\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
       "Bash(git commit:*)",
       "WebFetch(domain:api.minesk.in)",
-      "Bash(done)"
+      "Bash(done)",
+      "WebFetch(domain:minecraft.fandom.com)"
     ]
   }
 }
