@@ -511,14 +511,14 @@ get_triton_emblem_status_item:
     # In progress - high level overview
     - define lanterns_complete <player.has_flag[triton.component.lanterns]>
     - define guardians_complete <player.has_flag[triton.component.guardians]>
-    - define conduits_complete <player.has_flag[triton.component.conduits]>
+    - define catches_complete <player.has_flag[triton.component.catches]>
 
     - define components_done 0
     - if <[lanterns_complete]>:
         - define components_done <[components_done].add[1]>
     - if <[guardians_complete]>:
         - define components_done <[components_done].add[1]>
-    - if <[conduits_complete]>:
+    - if <[catches_complete]>:
         - define components_done <[components_done].add[1]>
 
     - define lore <list>

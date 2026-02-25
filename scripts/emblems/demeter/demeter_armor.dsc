@@ -39,6 +39,8 @@ demeter_divine_helm:
     type: item
     material: diamond_helmet
     allow in material recipes: true
+    mechanisms:
+        unbreakable: true
     display name: <&6>Crown of the Last Harvest
     lore:
     - <&7>Forged from the warmth of
@@ -53,6 +55,8 @@ demeter_divine_chestplate:
     type: item
     material: diamond_chestplate
     allow in material recipes: true
+    mechanisms:
+        unbreakable: true
     display name: <&6>Mantle of Eternal Spring
     lore:
     - <&7>Forged from the warmth of
@@ -67,6 +71,8 @@ demeter_divine_leggings:
     type: item
     material: diamond_leggings
     allow in material recipes: true
+    mechanisms:
+        unbreakable: true
     display name: <&6>Greaves of the Golden Field
     lore:
     - <&7>Forged from the warmth of
@@ -81,6 +87,8 @@ demeter_divine_boots:
     type: item
     material: diamond_boots
     allow in material recipes: true
+    mechanisms:
+        unbreakable: true
     display name: <&6>Rootwalker Treads
     lore:
     - <&7>Forged from the warmth of
@@ -262,11 +270,11 @@ demeter_infusion_ceremony:
     debug: false
     script:
     # Take materials
-    - take diamond_helmet quantity:1
-    - take diamond_chestplate quantity:1
-    - take diamond_leggings quantity:1
-    - take diamond_boots quantity:1
-    - take demeter_divine_gift quantity:1
+    - take item:diamond_helmet quantity:1
+    - take item:diamond_chestplate quantity:1
+    - take item:diamond_leggings quantity:1
+    - take item:diamond_boots quantity:1
+    - take item:demeter_divine_gift quantity:1
 
     # Ceremony dialogue
     - narrate "<&6><&l>Demeter<&r><&7>: Place the armor before me. And the seeds... yes."

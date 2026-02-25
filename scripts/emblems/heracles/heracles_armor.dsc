@@ -39,6 +39,8 @@ heracles_divine_helm:
     type: item
     material: diamond_helmet
     allow in material recipes: true
+    mechanisms:
+        unbreakable: true
     display name: <&c>Nemean Crown
     lore:
     - <&7>Bearing the strength of every
@@ -53,6 +55,8 @@ heracles_divine_chestplate:
     type: item
     material: diamond_chestplate
     allow in material recipes: true
+    mechanisms:
+        unbreakable: true
     display name: <&c>Plate of the Twelve Labors
     lore:
     - <&7>Bearing the strength of every
@@ -67,6 +71,8 @@ heracles_divine_leggings:
     type: item
     material: diamond_leggings
     allow in material recipes: true
+    mechanisms:
+        unbreakable: true
     display name: <&c>Greaves of the Last Stand
     lore:
     - <&7>Bearing the strength of every
@@ -81,6 +87,8 @@ heracles_divine_boots:
     type: item
     material: diamond_boots
     allow in material recipes: true
+    mechanisms:
+        unbreakable: true
     display name: <&c>Titan's Stride
     lore:
     - <&7>Bearing the strength of every
@@ -246,11 +254,11 @@ heracles_infusion_ceremony:
     type: task
     debug: false
     script:
-    - take diamond_helmet quantity:1
-    - take diamond_chestplate quantity:1
-    - take diamond_leggings quantity:1
-    - take diamond_boots quantity:1
-    - take heracles_divine_gift quantity:1
+    - take item:diamond_helmet quantity:1
+    - take item:diamond_chestplate quantity:1
+    - take item:diamond_leggings quantity:1
+    - take item:diamond_boots quantity:1
+    - take item:heracles_divine_gift quantity:1
 
     - narrate "<&c><&l>Heracles<&r><&7>: Give it here. All of it."
     - playsound <player> sound:block_enchantment_table_use volume:1.0

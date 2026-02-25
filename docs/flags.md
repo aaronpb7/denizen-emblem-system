@@ -182,7 +182,7 @@ This document lists ALL flags used in the Emblem System V2. Flags are organized 
 |------|------|---------|---------------|------------------|
 | `triton.lanterns.count` | Integer | Total sea lanterns turned in | `850` | Sea lanterns turned in to Triton NPC, emblem=TRITON |
 | `triton.guardians.count` | Integer | Total guardian kill points | `1200` | Guardian killed (+1) or Elder Guardian killed (+15), emblem=TRITON |
-| `triton.conduits.count` | Integer | Total conduits crafted | `18` | Conduit craft event, emblem=TRITON |
+| `triton.catches.count` | Integer | Total treasure catches | `72` | Treasure fish event, emblem=TRITON |
 
 ### Key Award Tracking
 
@@ -190,9 +190,9 @@ This document lists ALL flags used in the Emblem System V2. Flags are organized 
 |------|------|---------|---------------|
 | `triton.lanterns.keys_awarded` | Integer | Keys awarded from lanterns | `85` |
 | `triton.guardians.keys_awarded` | Integer | Keys awarded from guardians | `80` |
-| `triton.conduits.keys_awarded` | Integer | Keys awarded from conduits | `72` |
+| `triton.catches.keys_awarded` | Integer | Keys awarded from catches | `72` |
 
-**Logic**: Lanterns: `floor(count / 10)`. Guardians: `floor(count / 15)`. Conduits: `count * 4`.
+**Logic**: Lanterns: `floor(count / 10)`. Guardians: `floor(count / 15)`. Catches: `count` (1:1).
 
 ### Component Flags
 
@@ -200,7 +200,7 @@ This document lists ALL flags used in the Emblem System V2. Flags are organized 
 |------|------|---------|----------|
 | `triton.component.lanterns` | Boolean | Lantern component obtained | Counter reaches 1,000 |
 | `triton.component.guardians` | Boolean | Guardian component obtained | Counter reaches 1,500 |
-| `triton.component.conduits` | Boolean | Conduit component obtained | Counter reaches 25 |
+| `triton.component.catches` | Boolean | Catch component obtained | Counter reaches 100 |
 
 ### Emblem Unlock
 

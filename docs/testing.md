@@ -157,9 +157,9 @@ Sets all 3 components to complete, marks emblem as unlocked, and increments rank
 - Unique item counter
 
 **Triton:**
-- All activity counters (lanterns, guardians, conduits)
+- All activity counters (lanterns, guardians, catches)
 - All keys awarded tracking
-- All components (lanterns, guardians, conduits) + dates
+- All components (lanterns, guardians, catches) + dates
 - Crate statistics (opens, tier counts)
 - Animation state flags
 
@@ -459,13 +459,13 @@ Sets all 3 components to complete, marks emblem as unlocked, and increments rank
 /tritonadmin <player> set <activity> <count>
 ```
 
-**Valid Activities**: `lanterns`, `guardians`, `conduits`
+**Valid Activities**: `lanterns`, `guardians`, `catches`
 
 **Examples**:
 ```
 /tritonadmin Notch set lanterns 900
 /tritonadmin Notch set guardians 1400
-/tritonadmin Notch set conduits 20
+/tritonadmin Notch set catches 80
 ```
 
 **Note**: Does NOT auto-award keys or components. Use separate commands for those.
@@ -473,7 +473,7 @@ Sets all 3 components to complete, marks emblem as unlocked, and increments rank
 #### Toggle Component
 
 ```
-/tritonadmin <player> component <lanterns|guardians|conduits> <true|false>
+/tritonadmin <player> component <lanterns|guardians|catches> <true|false>
 ```
 
 **Example**: `/tritonadmin Notch component lanterns true`
@@ -619,7 +619,7 @@ HERACLES:
 TRITON:
   Lanterns: 500 | Awarded: 50 | Should: 50 | Owed: 0
   Guardians: 750 | Awarded: 50 | Should: 50 | Owed: 0
-  Conduits: 12 | Awarded: 48 | Should: 48 | Owed: 0
+  Catches: 72 | Awarded: 72 | Should: 72 | Owed: 0
 ```
 
 ---

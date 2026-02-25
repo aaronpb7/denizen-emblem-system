@@ -91,7 +91,7 @@ triton_first_meeting:
     - narrate "<&3><&l>Triton<&r><&7>: When Olympus fell, I dove into the deepest trench I could find. I thought the sea would protect me. It did not. The ocean <&3>flinched<&7>. The entire ocean. I have never felt that before."
     - wait 5s
 
-    - narrate "<&3><&l>Triton<&r><&7>: I need mortal hands to remind the sea who I am. Bring me <&3>sea lanterns<&7>, slay the <&3>guardians<&7> of the deep, and forge <&3>conduits<&7> of power in my name."
+    - narrate "<&3><&l>Triton<&r><&7>: I need mortal hands to remind the sea who I am. Bring me <&3>sea lanterns<&7>, slay the <&3>guardians<&7> of the deep, and fish <&3>treasures<&7> from my waters."
     - wait 5s
 
     - narrate "<&3><&l>Triton<&r><&7>: Accept my emblem. I will not ask twice."
@@ -204,7 +204,7 @@ check_triton_components_complete:
     type: procedure
     debug: false
     script:
-    - if <player.has_flag[triton.component.lanterns]> && <player.has_flag[triton.component.guardians]> && <player.has_flag[triton.component.conduits]>:
+    - if <player.has_flag[triton.component.lanterns]> && <player.has_flag[triton.component.guardians]> && <player.has_flag[triton.component.catches]>:
         - determine true
     - determine false
 
@@ -251,7 +251,7 @@ get_triton_emblem_select_item:
             - define components_done <[components_done].add[1]>
         - if <player.has_flag[triton.component.guardians]>:
             - define components_done <[components_done].add[1]>
-        - if <player.has_flag[triton.component.conduits]>:
+        - if <player.has_flag[triton.component.catches]>:
             - define components_done <[components_done].add[1]>
         - define lore <[lore].include[<&e>Progress<&co> <&7><[components_done]>/3 components]>
     - define lore "<[lore].include[<&sp>]>"

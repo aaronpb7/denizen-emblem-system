@@ -801,7 +801,7 @@ tritonadmin_command:
         # Set activity counter
         - case set:
             - if <context.args.size> < 4:
-                - narrate "<&c>Usage: /tritonadmin <player> set <lanterns|guardians|conduits> <count>"
+                - narrate "<&c>Usage: /tritonadmin <player> set <lanterns|guardians|catches> <count>"
                 - stop
             - define activity <context.args.get[3].to_lowercase>
             - define count <context.args.get[4]>
@@ -815,16 +815,16 @@ tritonadmin_command:
                 - case guardians:
                     - flag <[target]> triton.guardians.count:<[count]>
                     - narrate "<&a>Set <[target].name>'s guardians count to <[count]>"
-                - case conduits:
-                    - flag <[target]> triton.conduits.count:<[count]>
-                    - narrate "<&a>Set <[target].name>'s conduits count to <[count]>"
+                - case catches:
+                    - flag <[target]> triton.catches.count:<[count]>
+                    - narrate "<&a>Set <[target].name>'s catches count to <[count]>"
                 - default:
-                    - narrate "<&c>Invalid activity. Use: lanterns, guardians, or conduits"
+                    - narrate "<&c>Invalid activity. Use: lanterns, guardians, or catches"
 
         # Toggle component
         - case component:
             - if <context.args.size> < 4:
-                - narrate "<&c>Usage: /tritonadmin <player> component <lanterns|guardians|conduits> <true|false>"
+                - narrate "<&c>Usage: /tritonadmin <player> component <lanterns|guardians|catches> <true|false>"
                 - stop
             - define component <context.args.get[3].to_lowercase>
             - define value <context.args.get[4].to_lowercase>
@@ -846,21 +846,21 @@ tritonadmin_command:
                     - else:
                         - flag <[target]> triton.component.guardians:!
                         - narrate "<&a>Removed guardians component for <[target].name>"
-                - case conduits:
+                - case catches:
                     - if <[value]> == true:
-                        - flag <[target]> triton.component.conduits:true
-                        - narrate "<&a>Set conduits component to true for <[target].name>"
+                        - flag <[target]> triton.component.catches:true
+                        - narrate "<&a>Set catches component to true for <[target].name>"
                     - else:
-                        - flag <[target]> triton.component.conduits:!
-                        - narrate "<&a>Removed conduits component for <[target].name>"
+                        - flag <[target]> triton.component.catches:!
+                        - narrate "<&a>Removed catches component for <[target].name>"
                 - default:
-                    - narrate "<&c>Invalid component. Use: lanterns, guardians, or conduits"
+                    - narrate "<&c>Invalid component. Use: lanterns, guardians, or catches"
 
         # Max out emblem (all components + unlock)
         - case max:
             - flag <[target]> triton.component.lanterns:true
             - flag <[target]> triton.component.guardians:true
-            - flag <[target]> triton.component.conduits:true
+            - flag <[target]> triton.component.catches:true
             - flag <[target]> triton.emblem.unlocked:true
             - flag <[target]> triton.emblem.unlock_date:<util.time_now>
             - flag <[target]> emblem.rank:+:1
@@ -1454,11 +1454,11 @@ checkkeys_command:
     - define guardians_owed <[guardians_should].sub[<[guardians_awarded]>].max[0]>
     - narrate "<&7>  Guardians: <&f><[guardians_count]> <&7>| Awarded: <&f><[guardians_awarded]> <&7>| Should: <&f><[guardians_should]> <&7>| Owed: <&a><[guardians_owed]>"
 
-    - define conduits_count <[target].flag[triton.conduits.count].if_null[0]>
-    - define conduits_awarded <[target].flag[triton.conduits.keys_awarded].if_null[0]>
-    - define conduits_should <[conduits_count].mul[4]>
-    - define conduits_owed <[conduits_should].sub[<[conduits_awarded]>].max[0]>
-    - narrate "<&7>  Conduits: <&f><[conduits_count]> <&7>| Awarded: <&f><[conduits_awarded]> <&7>| Should: <&f><[conduits_should]> <&7>| Owed: <&a><[conduits_owed]>"
+    - define catches_count <[target].flag[triton.catches.count].if_null[0]>
+    - define catches_awarded <[target].flag[triton.catches.keys_awarded].if_null[0]>
+    - define catches_should <[catches_count]>
+    - define catches_owed <[catches_should].sub[<[catches_awarded]>].max[0]>
+    - narrate "<&7>  Catches: <&f><[catches_count]> <&7>| Awarded: <&f><[catches_awarded]> <&7>| Should: <&f><[catches_should]> <&7>| Owed: <&a><[catches_owed]>"
 
     # Charon
     - narrate "<&5>CHARON:"

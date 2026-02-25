@@ -258,7 +258,7 @@ mythic_crafting_click:
         # All ingredients present — take them
         - take item:<[blueprint_script]> quantity:1
         - take item:<[fragment_script]> quantity:4
-        - take diamond_block quantity:4
+        - take item:diamond_block quantity:4
 
         # Give result item
         - give <[recipe].get[result]>

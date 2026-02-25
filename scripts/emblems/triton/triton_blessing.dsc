@@ -5,7 +5,7 @@
 # Consumable item that boosts all incomplete Triton activities by +5%
 # - Lanterns: +50 (5% of 1,000)
 # - Guardians: +75 (5% of 1,500)
-# - Conduits: +1 (5% of 25, rounded down)
+# - Catches: +5 (5% of 100)
 #
 # Only boosts incomplete activities (component not obtained)
 # Caps at requirement (cannot exceed milestone)
@@ -24,7 +24,7 @@ triton_blessing_usage:
         - determine cancelled passively
 
         # If all components complete, convert blessing to keys
-        - if <player.has_flag[triton.component.lanterns]> && <player.has_flag[triton.component.guardians]> && <player.has_flag[triton.component.conduits]>:
+        - if <player.has_flag[triton.component.lanterns]> && <player.has_flag[triton.component.guardians]> && <player.has_flag[triton.component.catches]>:
             - take item:triton_blessing quantity:1
             - give triton_key quantity:10
             - narrate "<&d><&l>TRITON BLESSING ACTIVATED!<&r>"
@@ -90,32 +90,31 @@ triton_blessing_usage:
                 - playsound <player> sound:ui_toast_challenge_complete
                 - announce "<&3>[Triton]<&r> <&f><player.name> <&7>has obtained the <&6>Guardian Component<&7>!"
 
-        # ===== CONDUIT BOOST =====
-        - if !<player.has_flag[triton.component.conduits]>:
-            - define current <player.flag[triton.conduits.count].if_null[0]>
-            - define boost 1
-            - define new_count <[current].add[<[boost]>].min[25]>
+        # ===== CATCHES BOOST =====
+        - if !<player.has_flag[triton.component.catches]>:
+            - define current <player.flag[triton.catches.count].if_null[0]>
+            - define boost 5
+            - define new_count <[current].add[<[boost]>].min[100]>
             - define actual_boost <[new_count].sub[<[current]>]>
 
-            - flag player triton.conduits.count:<[new_count]>
-            - define boosted <[boosted].include[<&3>Conduits<&7>: +<[actual_boost]> (<[current]> → <[new_count]>)]>
+            - flag player triton.catches.count:<[new_count]>
+            - define boosted <[boosted].include[<&3>Catches<&7>: +<[actual_boost]> (<[current]> → <[new_count]>)]>
 
             # Check for key awards
-            - define keys_awarded <player.flag[triton.conduits.keys_awarded].if_null[0]>
-            - define keys_should_have <[new_count].mul[4]>
-            - if <[keys_should_have]> > <[keys_awarded]>:
-                - define keys_to_give <[keys_should_have].sub[<[keys_awarded]>]>
+            - define keys_awarded <player.flag[triton.catches.keys_awarded].if_null[0]>
+            - if <[new_count]> > <[keys_awarded]>:
+                - define keys_to_give <[new_count].sub[<[keys_awarded]>]>
                 - give triton_key quantity:<[keys_to_give]>
-                - flag player triton.conduits.keys_awarded:<[keys_should_have]>
-                - narrate "<&e><&l>BONUS KEYS!<&r> <&7>+<[keys_to_give]> Triton Keys (Conduits)"
+                - flag player triton.catches.keys_awarded:<[new_count]>
+                - narrate "<&e><&l>BONUS KEYS!<&r> <&7>+<[keys_to_give]> Triton Keys (Catches)"
 
             # Check for component milestone
-            - if <[new_count]> >= 25:
-                - flag player triton.component.conduits:true
-                - flag player triton.component.conduits_date:<util.time_now.format>
-                - narrate "<&6><&l>MILESTONE!<&r> <&e>Conduit Component obtained! <&7>(25 conduits)"
+            - if <[new_count]> >= 100:
+                - flag player triton.component.catches:true
+                - flag player triton.component.catches_date:<util.time_now.format>
+                - narrate "<&6><&l>MILESTONE!<&r> <&e>Catch Component obtained! <&7>(100 treasures fished)"
                 - playsound <player> sound:ui_toast_challenge_complete
-                - announce "<&3>[Triton]<&r> <&f><player.name> <&7>has obtained the <&6>Conduit Component<&7>!"
+                - announce "<&3>[Triton]<&r> <&f><player.name> <&7>has obtained the <&6>Catch Component<&7>!"
 
         # Consume blessing
         - take item:triton_blessing quantity:1

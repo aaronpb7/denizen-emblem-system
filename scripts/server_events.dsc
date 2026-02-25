@@ -5,6 +5,7 @@
 # 1. Daily server restart at midnight
 # 2. Bulletin notification on join (if unread)
 # 3. Emblem warning on join (if no emblem selected)
+# 4. Lore whispers — random hourly ominous messages + thunderstorm
 #
 
 server_midnight_restart:
@@ -43,6 +44,13 @@ server_join_handler:
             - narrate "<&7>Type <&f>/profile <&7>and click the <&e>Bulletin <&7>to see what's new."
             - narrate " "
 
+        # --- Triton catches migration (conduit → catches) ---
+        - if !<player.has_flag[triton.catches_migrated]>:
+            - if <player.has_flag[triton.component.conduits]>:
+                - flag player triton.component.catches:true
+                - flag player triton.component.catches_date:<player.flag[triton.component.conduits_date].if_null[<util.time_now.format>]>
+            - flag player triton.catches_migrated:true
+
         # --- Emblem warning ---
         # Only warn players who have met Promachos but have no emblem set
         - if <player.has_flag[met_promachos]> && !<player.has_flag[emblem.active]>:
@@ -53,3 +61,48 @@ server_join_handler:
             - narrate "<&e><&l>Promachos<&r><&7>: You have not chosen an emblem! Visit one of the gods to choose one."
             - playsound <player> sound:entity_villager_ambient
             - title "subtitle:<&7>Visit a god to choose an emblem" fade_in:10t stay:60t fade_out:10t
+
+# ============================================
+# LORE WHISPERS
+# ============================================
+# Once per hour at a random minute, broadcast an
+# ominous lore line and trigger a thunderstorm.
+
+lore_whisper_scheduler:
+    type: world
+    debug: false
+    events:
+        on system time hourly:
+        - if <server.online_players.size> == 0:
+            - stop
+        - define delay <util.random.int[1].to[55]>
+        - wait <[delay]>m
+        - if <server.online_players.size> == 0:
+            - stop
+        - run lore_whisper_broadcast
+
+lore_whisper_broadcast:
+    type: task
+    debug: false
+    definitions: line
+    script:
+    - define whispers <list>
+    - define whispers <[whispers].include[The ground trembles beneath your feet. Something stirs.]>
+    - define whispers <[whispers].include[A crack splits the sky for just a moment... then silence.]>
+    - define whispers <[whispers].include[The air grows heavy. The gods have gone quiet.]>
+    - define whispers <[whispers].include[Somewhere beneath the world, something is waking up.]>
+    - define whispers <[whispers].include[The river flows backwards. The dead do not rest.]>
+    - define whispers <[whispers].include[A sound without a source echoes from the deep.]>
+    - define whispers <[whispers].include[The sea pulls back from the shore... as if afraid.]>
+    - define whispers <[whispers].include[The forge fire flickers. Hephaestus will not say why.]>
+    - define whispers <[whispers].include[Lightning has not struck in days. The sky feels... empty.]>
+    - define whispers <[whispers].include[The walls between worlds grow thin. Something presses against them.]>
+    - define whispers <[whispers].include[An old voice whispers a name no one recognizes.]>
+    - define whispers <[whispers].include[The harvest withers where no blight has touched.]>
+    - define line <[whispers].random>
+    - announce "<&7><&o><[line]>"
+    - playsound <server.online_players> sound:ambient_cave volume:0.4
+    - wait 3s
+    - weather storm reset:1m
+    - wait 5s
+    - weather thunder reset:55s

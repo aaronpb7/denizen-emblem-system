@@ -26,7 +26,8 @@
       "Bash(git commit:*)",
       "WebFetch(domain:api.minesk.in)",
       "Bash(done)",
-      "WebFetch(domain:minecraft.fandom.com)"
+      "WebFetch(domain:minecraft.fandom.com)",
+      "WebFetch(domain:minecraft.wiki)"
     ]
   }
 }

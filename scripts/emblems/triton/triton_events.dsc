@@ -4,7 +4,7 @@
 #
 # Activity tracking for component milestones
 # 1. Guardian kills → component at 1,500 (regular=+1, elder=+15)
-# 2. Conduit crafting → component at 25
+# 2. Treasure fishing → component at 100
 #
 # Sea lantern turn-in is handled by the Triton NPC (triton_npc.dsc)
 #
@@ -78,38 +78,50 @@ ocean_guardian_combat:
             - narrate "<&d>+1 Triton Mythic Fragment!"
 
 # ============================================
-# CONDUIT CRAFTING
+# TREASURE FISHING (TRITON'S CATCH)
 # ============================================
 
-ocean_conduit_crafting:
+ocean_treasure_fishing:
     type: world
     debug: false
     events:
-        after player crafts conduit:
+        after player fishes while caught_fish:
         # Emblem gate
         - if <player.flag[emblem.active].if_null[NONE]> != TRITON:
             - stop
 
-        # Track count
-        - flag player triton.conduits.count:++
-        - define count <player.flag[triton.conduits.count]>
+        # Only count treasure category items for progression
+        - define material <context.item.material.name>
+        - define is_treasure <list[enchanted_book|name_tag|saddle|nautilus_shell|bow|fishing_rod].contains[<[material]>]>
 
-        # Key award logic (4 keys per conduit)
-        - define keys_awarded <player.flag[triton.conduits.keys_awarded].if_null[0]>
-        - define keys_should_have <[count].mul[4]>
-        - if <[keys_should_have]> > <[keys_awarded]>:
-            - define keys_to_give <[keys_should_have].sub[<[keys_awarded]>]>
-            - give triton_key quantity:<[keys_to_give]>
-            - flag player triton.conduits.keys_awarded:<[keys_should_have]>
-            - narrate "<&e><&l>TRITON KEY!<&r> <&7>Conduits: <&a><[count]><&7>/25 <&8>(+4 keys)"
+        # 1% bonus key chance on ANY catch
+        - if <util.random.int[1].to[100]> <= 1:
+            - give triton_key quantity:1
+            - narrate "<&3><&l>BONUS KEY!<&r> <&7>The sea god rewards your patience!"
             - playsound <player> sound:entity_experience_orb_pickup
 
-        # Check for component milestone (25)
-        - if <[count]> >= 25 && !<player.has_flag[triton.component.conduits]>:
-            - flag player triton.component.conduits:true
-            - flag player triton.component.conduits_date:<util.time_now.format>
-            - narrate "<&6><&l>MILESTONE!<&r> <&e>Conduit Component obtained! <&7>(25 conduits)"
+        - if !<[is_treasure]>:
+            - stop
+
+        # Track count
+        - flag player triton.catches.count:++
+        - define count <player.flag[triton.catches.count]>
+
+        # Key award logic (1 key per treasure catch)
+        - define keys_awarded <player.flag[triton.catches.keys_awarded].if_null[0]>
+        - if <[count]> > <[keys_awarded]>:
+            - define keys_to_give <[count].sub[<[keys_awarded]>]>
+            - give triton_key quantity:<[keys_to_give]>
+            - flag player triton.catches.keys_awarded:<[count]>
+            - narrate "<&e><&l>TRITON KEY!<&r> <&7>Triton's Catch: <&a><[count]><&7>/100"
+            - playsound <player> sound:entity_experience_orb_pickup
+
+        # Check for component milestone (100)
+        - if <[count]> >= 100 && !<player.has_flag[triton.component.catches]>:
+            - flag player triton.component.catches:true
+            - flag player triton.component.catches_date:<util.time_now.format>
+            - narrate "<&6><&l>MILESTONE!<&r> <&e>Catch Component obtained! <&7>(100 treasures fished)"
             - playsound <player> sound:ui_toast_challenge_complete
-            - announce "<&3>[Triton]<&r> <&f><player.name> <&7>has obtained the <&6>Conduit Component<&7>!"
+            - announce "<&3>[Triton]<&r> <&f><player.name> <&7>has obtained the <&6>Catch Component<&7>!"
             - give triton_mythic_fragment quantity:1
             - narrate "<&d>+1 Triton Mythic Fragment!"

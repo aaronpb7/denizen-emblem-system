@@ -24,7 +24,7 @@ Promachos retains emblem selection and tier gating.
 |----------|----------|--------------|-----------|------------|
 | Sea Lanterns | Turn in to Triton NPC | 10/key | 1,000 | 100 |
 | Guardian Kills | Kill guardians (regular=+1, elder=+15) | 15/key | 1,500 | 100 |
-| Conduit Crafting | Craft conduits | 1 conduit = 4 keys | 25 | 100 |
+| Triton's Catch | Fish treasure items | 1/key | 100 | 100 |
 
 ### Sea Lanterns
 - Hold sea lanterns in hand, right-click Triton NPC
@@ -39,17 +39,18 @@ Promachos retains emblem selection and tier gating.
 - Keys awarded every 15 kill points
 - Component at 1,500 total kill points
 
-### Conduit Crafting
-- Craft conduits with Triton emblem active
-- Each conduit crafted awards 4 keys
-- Component at 25 conduits crafted
+### Triton's Catch
+- Fish with a rod — only treasure category items count
+- Treasure items: enchanted_book, name_tag, saddle, nautilus_shell, bow, fishing_rod
+- Each treasure catch awards 1 key
+- Component at 100 treasure catches
 
 ## Blessing
 
 **Triton Blessing** — 5% boost on all incomplete activities:
 - Lanterns: +50 (5% of 1,000)
 - Guardians: +75 (5% of 1,500)
-- Conduits: +1 (5% of 25, rounded down)
+- Catches: +5 (5% of 100)
 
 If all 3 components are already complete, converts to **10 Triton Keys** instead.
 
@@ -75,7 +76,7 @@ If all 3 components are already complete, converts to **10 Triton Keys** instead
 
 **MYTHIC:** triton_blessing:1, triton_mythic_fragment:1, gold_block:16, emerald_block:16
 
-> Triton Mythic Fragments are also awarded 1x per component milestone (Lanterns, Guardians, Conduits = 3 total).
+> Triton Mythic Fragments are also awarded 1x per component milestone (Lanterns, Guardians, Catches = 3 total).
 
 **OLYMPIAN:** neptune_key:1 (100%)
 
@@ -85,7 +86,7 @@ If all 3 components are already complete, converts to **10 Triton Keys** instead
 |-----------|-------------|------|
 | Lantern Component | 1,000 sea lanterns | `triton.component.lanterns` |
 | Guardian Component | 1,500 guardian kills | `triton.component.guardians` |
-| Conduit Component | 25 conduits crafted | `triton.component.conduits` |
+| Catch Component | 100 treasures fished | `triton.component.catches` |
 
 ## Emblem Unlock
 
@@ -100,6 +101,6 @@ When all 3 components are obtained, right-clicking the Triton NPC triggers the u
 
 - `scripts/emblems/triton/triton_items.dsc` — Key, blessing, fragment, components
 - `scripts/emblems/triton/triton_npc.dsc` — NPC assignment, interact, turn-in, ceremony, info GUI
-- `scripts/emblems/triton/triton_events.dsc` — Guardian kills, conduit crafting
+- `scripts/emblems/triton/triton_events.dsc` — Guardian kills, treasure fishing
 - `scripts/emblems/triton/triton_crate.dsc` — 5-tier crate system
 - `scripts/emblems/triton/triton_blessing.dsc` — Blessing consumable

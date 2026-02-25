@@ -78,7 +78,7 @@ emblem_migration_handler:
                 - give triton_mythic_fragment quantity:1
             - if <player.has_flag[triton.component.guardians]>:
                 - give triton_mythic_fragment quantity:1
-            - if <player.has_flag[triton.component.conduits]>:
+            - if <player.has_flag[triton.component.catches]>:
                 - give triton_mythic_fragment quantity:1
             # Charon milestones
             - if <player.has_flag[charon.component.debris]>:
@@ -96,6 +96,14 @@ emblem_migration_handler:
             - flag player met_triton:!
             - flag player met_charon:!
             - flag player emblem.npc_migrated:true
+
+        # One-time: apply unbreakable to existing divine armor in inventory
+        - if !<player.has_flag[emblem.armor_unbreakable_migrated]>:
+            - define divine_armors <list[demeter_divine_helm|demeter_divine_chestplate|demeter_divine_leggings|demeter_divine_boots|hephaestus_divine_helm|hephaestus_divine_chestplate|hephaestus_divine_leggings|hephaestus_divine_boots|heracles_divine_helm|heracles_divine_chestplate|heracles_divine_leggings|heracles_divine_boots|triton_divine_helm|triton_divine_chestplate|triton_divine_leggings|triton_divine_boots|charon_divine_helm|charon_divine_chestplate|charon_divine_leggings|charon_divine_boots]>
+            - foreach <player.inventory.map_slots> key:slot as:item:
+                - if <[divine_armors].contains[<[item].script.name.if_null[none]>]>:
+                    - inventory adjust slot:<[slot]> unbreakable:true d:<player.inventory>
+            - flag player emblem.armor_unbreakable_migrated:true
 
         # Skip rest if already migrated
         - if <player.has_flag[emblem.migrated]>:

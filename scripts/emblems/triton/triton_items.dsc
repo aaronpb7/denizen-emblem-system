@@ -115,18 +115,18 @@ guardian_component:
     - <empty>
     - <&6><&l>LEGENDARY COMPONENT
 
-conduit_component:
+catch_component:
     type: item
-    material: conduit
-    display name: <&6>Conduit Component<&r>
+    material: fishing_rod
+    display name: <&6>Catch Component<&r>
     enchantments:
     - mending:1
     mechanisms:
         hides: ENCHANTS
     lore:
-    - <&7>Symbol of 25 conduits crafted.
+    - <&7>Symbol of 100 treasures fished from the deep.
     - <&7>Required for Triton's Emblem.
     - <empty>
-    - <&8><&o>Obtained: <player.flag[triton.component.conduits_date].if_null[Unknown]>
+    - <&8><&o>Obtained: <player.flag[triton.component.catches_date].if_null[Unknown]>
     - <empty>
     - <&6><&l>LEGENDARY COMPONENT

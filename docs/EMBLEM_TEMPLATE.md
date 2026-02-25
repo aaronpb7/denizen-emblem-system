@@ -75,7 +75,7 @@ Activity 3:
 | Demeter | wheat (harvest) | 150 | 15,000 | cows (breed) | 20 | 2,000 | cakes (craft) | 5 | 500 |
 | Hephaestus | iron (mine) | 50 | 5,000 | smelting (furnace) | 50 | 5,000 | golems (build) | 1 | 100 |
 | Heracles | pillagers (kill) | 25 | 2,500 | raids (complete) | 2keys/raid | 50 | emeralds (trade) | 100 | 10,000 |
-| Triton | lanterns (NPC turn-in) | 10 | 1,000 | guardians (kill) | 15 | 1,500 | conduits (craft) | 4keys/craft | 25 |
+| Triton | lanterns (NPC turn-in) | 10 | 1,000 | guardians (kill) | 15 | 1,500 | catches (fish treasure) | 1 | 100 |
 
 ### 1.3 Crate Loot Pools (5 tiers)
 

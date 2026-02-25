@@ -39,6 +39,8 @@ hephaestus_divine_helm:
     type: item
     material: diamond_helmet
     allow in material recipes: true
+    mechanisms:
+        unbreakable: true
     display name: <&8>Visage of the Eternal Forge
     lore:
     - <&7>Forged with the last heat of
@@ -53,6 +55,8 @@ hephaestus_divine_chestplate:
     type: item
     material: diamond_chestplate
     allow in material recipes: true
+    mechanisms:
+        unbreakable: true
     display name: <&8>Anvil-Born Cuirass
     lore:
     - <&7>Forged with the last heat of
@@ -67,6 +71,8 @@ hephaestus_divine_leggings:
     type: item
     material: diamond_leggings
     allow in material recipes: true
+    mechanisms:
+        unbreakable: true
     display name: <&8>Cinderguard Greaves
     lore:
     - <&7>Forged with the last heat of
@@ -81,6 +87,8 @@ hephaestus_divine_boots:
     type: item
     material: diamond_boots
     allow in material recipes: true
+    mechanisms:
+        unbreakable: true
     display name: <&8>Emberstep Sabatons
     lore:
     - <&7>Forged with the last heat of
@@ -244,11 +252,11 @@ hephaestus_infusion_ceremony:
     type: task
     debug: false
     script:
-    - take diamond_helmet quantity:1
-    - take diamond_chestplate quantity:1
-    - take diamond_leggings quantity:1
-    - take diamond_boots quantity:1
-    - take hephaestus_divine_gift quantity:1
+    - take item:diamond_helmet quantity:1
+    - take item:diamond_chestplate quantity:1
+    - take item:diamond_leggings quantity:1
+    - take item:diamond_boots quantity:1
+    - take item:hephaestus_divine_gift quantity:1
 
     - narrate "<&8><&l>Hephaestus<&r><&7>: Set it down. All of it. Don't talk."
     - playsound <player> sound:block_anvil_use volume:1.0

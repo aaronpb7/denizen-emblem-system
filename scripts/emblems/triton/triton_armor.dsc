@@ -39,6 +39,8 @@ triton_divine_helm:
     type: item
     material: diamond_helmet
     allow in material recipes: true
+    mechanisms:
+        unbreakable: true
     display name: <&3>Tidecrown of the Abyss
     lore:
     - <&7>Infused with the weight of
@@ -53,6 +55,8 @@ triton_divine_chestplate:
     type: item
     material: diamond_chestplate
     allow in material recipes: true
+    mechanisms:
+        unbreakable: true
     display name: <&3>Depthguard Cuirass
     lore:
     - <&7>Infused with the weight of
@@ -67,6 +71,8 @@ triton_divine_leggings:
     type: item
     material: diamond_leggings
     allow in material recipes: true
+    mechanisms:
+        unbreakable: true
     display name: <&3>Riptide Greaves
     lore:
     - <&7>Infused with the weight of
@@ -81,6 +87,8 @@ triton_divine_boots:
     type: item
     material: diamond_boots
     allow in material recipes: true
+    mechanisms:
+        unbreakable: true
     display name: <&3>Abyssal Striders
     lore:
     - <&7>Infused with the weight of
@@ -248,11 +256,11 @@ triton_infusion_ceremony:
     type: task
     debug: false
     script:
-    - take diamond_helmet quantity:1
-    - take diamond_chestplate quantity:1
-    - take diamond_leggings quantity:1
-    - take diamond_boots quantity:1
-    - take triton_divine_gift quantity:1
+    - take item:diamond_helmet quantity:1
+    - take item:diamond_chestplate quantity:1
+    - take item:diamond_leggings quantity:1
+    - take item:diamond_boots quantity:1
+    - take item:triton_divine_gift quantity:1
 
     - narrate "<&3><&l>Triton<&r><&7>: Give me the armor. And the pearls. Do not speak."
     - playsound <player> sound:block_enchantment_table_use volume:1.0

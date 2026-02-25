@@ -57,7 +57,7 @@ scripts/
     │   └── vulcan_items.dsc       # Unique items (pickaxe, blueprint, head)
     ├── triton/                    # TRITON emblem (Tier 2) + Neptune meta
     │   ├── triton_npc.dsc         # Triton NPC (turn-ins, ceremony, info GUI)
-    │   ├── triton_events.dsc      # Activity tracking (guardians, conduits)
+    │   ├── triton_events.dsc      # Activity tracking (guardians, treasure fishing)
     │   ├── triton_crate.dsc       # Triton crate opening system
     │   ├── triton_blessing.dsc    # Triton Blessing consumable
     │   ├── triton_items.dsc       # Custom items (key, blessing, fragment, components)
@@ -87,7 +87,7 @@ Players interact with **Promachos NPC** (requires `met_promachos` flag) to choos
 | DEMETER | Demeter | Demeter, Goddess of Harvest | Wheat harvesting, cow breeding, cake crafting |
 | HEPHAESTUS | Hephaestus | Hephaestus, God of the Forge | Mining ores, smelting, golem creation |
 | HERACLES | Heracles | Heracles, Hero of Strength | Pillager slaying, raid defense, emerald trading |
-| TRITON | Triton | Triton, God of the Sea | Sea lantern turn-ins, guardian kills, conduit crafting |
+| TRITON | Triton | Triton, God of the Sea | Sea lantern turn-ins, guardian kills, treasure fishing |
 | CHARON | Charon | Charon, Ferryman of the Dead | Ancient debris turn-in, wither combat, piglin bartering |
 
 **Key Mechanics:**
@@ -328,7 +328,7 @@ Players can equip one chat title prefix at a time via `/profile` → Cosmetics m
 | `triton_mythic_fragment` | prismarine_shard | Crafting ingredient for Neptune's Trident |
 | `lantern_component` | sea_lantern | Milestone component (1,000 lanterns) |
 | `guardian_component` | prismarine_crystals | Milestone component (1,500 guardian kills) |
-| `conduit_component` | conduit | Milestone component (25 conduits) |
+| `catch_component` | fishing_rod | Milestone component (100 treasure catches) |
 
 ### Neptune Items
 
@@ -505,9 +505,9 @@ triton.guardians.count
 triton.guardians.keys_awarded
 triton.component.guardians
 
-triton.conduits.count
-triton.conduits.keys_awarded
-triton.component.conduits
+triton.catches.count
+triton.catches.keys_awarded
+triton.component.catches
 
 # Emblem Unlock
 triton.emblem.unlocked
@@ -631,7 +631,7 @@ bulletin.seen_version      # Integer: Last bulletin version viewed
 - ✅ Admin commands for testing
 - ✅ Early close handling for crates (no duplicate awards)
 
-- ✅ Triton activity tracking (sea lanterns, guardian kills, conduit crafting)
+- ✅ Triton activity tracking (sea lanterns, guardian kills, treasure fishing)
 - ✅ Triton crate system (5 tiers, ocean theme)
 - ✅ Triton Blessing consumable (+5% progress boost)
 - ✅ Triton NPC (dedicated NPC for turn-ins, ceremony, info)

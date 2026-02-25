@@ -39,6 +39,8 @@ charon_divine_helm:
     type: item
     material: diamond_helmet
     allow in material recipes: true
+    mechanisms:
+        unbreakable: true
     display name: <&5>Ferryman's Cowl
     lore:
     - <&7>Woven from the currents of
@@ -53,6 +55,8 @@ charon_divine_chestplate:
     type: item
     material: diamond_chestplate
     allow in material recipes: true
+    mechanisms:
+        unbreakable: true
     display name: <&5>Shroud of the Styx
     lore:
     - <&7>Woven from the currents of
@@ -67,6 +71,8 @@ charon_divine_leggings:
     type: item
     material: diamond_leggings
     allow in material recipes: true
+    mechanisms:
+        unbreakable: true
     display name: <&5>Deathwalker Greaves
     lore:
     - <&7>Woven from the currents of
@@ -81,6 +87,8 @@ charon_divine_boots:
     type: item
     material: diamond_boots
     allow in material recipes: true
+    mechanisms:
+        unbreakable: true
     display name: <&5>Stygian Sabatons
     lore:
     - <&7>Woven from the currents of
@@ -252,11 +260,11 @@ charon_infusion_ceremony:
     type: task
     debug: false
     script:
-    - take diamond_helmet quantity:1
-    - take diamond_chestplate quantity:1
-    - take diamond_leggings quantity:1
-    - take diamond_boots quantity:1
-    - take charon_divine_gift quantity:1
+    - take item:diamond_helmet quantity:1
+    - take item:diamond_chestplate quantity:1
+    - take item:diamond_leggings quantity:1
+    - take item:diamond_boots quantity:1
+    - take item:charon_divine_gift quantity:1
 
     - narrate "<&5><&l>Charon<&r><&7>: Place it before me. The coins... on the armor. Yes."
     - playsound <player> sound:block_enchantment_table_use volume:1.0

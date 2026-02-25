@@ -151,13 +151,13 @@ get_emblem_display_item:
             # Show actual progress stats
             - define lanterns <player.flag[triton.lanterns.count].if_null[0]>
             - define guardians <player.flag[triton.guardians.count].if_null[0]>
-            - define conduits <player.flag[triton.conduits.count].if_null[0]>
-            - define keys <player.flag[triton.lanterns.keys_awarded].if_null[0].add[<player.flag[triton.guardians.keys_awarded].if_null[0]>].add[<player.flag[triton.conduits.keys_awarded].if_null[0]>]>
+            - define catches <player.flag[triton.catches.count].if_null[0]>
+            - define keys <player.flag[triton.lanterns.keys_awarded].if_null[0].add[<player.flag[triton.guardians.keys_awarded].if_null[0]>].add[<player.flag[triton.catches.keys_awarded].if_null[0]>]>
 
             - define lore <[lore].include[<&3>Your Progress<&co>]>
             - define lore <[lore].include[<&7>• Sea lanterns offered<&co> <&3><[lanterns].format_number>]>
             - define lore <[lore].include[<&7>• Guardians slain<&co> <&3><[guardians].format_number>]>
-            - define lore <[lore].include[<&7>• Conduits crafted<&co> <&3><[conduits].format_number>]>
+            - define lore <[lore].include[<&7>• Treasures fished<&co> <&3><[catches].format_number>]>
             - define lore "<[lore].include[<&sp>]>"
             - define lore <[lore].include[<&3>Keys earned<&co> <&3><[keys]> <&7>Triton Keys]>
             - if <player.has_flag[triton.armor.crafted]>:
@@ -962,8 +962,8 @@ get_triton_progress_items:
     - define guardian_item <proc[get_triton_guardians_progress_item]>
     - define items <[items].set[<[guardian_item]>].at[14]>
 
-    - define conduit_item <proc[get_triton_conduits_progress_item]>
-    - define items <[items].set[<[conduit_item]>].at[16]>
+    - define catch_item <proc[get_triton_catches_progress_item]>
+    - define items <[items].set[<[catch_item]>].at[16]>
 
     # Meta-crate progress (bottom right slot 27)
     - define items <[items].set[<proc[get_neptune_meta_progress_item]>].at[27]>
@@ -1037,37 +1037,37 @@ get_triton_guardians_progress_item:
     - else:
         - determine <item[prismarine_crystals].with[display=<&3><&l>Guardian Slayer;lore=<[lore]>]>
 
-get_triton_conduits_progress_item:
+get_triton_catches_progress_item:
     type: procedure
     debug: false
     script:
-    - define count <player.flag[triton.conduits.count].if_null[0]>
-    - define complete <player.has_flag[triton.component.conduits]>
+    - define count <player.flag[triton.catches.count].if_null[0]>
+    - define complete <player.has_flag[triton.component.catches]>
 
     - define lore <list>
     - if !<[complete]>:
         - define lore <[lore].include[<&7>Component In Progress]>
         - define lore "<[lore].include[<&sp>]>"
-    - define lore <[lore].include[<&7><&o>"Channel the ocean's ancient power"]>
+    - define lore <[lore].include[<&7><&o>"Claim the ocean's hidden bounty"]>
     - define lore "<[lore].include[<&sp>]>"
-    - define lore <[lore].include[<&3>Task<&co> <&7>Craft conduits from hearts]>
-    - define lore <[lore].include[<&7>of the sea and nautilus shells.]>
-    - define lore <[lore].include[<&7>Each conduit channels Triton's power.]>
+    - define lore <[lore].include[<&3>Task<&co> <&7>Fish for treasure in the ocean.]>
+    - define lore <[lore].include[<&7>Only treasure catches count<&co>]>
+    - define lore <[lore].include[<&7>enchanted books, name tags, saddles, etc.]>
     - define lore "<[lore].include[<&sp>]>"
     - define lore <[lore].include[<&3>Component Progress<&co>]>
-    - define lore <[lore].include[<&7><[count]> / 25 conduits crafted]>
+    - define lore <[lore].include[<&7><[count]> / 100 treasures fished]>
     - if <[complete]>:
         - define percent 100
     - else:
-        - define percent <[count].div[25].mul[100].round>
+        - define percent <[count].div[100].mul[100].round>
     - define lore <[lore].include[<&7>(<[percent]>% complete)]>
     - define lore "<[lore].include[<&sp>]>"
     - define lore <[lore].include[<&8><&o>Complete all components to earn the emblem.]>
 
     - if <[complete]>:
-        - determine <item[conduit].with[display=<&3><&l>Conduit Crafting;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
+        - determine <item[fishing_rod].with[display=<&3><&l>Triton's Catch;lore=<[lore]>;enchantments=mending,1;hides=ALL]>
     - else:
-        - determine <item[conduit].with[display=<&3><&l>Conduit Crafting;lore=<[lore]>]>
+        - determine <item[fishing_rod].with[display=<&3><&l>Triton's Catch;lore=<[lore]>]>
 
 triton_progress_back_button:
     type: item
